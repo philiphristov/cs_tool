@@ -1,0 +1,863 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width">
+	<title>VerbaAlpina Crowdsourcing Tool - Documentation Source: generateMap.js</title>
+
+	<!--[if lt IE 9]>
+	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
+	<link type="text/css" rel="stylesheet" href="styles/sunlight.default.css">
+
+	<link type="text/css" rel="stylesheet" href="styles/site.cerulean.css">
+
+</head>
+
+<body>
+
+<div class="navbar navbar-default navbar-fixed-top ">
+<div class="container">
+	<div class="navbar-header">
+		<a class="navbar-brand" href="index.html">VerbaAlpina Crowdsourcing Tool - Documentation</a>
+		<button class="navbar-toggle" type="button" data-toggle="collapse" data-target="#topNavigation">
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+        </button>
+	</div>
+	<div class="navbar-collapse collapse" id="topNavigation">
+		<ul class="nav navbar-nav">
+			
+			<li class="dropdown">
+				<a href="modules.list.html" class="dropdown-toggle" data-toggle="dropdown">Modules<b class="caret"></b></a>
+				<ul class="dropdown-menu ">
+					<li><a href="module-Ajax_Calls.html">Ajax_Calls</a></li><li><a href="module-Content_Interactions.html">Content_Interactions</a></li><li><a href="module-Geo_Parser.html">Geo_Parser</a></li><li><a href="module-Map-Objects_Generator.html">Map-Objects_Generator</a></li>
+				</ul>
+			</li>
+			
+		</ul>
+        
+            <div class="col-sm-3 col-md-3">
+                <form class="navbar-form" role="search">
+                    <div class="input-group">
+                        <input type="text" class="form-control" placeholder="Search" name="q" id="search-input">
+                        <div class="input-group-btn">
+                            <button class="btn btn-default" id="search-submit"><i class="glyphicon glyphicon-search"></i></button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        
+	</div>
+
+</div>
+</div>
+
+
+<div class="container" id="toc-content">
+<div class="row">
+
+	
+	<div class="col-md-12">
+	
+		<div id="main">
+			
+
+		<h1 class="page-title">Source: generateMap.js</h1>
+    
+<section>
+    <article>
+        <pre
+            class="sunlight-highlight-javascript linenums">/**
+ * @module  Map-Objects_Generator
+ * 
+ */
+
+
+var styledMapType;
+var map;
+var marker;
+var markershape;
+var markershapeFiltered;
+var center;
+var infoWindows = [];
+var markers = [];
+var old_feature;
+var old_infowindow;
+
+var location_markers = {};
+
+var user_input_marker;
+
+var marker_to_change;
+
+var change_input = ['Ändern','Modifier','Modificare','Spremeni:'];   
+var delete_input = ['Löschen','Effacer','Cancellare','Izbriši']; 
+var  question_marker = ['Wie Sagt man bei Ihnen?', 'Comment est-ce qu´on dit chez vous?' , 'Come si dice da voi?', 'Kako se pri vas reče?'];
+var crowder = ['anonymer User','Utilisateur anonyme','Utente anonimo','Anonimen uporabnik'];
+
+jQuery(document).ready(function($) {
+  initMap();
+
+  jQuery.ajax({
+    dataType: "json",
+    url: url.plugins_Url+"js/json/mapstyle_dark_minimal.json",
+    success: function(data){
+      styledMapType = data;
+      map.setOptions({styles: styledMapType});
+    }
+  });  
+
+
+
+
+});
+
+/**
+ * Initialize the Google Map - Options, Styles and Markers
+ * 
+ */
+function initMap(){
+
+  var myOptions = {
+      center: {lat: 45.483678, lng: 11.410439},
+          zoom:6,
+          disableDefaultUI: true,
+          styles:  styledMapType
+  };
+
+  var styledMapType = new google.maps.StyledMapType ([
+  {
+    "featureType": "road",
+    "stylers": [
+      {
+        "visibility": "off"
+      }
+    ]
+  }
+]);
+
+  map = new google.maps.Map(document.getElementById('map'), myOptions);
+
+  map.setOptions({styles : styledMapType});
+
+  markershapeFiltered = {
+    path: "m 96,63.999986 q 0,-13.24998 -9.37497,-22.62502 -9.375032,-9.37496 -22.625027,-9.37496 -13.250004,0 -22.625007,9.37496 -9.37499,9.37504 -9.37499,22.62502 0,13.25 9.37499,22.625 9.375003,9.375 22.625007,9.375 13.249995,0 22.625027,-9.375 Q 96,77.249986 96,63.999986 z m 32,0 q 0,13.625 -4.125,22.375 L 78.375005,183.12501 q -1.999996,4.125 -5.937511,6.49998 Q 68.500043,192 64.000003,192 q -4.499987,0 -8.437497,-2.37501 -3.937505,-2.37498 -5.812493,-6.49998 L 4.1249985,86.374986 Q 0,77.624986 0,63.999986 0,37.499946 18.750001,18.750006 37.500011,6e-6 64.000003,6e-6 90.500008,6e-6 109.25,18.749996 128,37.499946 128,63.999986 z",
+    fillColor: '#939393',
+    fillOpacity: 0.8,
+    scale: 0.22,
+    strokeColor: '#7e7e7e',
+    strokeWeight: 1,
+    anchor: new google.maps.Point(64, 192)
+  };
+
+  markershape = {
+    path: "m 96,63.999986 q 0,-13.24998 -9.37497,-22.62502 -9.375032,-9.37496 -22.625027,-9.37496 -13.250004,0 -22.625007,9.37496 -9.37499,9.37504 -9.37499,22.62502 0,13.25 9.37499,22.625 9.375003,9.375 22.625007,9.375 13.249995,0 22.625027,-9.375 Q 96,77.249986 96,63.999986 z m 32,0 q 0,13.625 -4.125,22.375 L 78.375005,183.12501 q -1.999996,4.125 -5.937511,6.49998 Q 68.500043,192 64.000003,192 q -4.499987,0 -8.437497,-2.37501 -3.937505,-2.37498 -5.812493,-6.49998 L 4.1249985,86.374986 Q 0,77.624986 0,63.999986 0,37.499946 18.750001,18.750006 37.500011,6e-6 64.000003,6e-6 90.500008,6e-6 109.25,18.749996 128,37.499946 128,63.999986 z",
+    fillColor: 'blue',
+    fillOpacity: 0.8,
+    scale: 0.22,
+    strokeColor: '#000080',
+    strokeWeight: 1,
+    anchor: new google.maps.Point(64, 192)
+  };
+
+    markershapeChoosen = {
+    path: "m 96,63.999986 q 0,-13.24998 -9.37497,-22.62502 -9.375032,-9.37496 -22.625027,-9.37496 -13.250004,0 -22.625007,9.37496 -9.37499,9.37504 -9.37499,22.62502 0,13.25 9.37499,22.625 9.375003,9.375 22.625007,9.375 13.249995,0 22.625027,-9.375 Q 96,77.249986 96,63.999986 z m 32,0 q 0,13.625 -4.125,22.375 L 78.375005,183.12501 q -1.999996,4.125 -5.937511,6.49998 Q 68.500043,192 64.000003,192 q -4.499987,0 -8.437497,-2.37501 -3.937505,-2.37498 -5.812493,-6.49998 L 4.1249985,86.374986 Q 0,77.624986 0,63.999986 0,37.499946 18.750001,18.750006 37.500011,6e-6 64.000003,6e-6 90.500008,6e-6 109.25,18.749996 128,37.499946 128,63.999986 z",
+    fillColor: 'green',
+    fillOpacity: 0.9,
+    scale: 0.22,
+    strokeColor: '#004600',
+    strokeWeight: 1,
+    anchor: new google.maps.Point(64, 192)
+  };
+
+/*
+    marker = new google.maps.Marker({
+    map: map,
+    draggable: false,
+    animation: google.maps.Animation.DROP,
+    position: {lat: 48.1520, lng: 11.5535},
+    icon: markershape
+ 
+  });
+*/
+}
+
+/**
+ * Adds Alpine convention Polygon
+ * @param {String} geoData Geodata - Polygon
+ */
+function addGeometryAlps(geoData){
+  var polygon = parseGeoData(geoData);
+
+
+  var /** Object */ options = {"geometry" : polygon};
+  var feature = new google.maps.Data.Feature(options);
+
+  map.data.add(feature);
+
+  feature.setProperty('selected', false);
+
+      map.data.setStyle(function(feature) {
+        var color = 'blue';
+        var opacity = 0;
+        /*if (feature.getProperty('selected')) {
+          color = 'green';
+          opacity = 0.4;
+
+        }*/
+
+        return /** @type {google.maps.Data.StyleOptions} */({
+          fillOpacity:opacity,
+          fillColor: color,
+          strokeColor: color,
+          strokeWeight: 2
+        });
+      });
+ }
+
+/**
+ * Adds location polygon
+ * @param {String} geoData Geo data
+ * @param {Object} data    Object containing data for the polygon
+ */
+function addGeometry(geoData,data){
+
+  var location_name = data.name;
+  location_name = location_name.replace(/\\/g, "");
+  var center = parseGeoData(data.centerCoordinates);  
+  var lat_g = parseGeoData(data.centerCoordinates).get().lat();
+  var lng_g = parseGeoData(data.centerCoordinates).get().lng();
+
+  if(old_feature != null){
+    map.data.remove(old_feature);
+    //console.log('removeThat Thing');
+    //map.data.remove(old_infowindow);  
+  }  
+  
+  if(old_infowindow != null){
+    old_infowindow.close();
+    old_infowindow = null;
+  }
+
+  var polygon = parseGeoData(geoData);
+
+
+  var /** Object */ options = {"geometry" : polygon};
+  var featureSelected = new google.maps.Data.Feature(options);
+
+ // featureSelected.setProperty('selected', true);
+  featureSelected.setProperty('selected', check_user_aesserungen_in_location(location_name));
+  featureSelected.setProperty('location', location_name);
+
+ var infoWindowContent = [
+        "&lt;div id='inputWrapper'>",
+        location_name ,
+        "&lt;/div>"
+
+    ].join("");
+  var infowindow = new google.maps.InfoWindow();
+  var infowindow = new google.maps.InfoWindow({
+        content:infoWindowContent,
+        position: {lat: lat_g, lng:lng_g }
+  });
+
+  infoWindows.push(infowindow);
+
+  old_feature = featureSelected;
+  old_infowindow = infowindow;
+
+  map.data.add(featureSelected);
+
+
+
+
+  map.data.setStyle(function(featureSelected) {
+    var color = 'blue';
+    var fillColor = '#2068b5';
+    var opacity = 0;
+    if (featureSelected.getProperty('selected')) {
+      color = '#009900';
+      fillColor = '#009900';
+      opacity = 0.1;
+      //fillOpacity = 0.1;
+    }
+    return /** @type {google.maps.Data.StyleOptions} */({
+      fillOpacity:opacity,
+      fillColor: fillColor,
+      strokeColor: color,
+      strokeWeight: 2
+    });
+  });
+    
+  change_feature_style(featureSelected,check_user_aesserungen_in_location(location_name));
+  infowindow.open(map);
+
+/*  map.data.addListener('click', function(event) {  
+        var feature = event.feature;
+       	feature.setProperty('choosen', true);
+  });
+
+  if(featureSelected.getProperty('choosen')){
+  	  infowindow.open(map);
+  }*/
+
+ }
+
+/**
+ * Displays Marker For one location
+ * @param  {Object} element  Contains location information(name, id), number of answers in that location and if the current author has answers in it.
+ * @param  {Boolean} can_edit Checks if the user can edit the input.
+ * 
+ */
+function display_location_markers(element,can_edit){
+
+  var location_coordinates = parseGeoData(element.geo_data.geo);
+  var count_aeusserung_per_location = element.count.toString();
+  var location_id = element.geo_data.location_id.toString();
+  var userMarker = element.geo_data.userCheck;
+  var is_admin = can_edit;
+
+  if(is_admin)userMarker=true;
+
+  var marker_color;
+
+  if(userMarker == 0){
+    marker_color = "blue";
+
+  }else{
+    marker_color = "green";
+
+  }
+
+  //{lat:location_coordinates.get().lat(),lng:location_coordinates.get().lng()}
+
+  var marker = addCircleMarker(location_coordinates.get(),count_aeusserung_per_location,marker_color);
+
+  marker.location_id = location_id; /*Property Location_ID fuer Marker*/
+  marker.aeusserungen_count = count_aeusserung_per_location;
+
+   if(userMarker == 0){
+      marker.user_marker = false;
+  }
+  else{
+    marker.user_marker = true;
+  }
+
+
+  location_markers[element.geo_data.location_id] = marker;
+
+}
+
+/**
+ * Adds a marker when user enters an answer for a new location.
+ * @param {Object} obj           Data
+ * @param {Int} aeusserung_id Submited Answer Id
+ */
+function add_user_marker(obj,aeusserung_id){
+
+
+  var coordinates = parseGeoData(obj.centerCoordinates);
+  var infoWindowOrtsname = obj.name;
+  var concept = obj.concept;
+  var concept_id = obj.concept_id;
+  var bezeichnung = obj.bezeichnung;
+  var aeusserung_id = aeusserung_id;
+  var location_id = obj.location_id;
+
+
+  //  var green_marker = {
+  //   url: url.plugins_Url+"assets/images/green_marker.png",
+  //   size: new google.maps.Size(30,45),
+  //   // origin: new google.maps.Point(0, 0),
+  //   // anchor: new google.maps.Point(0, 32)
+  // };
+
+   markerSelected = new google.maps.Marker({
+          map: map,
+          draggable: false,
+          animation: google.maps.Animation.DROP,
+          position:{lat:coordinates.get().lat(), lng:coordinates.get().lng()}/*{lat:coordinates.get().lat(), lng:coordinates.get().lng()}*/,
+          icon:  url.plugins_Url+"assets/images/green_marker.png",
+          zIndex: 20001    
+        });
+       
+
+ user_input_marker = markerSelected; /*global user_input_marker*/
+/*
+       var infoWindowContent = [
+        "&lt;div class='inputWrapper'>",
+        "" + translateInfoWindowText(infoWindowOrtsname, concept,bezeichnung, current_user) + "", 
+        "&lt;div class='infbtnwrapper'>&lt;button style='display:inline-block;' id='edit_input' type='button' class='btn btn-primary btn-sm'>" + change_input[current_language] + "&lt;/button>",
+        "&lt;button style='display:inline-block;margin-left: 5px;padding: 4px; font-size: 14px;' class='btn btn-primary ' data-concept_id=\"" + concept_id + "\" data-todelete=\"" + aeusserung_id + "\"  data-ort= \"" + infoWindowOrtsname + "\" type='button' id='deleteAuesserung' type='button'>" + delete_input[current_language] + "&lt;/button>&lt;/div>",
+        "&lt;/div>"
+
+    ].join("");
+
+
+    var contentNode = jQuery(infoWindowContent)[0]; 
+
+    var infowindow = new google.maps.InfoWindow({
+        content: contentNode
+    });
+
+     infowindow.addListener('domready', function() {
+
+
+     jQuery(this.getContent()).find('#deleteAuesserung').off('click').on('click',function(){
+
+
+      infowindow.close();
+      markerSelected.setMap(null);
+
+      for(var i = 0; i &lt; markers.length; i++){
+        if(markers[i].marker===markerSelected)markers.splice(i,1);
+      }
+
+      deleteInput(aeusserung_id,infoWindowOrtsname,concept_id,location_id);
+
+     });
+
+    jQuery(this.getContent()).find('#edit_input').off('click').on('click',function(){
+      editInputA(infoWindowOrtsname,concept,bezeichnung,aeusserung_id,concept_id,infowindow,true,location_id);
+      marker_to_change = markerSelected;
+    });
+
+    });
+*/
+
+    /*close all other infowindows*/
+    closeAllInfoWindows();
+
+    setTimeout(function(){user_input_marker.setMap(null)}, 1100);
+/*
+    infoWindows.push(infowindow);
+
+    setTimeout(function(){infowindow.open(map, markerSelected)}, 1000);*/
+
+}
+
+
+
+
+
+
+function closeAllInfoWindows(){
+
+   for(var i = 0; i &lt; infoWindows.length; i++){
+              infoWindows[i].close();
+     }
+
+}
+
+function smoothZoom (map, max, cnt) {
+  //var mapObject = new google.maps.Map(document.getElementById("map"), myOptions);
+
+
+
+
+    if (cnt >= max) {
+        return;
+    }
+    else {
+        z = google.maps.event.addListener(map, 'zoom_changed', function(event){
+            google.maps.event.removeListener(z);
+            smoothZoom(map, max, cnt + 1);
+        });
+        setTimeout(function(){map.setZoom(cnt)}, 80); // 80ms is what I found to work well on my system -- it might not work well on all systems
+    }
+}
+
+
+jQuery(".userAuesserung").focus(function(){
+  jQuery(this).attr('id', 'currentInput');
+});
+
+function setQ(con, id){
+
+  closeAllInfoWindows();
+ // console.log('Closed infoowindows');
+
+ // console.log(con + id);
+
+  jQuery('#word_span').text(con);
+  jQuery('#word_span').attr("data-id_concept",id);
+
+  //filterMarkers(id);
+  
+     var index = concepts_index_by_id[parseInt(id)].index;
+
+     if(current_concept_index!=-1)deSelectTableEntry(current_concept_index);
+     selectTableEntry(index);
+    
+     current_concept_index = index;
+     concept_selected = true;
+
+     checkImageModal(id,con);    
+      
+  
+  /*position problems for popover*/
+   // setDynamicContent();
+   // setTimeout(function(){displayTooltips(true)}, 1000); 
+}
+
+
+
+function translateInfoWindowText(ort,concept,bezeichnung,author){
+ var text = '';
+ 
+
+ if(current_user.localeCompare(author) != 0){
+ 
+  var string = author;
+  var substring = "anonymousCrowder_";
+
+  if(string.indexOf(substring) == 0){
+        author = crowder[current_language];
+
+  }
+
+    switch(current_language){
+      case 0: 
+      text = "In " + ort + " sagt " + author +  " zu&lt;br> &lt;span id='i_span_2'>" + concept + ": &lt;/span>" + "&lt;span id='i_span_1'>\"" + bezeichnung + "\"&lt;/span>";
+      break;
+      case 1: 
+      text = "À " + ort + ", pour &lt;span id='i_span_2'>" + concept + "&lt;/span> " + author +  " dit:&lt;br> "  + " " + "&lt;span id='i_span_1'>\"" + bezeichnung + "\"&lt;/span>";
+      break;
+      case 2: 
+      text = "A " + ort + ", per  &lt;span id='i_span_2'>" + concept + "&lt;/span> " + author +  " dice:&lt;br> "  + " " + "&lt;span id='i_span_1'>\"" + bezeichnung + "\"&lt;/span>";
+      break;
+      case 3: 
+      text = "V " + ort + " " + author +  " reče za&lt;br> &lt;span id='i_span_2'>" + concept + ": &lt;/span>" + "&lt;span id='i_span_1'>\"" + bezeichnung + "\"&lt;/span>";
+      break;
+    }
+  }else{
+
+     switch(current_language){
+      case 0: 
+      text = "Ihre Antwort:&lt;br>" + "In " +  ort + " sagt man zu &lt;br>&lt;span id='i_span_2'>" + concept + ": &lt;/span>" + "&lt;span id='i_span_1'>\"" + bezeichnung + "\"&lt;/span>";
+      break;
+      case 1: 
+      text = "Votre réponse:&lt;br>" + "À " +  ort + ", pour &lt;br>&lt;span id='i_span_2'>" + concept + ": &lt;/span> on dit " + "&lt;span id='i_span_1'>\"" + bezeichnung + "\"&lt;/span>";
+      break;
+      case 2: 
+      text = "La vostra risposta: &lt;br>" + "A " +  ort + ", per &lt;br>&lt;span id='i_span_2'>" + concept + ": &lt;/span> si dice " + "&lt;span id='i_span_1'>\"" + bezeichnung + "\"&lt;/span>";
+      break;
+      case 3: 
+      text = "Vaš odgovor:&lt;br>" + "V " +  ort + " se reče za &lt;br>&lt;span id='i_span_2'>" + concept + ": &lt;/span> " + "&lt;span id='i_span_1'>\"" + bezeichnung + "\"&lt;/span>";
+      break;
+    }
+  }
+  return text;
+}
+
+
+
+
+
+
+function addCircleMarker(position,label,color){
+
+        var image = create_marker_image(label,color);
+        // the clickable region of the icon.
+        // var shape = {
+        //     coords: [1, 1, 1, 104, 80, 104, 80 , 1],
+        //     type: 'poly'
+        // };
+
+        var z_index = 20000-parseInt(label);
+
+        var marker = new google.maps.Marker({
+            position: position,
+            map: map,
+            icon: image,
+            // shape: shape,
+            zIndex: z_index
+        });
+
+        marker.addListener('click', function() {
+          closeAllInfoWindows();
+          openLocationListModal(marker);
+        });
+
+
+      
+        return marker;
+    
+}
+
+function change_marker(marker,number,color){
+
+
+  var label = (parseInt(marker.aeusserungen_count)+(number)).toString();
+  var color;
+
+  marker.aeusserungen_count = label;
+
+  var num_entries = check_for_entries(marker.location_id);
+  var cur_user_entries = check_for_current_user_entries(marker.location_id);
+
+  if(num_entries&lt;=0){
+    marker.setMap(null);
+    delete location_markers[marker.location_id];
+  }else if(cur_user_entries &lt;= 0){
+    color = "blue";
+    location_markers[marker.location_id].user_marker = false;
+  }else if(cur_user_entries > 0){
+    color = "green";
+    location_markers[marker.location_id].user_marker = true;
+  }
+
+  var image = create_marker_image(label,color);
+
+  marker.setIcon(image);
+
+}
+
+function check_for_entries(location_id){
+  var array_to_check = aeusserungen_by_locationindex[location_id];
+  var entered_aeusserungen = 0;
+
+ /* for(var i = 0; i&lt; array_to_check.length; i++){
+      entered_aeusserungen++;
+  }*/
+
+  for (var key in array_to_check) {
+    if (array_to_check.hasOwnProperty(key)) {
+      entered_aeusserungen++;    
+    }
+  }
+
+
+  return entered_aeusserungen;
+}
+
+function check_for_current_user_entries(location_id){
+  var array_to_check = aeusserungen_by_locationindex[location_id];
+  var user_entered_aeusserungen = 0;
+
+  for (var key in array_to_check) {
+    if (array_to_check.hasOwnProperty(key)) {
+      if(current_user.localeCompare(array_to_check[key].author) == 0){
+        user_entered_aeusserungen++;
+      }
+    }
+  }
+
+  return user_entered_aeusserungen;
+}
+
+
+
+function create_marker_image(label,color){
+
+var size;
+
+
+if(label.length==1)size=26;
+else if(label.length==2)size=34;
+else  size=42;  // conflict resolved
+
+
+ var number = parseInt(label);
+ var add = Math.floor(number/4);
+ size += add;
+
+ if(size>50)size=50; //max size = 50px;
+ size*=2; //multiply size for double size image for better quality
+
+    var canvas = document.createElement('canvas');
+    var context = canvas.getContext("2d");
+
+      canvas.width = size;
+      canvas.height = size;
+      var centerX = canvas.width / 2;
+      var centerY = canvas.height / 2;
+      var radius = (size/2)-4; //-4 for stroke width
+
+      var fillcolor = "rgba(0,0,139,0.88)";
+      var strokecolor = "#3366ff"
+
+      if(color=="green"){
+        fillcolor="rgba(0,100,0,0.88)";
+        strokecolor = "#00af00"
+      }
+
+      context.beginPath();
+      context.arc(centerX, centerY, radius, 0, 2 * Math.PI, false);
+      context.fillStyle = fillcolor;
+      context.fill();
+      context.lineWidth = 4;
+      context.strokeStyle = strokecolor;
+      context.stroke();
+
+        context.font = "25px Arial";
+
+      var y = (size/2)+8;
+
+        if(color=="blue"){
+            context.fillStyle = '#7396ff';
+        }
+        else{
+            context.fillStyle = '#2BBF17';
+        } 
+
+        context.textAlign="center"; 
+        context.fillText(label, centerX, y);
+      
+      
+
+        var image = {
+            url: canvas.toDataURL(),
+            scaledSize: new google.maps.Size(size/2, size/2),
+            origin: new google.maps.Point(0,0),
+            anchor: new google.maps.Point(size/4, size/4)
+        };
+
+        return image;
+}
+
+function change_feature_style(current_feature,has_aesserungen){
+
+  if(has_aesserungen/*current_feature.getProperty('selected')*/){
+      map.data.overrideStyle(current_feature, {color : '#009900',fillColor : '#009900',strokeColor: '#009900',fillOpacity:0.2});
+    }else{
+      map.data.overrideStyle(current_feature, {color : 'blue',fillColor : '#2068b5',fillOpacity:0.2,strokeColor: 'blue'});
+  }
+
+    //console.log("Feature property is" + current_feature.getProperty('selected'));
+}</pre>
+    </article>
+</section>
+
+
+
+
+
+		</div>
+	</div>
+
+	<div class="clearfix"></div>
+
+	
+
+</div>
+</div>
+
+
+    <div class="modal fade" id="searchResults">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title">Search results</h4>
+          </div>
+          <div class="modal-body"></div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          </div>
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+    </div>
+
+
+<footer>
+
+
+<span class="jsdoc-message">
+	Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.4</a>
+	
+		on 2017-09-26T17:15:41+02:00
+	
+	using the <a href="https://github.com/docstrap/docstrap">DocStrap template</a>.
+</span>
+</footer>
+
+<script src="scripts/docstrap.lib.js"></script>
+<script src="scripts/toc.js"></script>
+
+    <script type="text/javascript" src="scripts/fulltext-search-ui.js"></script>
+
+
+<script>
+$( function () {
+	$( "[id*='$']" ).each( function () {
+		var $this = $( this );
+
+		$this.attr( "id", $this.attr( "id" ).replace( "$", "__" ) );
+	} );
+
+	$( ".tutorial-section pre, .readme-section pre, pre.prettyprint.source" ).each( function () {
+		var $this = $( this );
+
+		var example = $this.find( "code" );
+		exampleText = example.html();
+		var lang = /{@lang (.*?)}/.exec( exampleText );
+		if ( lang && lang[1] ) {
+			exampleText = exampleText.replace( lang[0], "" );
+			example.html( exampleText );
+			lang = lang[1];
+		} else {
+			var langClassMatch = example.parent()[0].className.match(/lang\-(\S+)/);
+			lang = langClassMatch ? langClassMatch[1] : "javascript";
+		}
+
+		if ( lang ) {
+
+			$this
+			.addClass( "sunlight-highlight-" + lang )
+			.addClass( "linenums" )
+			.html( example.html() );
+
+		}
+	} );
+
+	Sunlight.highlightAll( {
+		lineNumbers : true,
+		showMenu : true,
+		enableDoclinks : true
+	} );
+
+	$.catchAnchorLinks( {
+        navbarOffset: 10
+	} );
+	$( "#toc" ).toc( {
+		anchorName  : function ( i, heading, prefix ) {
+			return $( heading ).attr( "id" ) || ( prefix + i );
+		},
+		selectors   : "#toc-content h1,#toc-content h2,#toc-content h3,#toc-content h4",
+		showAndHide : false,
+		smoothScrolling: true
+	} );
+
+	$( "#main span[id^='toc']" ).addClass( "toc-shim" );
+	$( '.dropdown-toggle' ).dropdown();
+
+    $( "table" ).each( function () {
+      var $this = $( this );
+      $this.addClass('table');
+    } );
+
+} );
+</script>
+
+
+
+<!--Navigation and Symbol Display-->
+
+
+<!--Google Analytics-->
+
+
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            SearcherDisplay.init();
+        });
+    </script>
+
+
+</body>
+</html>

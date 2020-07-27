@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: geo.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: geo.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * @module  Geo_Parser
+ */
+//@file Parses Coordinate Objects to Google Maps Geo Objects
+
+/**
+ * @param {string} string
+ *
+ * @return {google.maps.Data.Point}
+ */
+function parsePoint(string) {
+	string = string.replace("POINT(", "");
+	string = string.replace(")", "");
+	var /** Array&lt;string> */ result = string.split(' ');
+	if(result.length != 2)
+		return null;
+	return new google.maps.Data.Point(new google.maps.LatLng(result[1] * 1, result[0] * 1));
+}
+
+/**
+ * @param {string} string 
+ * 
+ * @return {google.maps.Data.Geometry}
+ */
+
+function parseGeoData (string) {
+	if(string.indexOf("MULTIPOLYGON") != -1){
+		return parseMultiPolygon(string);
+	}
+	else if(string.indexOf("POLYGON") != -1){
+		return parsePolygon(string);
+	}
+	else if(string.indexOf("MULTILINESTRING") != -1){
+		return parseMultiLineString(string);
+	}
+	else if(string.indexOf("LINESTRING") != -1){
+		return parseLineString(string);
+	}
+	else if(string.indexOf("POINT") != -1){
+		return parsePoint(string);
+	}
+	return null;
+}
+
+/**
+ * @param {string} string
+ * 
+ * @return {google.maps.Data.Polygon}
+ */
+
+function parsePolygon (string) {
+
+	string = string.replace("POLYGON((","");
+ 	string = string.replace("))","");
+	
+	return new google.maps.Data.Polygon(parsePolygonCoords(string));
+}
+
+/**
+ * @param {string} string 
+ * 
+ * @return {google.maps.Data.Polygon}
+ */
+
+function parseMultiPolygon (string) {
+	string = string.replace("MULTIPOLYGON(((","");
+ 	string = string.replace(")))","");
+	
+	/**
+	 * @type {Array&lt;string>} 
+	 */	
+ 	var polygons = string.split(")),((");
+ 	
+ 	polygons[0].replace("((", "");
+ 	polygons[polygons.length-1].replace("))", "");
+ 	
+ 	/**
+ 	 * @type {Array&lt;Array&lt;google.maps.LatLng>>} 
+ 	 */
+ 	var resultList = new Array();
+ 	
+ 	for (var i = 0; i &lt; polygons.length; i++) {
+		resultList = resultList.concat(parsePolygonCoords(polygons[i]));
+ 	}
+ 	return new google.maps.Data.Polygon(resultList);
+}
+
+/**
+ * @param {string} string
+ * 
+ * @return {Array&lt;Array&lt;google.maps.LatLng>>} 
+ */
+function parsePolygonCoords (string){
+	
+	/**
+	 * @type {Array&lt;Array&lt;google.maps.LatLng>>}
+	 */
+ 	var coords = new Array();
+	/**
+	 * @type {Array&lt;string>} 
+	 */
+	var polygons = string.split("),(");
+	
+	for (var /** number */ i = 0; i &lt; polygons.length; i++) {
+  		coords[i] = new Array();
+  		var values = polygons[i].split(",");
+		for (var /** number */ j = 0; j &lt; values.length; j++) {
+	 		var /** Array&lt;string> */ coord = values[j].split(" ");
+	 		coords[i].push(new google.maps.LatLng(coord[1] * 1, coord[0] * 1));
+		}
+ 	}
+ 	return coords;
+}
+
+/**
+ * @param {string} string
+ * 
+ * @return {Array&lt;google.maps.LatLng>} 
+ */
+function parseLineCoords (string){
+	/**
+	 * @type {Array&lt;google.maps.LatLng>} 
+	 */
+	var coords = new Array();
+  	var values = string.split(",");
+	for (var /** number */ j = 0; j &lt; values.length; j++) {
+	 	var /** Array&lt;string> */ coord = values[j].split(" ");
+	 	coords.push(new google.maps.LatLng(coord[1] * 1, coord[0] * 1));
+ 	}
+ 	return coords;
+}
+
+/**
+ * @param {string} string
+ * 
+ * @return {google.maps.Data.MultiLineString} 
+ */
+function parseMultiLineString (string) {
+	string = string.replace("MULTILINESTRING((","");
+ 	string = string.replace("))","");
+	
+	
+	/**
+	 * @type {Array&lt;string>} 
+	 */	
+ 	var polylines = string.split("),(");
+ 	/**
+	 * @type {Array&lt;Array&lt;google.maps.LatLng>>} 
+	 */
+	var resultList = new Array(polylines.length);
+ 	
+ 	polylines[0].replace("(", "");
+ 	polylines[polylines.length-1].replace(")", "");
+ 	
+ 	for (var i = 0; i &lt; polylines.length; i++) {
+ 		resultList[i] = parseLineCoords(polylines[i]);
+ 	}
+ 	return new google.maps.Data.MultiLineString(resultList);
+}
+
+/**
+ * @param {string} string
+ * 
+ * @return {google.maps.Data.LineString} 
+ */
+function parseLineString (string) {
+	string = string.replace("LINESTRING(","");
+ 	string = string.replace(")","");
+	
+ 	return new google.maps.Data.LineString(parseLineCoords(string));
+}</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-Ajax_Calls.html">Ajax_Calls</a></li><li><a href="module-Content_Interactions.html">Content_Interactions</a></li><li><a href="module-Geo_Parser.html">Geo_Parser</a></li><li><a href="module-Image%2520Uploader.html">Image Uploader</a></li><li><a href="module-Map-Objects_Generator.html">Map-Objects_Generator</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.4</a> on Mon May 18 2020 17:00:47 GMT+0200 (Central European Summer Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

@@ -1,0 +1,21 @@
+{
+    "tags": {
+        "allowUnknownTags": true
+    },
+    "source": {
+        "include" : [] ,
+        "includePattern": ".+\\.js(doc|x)?$",
+        "excludePattern": "(^|\\/|\\\\)_"
+    },
+    "plugins": ["plugins/markdown"],
+    "templates": {
+        "cleverLinks": false,
+        "monospaceLinks": false,
+        "theme": "cerulean",
+        "search":true,
+        "systemName":"VerbaAlpina Crowdsourcing Tool - Documentation",
+        "outputSourceFiles" : true,
+        "linenums" : true
+        
+    }
+}

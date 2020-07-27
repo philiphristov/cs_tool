@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Generator: Adobe Illustrator 16.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   version="1.1"
+   id="Capa_1"
+   x="0px"
+   y="0px"
+   width="375.90625"
+   height="501.21875"
+   viewBox="0 0 375.90624 501.21875"
+   xml:space="preserve"
+   inkscape:version="0.48.4 r9939"
+   sodipodi:docname="markervorlage_svg.svg"><metadata
+   id="metadata41"><rdf:RDF><cc:Work
+       rdf:about=""><dc:format>image/svg+xml</dc:format><dc:type
+         rdf:resource="http://purl.org/dc/dcmitype/StillImage" /><dc:title /></cc:Work></rdf:RDF></metadata><defs
+   id="defs39"><filter
+     id="filter4628"
+     inkscape:label="Motion blur, vertical"
+     inkscape:menu="Blurs"
+     inkscape:menu-tooltip="Blur as if the object flies vertically; adjust Standard Deviation to vary force"
+     color-interpolation-filters="sRGB"><feGaussianBlur
+       id="feGaussianBlur4630"
+       in="SourceGraphic"
+       stdDeviation="0.01 5"
+       result="fbSourceGraphic" /><feColorMatrix
+       result="fbSourceGraphicAlpha"
+       in="fbSourceGraphic"
+       values="0 0 0 -1 0 0 0 0 -1 0 0 0 0 -1 0 0 0 0 1 0"
+       id="feColorMatrix4632" /><feGaussianBlur
+       id="feGaussianBlur4634"
+       in="fbSourceGraphic"
+       stdDeviation="0.01 5"
+       result="fbSourceGraphic" /><feColorMatrix
+       result="fbSourceGraphicAlpha"
+       in="fbSourceGraphic"
+       values="0 0 0 -1 0 0 0 0 -1 0 0 0 0 -1 0 0 0 0 1 0"
+       id="feColorMatrix4636" /><feGaussianBlur
+       id="feGaussianBlur4638"
+       in="fbSourceGraphic"
+       stdDeviation="0.01 5"
+       result="fbSourceGraphic" /><feColorMatrix
+       result="fbSourceGraphicAlpha"
+       in="fbSourceGraphic"
+       values="0 0 0 -1 0 0 0 0 -1 0 0 0 0 -1 0 0 0 0 1 0"
+       id="feColorMatrix4640" /><feGaussianBlur
+       id="feGaussianBlur4642"
+       in="fbSourceGraphic"
+       stdDeviation="0.01 5" /></filter></defs><sodipodi:namedview
+   pagecolor="#ffffff"
+   bordercolor="#666666"
+   borderopacity="1"
+   objecttolerance="10"
+   gridtolerance="10"
+   guidetolerance="10"
+   inkscape:pageopacity="0"
+   inkscape:pageshadow="2"
+   inkscape:window-width="1639"
+   inkscape:window-height="847"
+   id="namedview37"
+   showgrid="false"
+   inkscape:zoom="0.48638432"
+   inkscape:cx="-599.49252"
+   inkscape:cy="252.61325"
+   inkscape:window-x="161"
+   inkscape:window-y="522"
+   inkscape:window-maximized="0"
+   inkscape:current-layer="Capa_1"
+   fit-margin-top="0"
+   fit-margin-left="0"
+   fit-margin-right="0"
+   fit-margin-bottom="0" />
+<g
+   id="g3"
+   style="fill:#d63138;fill-opacity:1;stroke:#ffffff;stroke-width:12;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+   transform="translate(-54.656254,6)">
+	<path
+   d="M 242.606,0 C 142.124,0 60.651,81.473 60.651,181.955 c 0,40.928 13.504,78.659 36.31,109.075 L 242.607,485.213 388.252,291.03 c 22.808,-30.416 36.31,-68.146 36.31,-109.075 C 424.562,81.473 343.089,0 242.606,0 z m 0,303.257 c -66.989,0 -121.302,-54.311 -121.302,-121.302 0,-66.989 54.313,-121.304 121.302,-121.304 66.991,0 121.302,54.315 121.302,121.304 0,66.992 -54.31,121.302 -121.302,121.302 z"
+   id="path5"
+   style="fill:#d63138;fill-opacity:1;stroke:#ffffff;stroke-width:12;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+   inkscape:connector-curvature="0" />
+</g>
+<g
+   id="g7"
+   transform="translate(-54.656254,6)">
+</g>
+<g
+   id="g9"
+   transform="translate(-54.656254,6)">
+</g>
+<g
+   id="g11"
+   transform="translate(-54.656254,6)">
+</g>
+<g
+   id="g13"
+   transform="translate(-54.656254,6)">
+</g>
+<g
+   id="g15"
+   transform="translate(-54.656254,6)">
+</g>
+<g
+   id="g17"
+   transform="translate(-54.656254,6)">
+</g>
+<g
+   id="g19"
+   transform="translate(-54.656254,6)">
+</g>
+<g
+   id="g21"
+   transform="translate(-54.656254,6)">
+</g>
+<g
+   id="g23"
+   transform="translate(-54.656254,6)">
+</g>
+<g
+   id="g25"
+   transform="translate(-54.656254,6)">
+</g>
+<g
+   id="g27"
+   transform="translate(-54.656254,6)">
+</g>
+<g
+   id="g29"
+   transform="translate(-54.656254,6)">
+</g>
+<g
+   id="g31"
+   transform="translate(-54.656254,6)">
+</g>
+<g
+   id="g33"
+   transform="translate(-54.656254,6)">
+</g>
+<g
+   id="g35"
+   transform="translate(-54.656254,6)">
+</g>
+<path
+   style="fill:#d63138;fill-opacity:1;stroke:#bd0000;stroke-width:2.7988441;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
+   d="M 185.1344,79.366959 C 135.60921,79.69139 89.827741,117.92377 80.475131,166.55982 c -8.998711,41.77749 8.875798,87.76793 44.013949,112.00072 35.72133,25.66895 87.20983,26.96817 123.69139,2.08762 36.31448,-23.5467 56.33909,-69.59605 47.45702,-112.22425 -7.73409,-42.72864 -42.90031,-78.659261 -85.59085,-86.864952 -8.19081,-1.660521 -16.55163,-2.431887 -24.91224,-2.191999 z"
+   inkscape:connector-curvature="0" /></svg>

@@ -1,0 +1,129 @@
+
+
+.resp_header{
+    font-weight: bold;
+    display: none;
+}
+
+table tr td a {
+    display:block;
+    height:100%;
+    width:100%;
+}
+
+table{
+    overflow: hidden;
+    border-collapse: collapse; 
+}
+td{
+    overflow: hidden;
+    /*white-space: nowrap;*/
+    text-overflow: ellipsis;
+}
+
+
+
+@media only screen and (max-width: 760px) {
+
+    table, thead, tbody, th, td, tr { 
+        display: block; 
+    }
+    
+    thead tr { 
+        position: absolute;
+        top: -9999px;
+        left: -9999px;
+    }
+    
+    tr { border: 1px solid #ccc; }
+    
+    td { 
+         display: flex !important;
+
+        border: none;
+        border-bottom: 1px solid #eee; 
+        position: relative;
+        padding-left: 50%; 
+    }
+    
+    td:before { 
+
+             top: 6px;
+        left: 6px;
+        width: 45%; 
+        padding-right: 10px; 
+        white-space: nowrap;
+    }
+
+    .resp_header{
+      display: inline-table;
+    }
+    
+
+}
+
+
+
+
+
+table tbody tr:hover {
+
+background: #E7E7E7;
+cursor: pointer;
+}
+
+
+
+table tbody tr:hover a {
+ color: #777;
+}
+
+
+table td a {
+ text-decoration: none;
+ color: black;
+}
+
+
+#table_length{
+        display: none;
+}
+
+
+.addtheatrebtn{
+left: -11px;
+box-shadow: rgba(0,0,0,0.15) 2px 2px 0px;
+display: none;
+}
+
+.addtheatrebtn:before{
+position: absolute;
+content: "";
+height: 16px;
+width: 22px;
+-webkit-transform: rotate(40deg);
+-moz-transform: rotate(40deg);
+-ms-transform: rotate(40deg);
+-o-transform: rotate(40deg);
+transform: rotate(40deg);
+z-index: -1;
+left: 3px;
+top: 44px;
+background: #007095;
+}
+
+.cloakingdiv{
+  /*background: #ccc url(../images/backgrounds/seamlesstexture15_1200.jpg);*/
+  background: white;
+    width: 150px;
+    height: 14px;
+    position: absolute;
+    left: 15px;
+    top: 51px;
+}
+
+.table{
+-webkit-box-shadow: -2px 2px 12px 0px rgba(0,0,0,0.16);
+-moz-box-shadow: -2px 2px 12px 0px rgba(0,0,0,0.16);
+box-shadow: -2px 2px 12px 0px rgba(0,0,0,0.16);
+}
