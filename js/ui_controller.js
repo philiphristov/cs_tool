@@ -5,6 +5,8 @@
 class UIController {
 	constructor() {
 		this.image_uploader = new ImageUpload()
+		this.url
+		this.prevent_backdrop = false;
 	}
 
 	/**
@@ -14,8 +16,8 @@ class UIController {
 	initTool() {
 
 
-		var url = new URL(window.location.href);
-		url_concept_id = url.searchParams.get("concept");
+		this.url = new URL(window.location.href);
+		var url_concept_id = this.url.searchParams.get("concept");
 		// url_dialect_cluster = url.searchParams.get("dcluster");
 		// url_dialect = url.searchParams.get("dialect");
 
@@ -24,9 +26,9 @@ class UIController {
 
 		appManager.map_controller.calculateCenter();
 
-		offsetHeight = jQuery('#left_menu').outerHeight();
+		var offsetHeight = jQuery('#left_menu').outerHeight();
 
-		if (!dialect_modal_initialized) {
+		if (!appManager.data_manager.dialect_modal_initialized) {
 			appManager.data_loader.get_dialects();
 		}
 
@@ -36,7 +38,7 @@ class UIController {
 		if (appManager.data_manager.user_data.language_is_set && appManager.data_manager.user_data.crowder_dialect) {
 			console.log("Lang and Dialect Selected");
 
-			current_language = parseInt(crowder_lang);
+			appManager.data_manager.current_language = parseInt(crowder_lang);
 
 
 			this.setRandomTitelImage(function() {
@@ -491,7 +493,7 @@ class UIController {
 			} else {
 
 				jQuery('#location_span').popover('dispose');
-				appManager.ui_controller.addToolTip('#location_span', appManager.data_manager.getTranslation("location_select_texts", true, true));
+				appManager.ui_controller.addToolTip('#location_span', appManager.data_manager.getTranslation("location_select_texts", false, true));
 
 			}
 
@@ -542,11 +544,8 @@ class UIController {
 
 	addToolTips(elements) {
 		for (var i = 0; i < elements.length; i++) {
-
 			appManager.ui_controller.addToolTip(elements[i].name, elements[i].array);
-
 		}
-
 	}
 
 	addToolTip(element, title_array) {
@@ -751,7 +750,7 @@ class UIController {
 		})
 
 		jQuery('#why_register_modal .customclose').on('click', function() {
-			prevent_backdrop = false;
+			appManager.ui_controller.prevent_backdrop = false;
 			jQuery('#why_register_modal').modal('hide');
 		})
 
@@ -804,10 +803,10 @@ class UIController {
 
 		jQuery('#dialect_modal').on('shown.bs.modal', function() {
 
-			if (dialect_modal_initialized) {
+			if (appManager.data_manager.dialect_modal_initialized) {
 
-				if (datatable_dialects && (current_dialect_index != -1)) {
-					datatable_dialects.row(current_dialect_index).scrollTo();
+				if (appManager.data_manager.getData("datatable_dialects").data_value && (current_dialect_index != -1)) {
+					appManager.data_manager.getData("datatable_dialects").data_value.row(current_dialect_index).scrollTo();
 				}
 
 			}
@@ -912,7 +911,7 @@ class UIController {
 
 			if (do_image_modal) jQuery('#image_modal').modal({});
 
-			if (!prevent_backdrop) {
+			if (!appManager.ui_controller.prevent_backdrop) {
 				setTimeout(function() { appManager.ui_controller.displayTooltips(true); }, 200);
 				if (tutorial_running) appManager.ui_controller.showPopUp();
 				jQuery('#custom_modal_backdrop').fadeOut(function() { jQuery(this).remove() })
@@ -935,7 +934,7 @@ class UIController {
 
 		jQuery('#register_modal').on('shown.bs.modal', function(e) {
 
-			prevent_backdrop = false;
+			appManager.ui_controller.prevent_backdrop = false;
 			jQuery(this).find('.custom-modal-footer button').on('click', function() {
 
 				jQuery('#register_modal').find('.custom-modal-footer button').removeClass('active_tab');
@@ -949,7 +948,7 @@ class UIController {
 		})
 
 		jQuery('#register_modal').on('show.bs.modal', function(e) {
-			if (!prevent_backdrop) {
+			if (!appManager.ui_controller.prevent_backdrop) {
 				appManager.ui_controller.displayTooltips(false);
 				showCustomModalBackdrop();
 			}
@@ -996,7 +995,7 @@ class UIController {
 
 
 		jQuery('#location_list_modal').on('show.bs.modal', function(e) {
-			current_location_list_table = createLocationListTable(current_location_list_table_data);
+			current_location_list_table = appManager.data_manager.createLocationListTable(current_location_list_table_data);
 
 
 			switch (current_language) {
@@ -1040,7 +1039,7 @@ class UIController {
 		})
 
 		jQuery('#toplistmodal').on('shown.bs.modal', function(e) {
-			prevent_backdrop = false;
+			appManager.ui_controller.prevent_backdrop = false;
 			current_top_list_table.columns.adjust();
 		})
 
@@ -1050,14 +1049,14 @@ class UIController {
 		})
 
 		jQuery('#highscore_select_modal').on('hidden.bs.modal', function(e) {
-			if (!prevent_backdrop) {
+			if (!appManager.ui_controller.prevent_backdrop) {
 				jQuery('#custom_modal_backdrop').fadeOut(function() { jQuery(this).remove() })
 				appManager.ui_controller.displayTooltips(true);
 			}
 		})
 
 		jQuery('#share_modal').on('hidden.bs.modal', function(e) {
-			if (!prevent_backdrop) {
+			if (!appManager.ui_controller.prevent_backdrop) {
 				jQuery('#custom_modal_backdrop').fadeOut(function() { jQuery(this).remove() })
 				appManager.ui_controller.displayTooltips(true);
 			}
@@ -1073,7 +1072,7 @@ class UIController {
 
 
 		jQuery('#why_register_modal').on('show.bs.modal', function(e) {
-			if (!prevent_backdrop) {
+			if (!appManager.ui_controller.prevent_backdrop) {
 				showCustomModalBackdrop();
 				appManager.ui_controller.displayTooltips(false);
 			}
@@ -1081,14 +1080,14 @@ class UIController {
 
 
 		jQuery('#why_register_modal').on('hidden.bs.modal', function(e) {
-			if (!prevent_backdrop) {
+			if (!appManager.ui_controller.prevent_backdrop) {
 				appManager.ui_controller.displayTooltips(true);
 				jQuery('#custom_modal_backdrop').fadeOut(function() { jQuery(this).remove() })
 			}
 		})
 
 		jQuery('#dialect_modal').on('hidden.bs.modal', function(e) {
-			if (!prevent_backdrop && !jQuery("#welcome_modal").hasClass('in')) {
+			if (!appManager.ui_controller.prevent_backdrop && !jQuery("#welcome_modal").hasClass('in')) {
 				appManager.ui_controller.displayTooltips(true);
 				jQuery('#custom_modal_backdrop').fadeOut(function() { jQuery(this).remove() })
 			}
@@ -1096,7 +1095,7 @@ class UIController {
 		})
 
 		jQuery('#why_register_modal').on('shown.bs.modal', function(e) {
-			if (prevent_backdrop) prevent_backdrop = false;
+			if (appManager.ui_controller.prevent_backdrop) appManager.ui_controller.prevent_backdrop = false;
 		})
 
 
@@ -1113,7 +1112,7 @@ class UIController {
 
 		var number = Math.floor(Math.random() * 7) + 1;
 		var jpg = "titel_" + number.toString() + ".jpg";
-		var img_url = url.plugins_Url + '/assets/images/' + jpg;
+		var img_url = appManager.ui_controller.url.plugins_Url + '/assets/images/' + jpg;
 
 		jQuery('<img/>').attr('src', img_url).load(function() {
 			jQuery(this).remove();
@@ -1133,49 +1132,49 @@ class UIController {
 	add_translation_register_modal() {
 		var white_space = " ";
 
-		jQuery('.label_username').text(user_name[current_language]);
-		jQuery('.label_password').text(password_text[current_language]);
+		jQuery('.label_username').text(appManager.data_manager.getTranslation("user_name"));
+		jQuery('.label_password').text(appManager.data_manager.getTranslation("password_text"));
 
-		jQuery('#lwa_user_remember').val(enter_username_or_email[current_language]);
+		jQuery('#lwa_user_remember').val(appManager.data_manager.getTranslation("enter_username_or_email"));
 
-		jQuery('.slides_reg_register').text(new_acc_text_detail[current_language]);
-		jQuery('.slides_reg_login').text(new_acc_text_detail[current_language]);
-		jQuery('.slides_reg_forgot').text(forgot_password_text[current_language]);
+		jQuery('.slides_reg_register').text(appManager.data_manager.getTranslation("new_acc_text_detail"));
+		jQuery('.slides_reg_login').text(appManager.data_manager.getTranslation("new_acc_text_detail"));
+		jQuery('.slides_reg_forgot').text(appManager.data_manager.getTranslation("forgot_password_text"));
 
 
-		jQuery('#user_login').val(user_name[current_language]);
+		jQuery('#user_login').val(appManager.data_manager.getTranslation("user_name"));
 		jQuery('#user_email').val('E-Mail');
-		jQuery('#user_age').val(birth_year[current_language]);
-		jQuery('#lwa_user_remember').val(enter_username_or_email[current_language]);
+		jQuery('#user_age').val(appManager.data_manager.getTranslation("birth_year"));
+		jQuery('#lwa_user_remember').val(appManager.data_manager.getTranslation("enter_username_or_email"));
 
 		try {
 
-			jQuery('#login_btn').contents().last()[0].textContent = white_space + login_btn[current_language];
-			jQuery('.login_slider').contents().last()[0].textContent = white_space + login_btn[current_language];
-			jQuery('.register_btn').contents().last()[0].textContent = white_space + register[current_language];
-			jQuery('.send_anonymous_btn').contents().last()[0].textContent = white_space + send_anonymous_data_text[current_language];
-			jQuery('.forgot_pass_slider').contents().last()[0].textContent = white_space + forgot_password_text[current_language];
-			jQuery('.get_new_password').contents().last()[0].textContent = white_space + get_new_password[current_language];
-			jQuery('.new_acc_slider').contents().last()[0].textContent = white_space + new_acc_text[current_language];
-			jQuery('.reset_slider').contents().last()[0].textContent = white_space + reset_btn_text[current_language];
+			jQuery('#login_btn').contents().last()[0].textContent = white_space + appManager.data_manager.getTranslation("login_btn");
+			jQuery('.login_slider').contents().last()[0].textContent = white_space + appManager.data_manager.getTranslation("login_btn");
+			jQuery('.register_btn').contents().last()[0].textContent = white_space + appManager.data_manager.getTranslation("register");
+			jQuery('.send_anonymous_btn').contents().last()[0].textContent = white_space + appManager.data_manager.getTranslation("send_anonymous_data_text");
+			jQuery('.forgot_pass_slider').contents().last()[0].textContent = white_space + appManager.data_manager.getTranslation("forgot_password_text");
+			jQuery('.get_new_password').contents().last()[0].textContent = white_space + appManager.data_manager.getTranslation("get_new_password");
+			jQuery('.new_acc_slider').contents().last()[0].textContent = white_space + appManager.data_manager.getTranslation("new_acc_text");
+			jQuery('.reset_slider').contents().last()[0].textContent = white_space + appManager.data_manager.getTranslation("reset_btn_text");
 
 		} catch (e) {
 			console.log(e)
 		}
-		jQuery('#user_login').on('focus', function() { if (jQuery(this).val() == user_name[current_language]) { jQuery(this).val(''); } })
-		jQuery('#user_login').on('blur', function() { if (jQuery(this).val() == '') { jQuery(this).val(user_name[current_language]); } })
+		jQuery('#user_login').on('focus', function() { if (jQuery(this).val() == appManager.data_manager.getTranslation("user_name")) { jQuery(this).val(''); } })
+		jQuery('#user_login').on('blur', function() { if (jQuery(this).val() == '') { jQuery(this).val(appManager.data_manager.getTranslation("user_name")); } })
 
 		jQuery('#user_email').on('focus', function() { if (jQuery(this).val() == 'E-Mail') { jQuery(this).val(''); } })
 		jQuery('#user_email').on('blur', function() { if (jQuery(this).val() == '') { jQuery(this).val('E-Mail'); } })
 
-		jQuery('#user_age').on('focus', function() { if (jQuery(this).val() == birth_year[current_language]) { jQuery(this).val(''); } })
-		jQuery('#user_age').on('blur', function() { if (jQuery(this).val() == '') { jQuery(this).val(birth_year[current_language]); } })
+		jQuery('#user_age').on('focus', function() { if (jQuery(this).val() == appManager.data_manager.getTranslation("birth_year")) { jQuery(this).val(''); } })
+		jQuery('#user_age').on('blur', function() { if (jQuery(this).val() == '') { jQuery(this).val(appManager.data_manager.getTranslation("birth_year")); } })
 
-		jQuery('#lwa_user_remember').on('focus', function() { if (jQuery(this).val() == enter_username_or_email[current_language]) { jQuery(this).val(''); } })
-		jQuery('#lwa_user_remember').on('blur', function() { if (jQuery(this).val() == '') { jQuery(this).val(enter_username_or_email[current_language]); } })
+		jQuery('#lwa_user_remember').on('focus', function() { if (jQuery(this).val() == appManager.data_manager.getTranslation("enter_username_or_email")) { jQuery(this).val(''); } })
+		jQuery('#lwa_user_remember').on('blur', function() { if (jQuery(this).val() == '') { jQuery(this).val(appManager.data_manager.getTranslation("enter_username_or_email")); } })
 
 		var additional_info = jQuery('.slides_reg_register').after('<div id="additional_info">');
-		jQuery('#additional_info').text(details_why_register_send_anonymous_data[current_language]);
+		jQuery('#additional_info').text(appManager.data_manager.getTranslation("details_why_register_send_anonymous_data"));
 	}
 
 
@@ -1191,7 +1190,7 @@ class UIController {
 
 
 
-			if (dialect_modal_initialized) {
+			if (appManager.data_manager.dialect_modal_initialized) {
 				if (!jQuery("#welcome_modal").hasClass("in")) {
 					appManager.ui_controller.showCustomModalBackdrop();
 				}
@@ -1229,6 +1228,7 @@ class UIController {
 		}
 
 	}
+
 	setQ(con, id) {
 
 		appManager.map_controller.closeAllInfoWindows();
@@ -1238,19 +1238,21 @@ class UIController {
 		jQuery('#word_span').attr("data-id_concept", id);
 
 
-		var index = concepts_index_by_id[parseInt(id)].index;
+		var index = appManager.data_manager.getData("concepts_index_by_id").data_value[parseInt(id)].index;
 
 		//if(current_concept_index[va_phase]!=-1)deSelectTableEntry(current_concept_index[va_phase]);
 		// not sure what this is
 
 		selectTableEntry(index);
 
-		current_concept_index[va_phase] = index;
+		// current_concept_index[va_phase] = index; LAST VERSION, but ERROR
+		current_concept_index = index;
 		concept_selected = true;
 
 		appManager.ui_controller.checkImageModal(id, con);
 
 	}
+
 	/**
 	 * [handleLocationSpanClick description]
 	 *
@@ -1335,17 +1337,17 @@ class UIController {
 				jQuery('#best_user').one('click', function() {
 					appManager.ui_controller.openHighScoreModal(top_users);
 					jQuery('.highscoreheadlinespan').text(appManager.data_manager.getTranslation("active_user_texts"));
-					prevent_backdrop = true;
+					appManager.ui_controller.prevent_backdrop = true;
 				}).text(appManager.data_manager.getTranslation("active_user_texts"))
 				jQuery('#best_location').one('click', function() {
 					appManager.ui_controller.openHighScoreModal(top_locations);
 					jQuery('.highscoreheadlinespan').text(appManager.data_manager.getTranslation("active_location_texts"));
-					prevent_backdrop = true;
+					appManager.ui_controller.prevent_backdrop = true;
 				}).text(appManager.data_manager.getTranslation("active_location_texts"))
 				jQuery('#best_concept').one('click', function() {
 					appManager.ui_controller.openHighScoreModal(top_concepts);
 					jQuery('.highscoreheadlinespan').text(appManager.data_manager.getTranslation("active_concept_texts"));
-					prevent_backdrop = true;
+					appManager.ui_controller.prevent_backdrop = true;
 				}).text(appManager.data_manager.getTranslation("active_concept_texts"))
 
 				var icon = jQuery('<i class="fa fa-pagelines leaf_icon_l" aria-hidden="true"></i>');
@@ -1357,6 +1359,51 @@ class UIController {
 			}) //DB CALLBACK
 
 		}, "#highscore_select_modal"); //IMAGE CALLBACK
+	}
+
+	openHighScoreModal(array) {
+
+		if (current_top_list_table != null) current_top_list_table.destroy();
+
+		var table_data = [];
+
+		var i = 0;
+		for (var key in array) {
+			i++;
+			var arr = array[key];
+
+			if (arr[3]) {
+				table_data.push(['<div class="highscorenumber">' + i + '.</div>', '<div class="concept_data" id="' + arr[3] + '">' + arr[0] + '</div>', arr[1]])
+			} else if (arr[2]) {
+				table_data.push(['<div class="highscorenumber">' + i + '.</div>', '<div class="obj_data" id="' + arr[2] + '">' + arr[0] + '</div>', arr[1]])
+			} else {
+				table_data.push(['<div class="highscorenumber">' + i + '.</div>', arr[0], arr[1]])
+			}
+
+		}
+
+		current_highscoredata = table_data;
+		jQuery('#highscore_select_modal').modal('hide');
+		jQuery('#toplistmodal').modal();
+
+
+		jQuery('#toplistmodal .obj_data').on('click', function() {
+			jQuery('#toplistmodal').modal('hide');
+			var g_location_id = jQuery(this).attr('id');
+			var g_location = jQuery(this).text();
+			appManager.map_controller.showPolygon(g_location, g_location_id, true);
+			//console.log("CLICKED!!!");
+		})
+
+		jQuery('#toplistmodal .concept_data').on('click', function() {
+
+			var id = parseInt(jQuery(this).attr('id'));
+			var name = jQuery(this).text();
+			appManager.ui_controller.setQ(name, id);
+			jQuery('#toplistmodal').modal('hide');
+			appManager.ui_controller.setDynamicContent();
+		})
+
 	}
 
 	openShareModal() {
@@ -1533,7 +1580,7 @@ class ImageUpload {
 	 *
 	 */
 	init_image_upload_form() {
-		this.fd = new FormData(jQuery('#image_upload_form')[0]);
+		appManager.ui_controller.image_uploader.fd = new FormData(jQuery('#image_upload_form')[0]);
 
 		let dropArea = document.getElementById('drop-area')
 		let gallery = document.getElementById('gallery')
@@ -1546,21 +1593,21 @@ class ImageUpload {
 		 * Event handling for image drag and drop
 		 */
 		events.map(eventName => {
-			dropArea.addEventListener(eventName, preventDefaults, false)
+			dropArea.addEventListener(eventName, appManager.ui_controller.image_uploader.preventDefaults, false)
 		})
 
 		events_enter_over.map(eventName => {
-			dropArea.addEventListener(eventName, highlight, false)
-			gallery.addEventListener(eventName, highlight, false)
+			dropArea.addEventListener(eventName, appManager.ui_controller.image_uploader.highlight, false)
+			gallery.addEventListener(eventName, appManager.ui_controller.image_uploader.highlight, false)
 		})
 
 		events_leave_drop.map(eventName => {
-			dropArea.addEventListener(eventName, unhighlight, false)
-			gallery.addEventListener(eventName, unhighlight, false)
+			dropArea.addEventListener(eventName, appManager.ui_controller.image_uploader.unhighlight, false)
+			gallery.addEventListener(eventName, appManager.ui_controller.image_uploader.unhighlight, false)
 		})
 
 
-		dropArea.addEventListener('drop', handleDrop, false)
+		dropArea.addEventListener('drop', appManager.ui_controller.image_uploader.handleDrop, false)
 
 		jQuery("#fileElem").change(function() {
 			console.log("Image selected")
@@ -1572,20 +1619,20 @@ class ImageUpload {
 			/**
 			 * check if user accepts terms and has selected images for upload
 			 */
-			if (jQuery("#accept_req_image_upload").is(":checked") && fd.getAll('image_data[]').length > 0) {
+			if (jQuery("#accept_req_image_upload").is(":checked") && appManager.ui_controller.image_uploader.fd.getAll('image_data[]').length > 0) {
 				upload_images(selected_concept_id);
 				jQuery('#drop-area-overlay').css('display', 'flex');
 
-			} else if (fd.getAll('image_data[]').length == 0) {
+			} else if (appManager.ui_controller.image_uploader.fd.getAll('image_data[]').length == 0) {
 
-				jQuery('.message_modal_content').text(select_image_alert[current_language]);
+				jQuery('.message_modal_content').text(appManager.data_manager.getTranslation("select_image_alert"));
 				jQuery('#message_modal').modal({
 					keyboard: true,
 					backdrop: "dynamic"
 				});
 			} else if (jQuery("#accept_req_image_upload").is(":not(:checked)")) {
 
-				jQuery('.message_modal_content').text(accept_upload_terms_alert[current_language]);
+				jQuery('.message_modal_content').text(appManager.data_manager.getTranslation("accept_upload_terms_alert"));
 				jQuery('#message_modal').modal({
 					keyboard: true,
 					backdrop: "dynamic"
@@ -1640,7 +1687,7 @@ class ImageUpload {
 		var files = dt.files
 
 		jQuery("#loading_images").css("display", "block")
-		handleFiles(files)
+		appManager.ui_controller.image_uploader.handleFiles(files)
 	}
 
 	/**
@@ -1654,13 +1701,13 @@ class ImageUpload {
 		files = files.filter(check_image)
 
 		files.forEach(function(file) {
-			fd.append('image_data[]', file);
+			appManager.ui_controller.image_uploader.fd.append('image_data[]', file);
 		})
 
 		files.forEach(previewFile)
 
 		if (jQuery("#erase_upload_images").length == 0) {
-			var del_button = jQuery("<button id='erase_upload_images'  class='btn-sm btn-outline-danger'></button").text(clear_images[current_language]);
+			var del_button = jQuery("<button id='erase_upload_images'  class='btn-sm btn-outline-danger'></button").text(appManager.data_manager.getTranslation("clear_images"));
 
 			del_button.on("click", function() {
 				appManager.ui_controller.image_uploader.reset_input(jQuery("#fileElem"))
@@ -1698,13 +1745,13 @@ class ImageUpload {
 	 */
 	upload_images(selected_concept_id) {
 
-		fd.set('action', "upload_image");
-		fd.set('selected_concept_id', selected_concept_id);
+		appManager.ui_controller.image_uploader.fd.set('action', "upload_image");
+		appManager.ui_controller.image_uploader.fd.set('selected_concept_id', selected_concept_id);
 		uploading = true;
 		jQuery.ajax({
 			type: 'POST',
 			url: ajax_object.ajax_url,
-			data: fd,
+			data: appManager.ui_controller.image_uploader.fd,
 			processData: false,
 			contentType: false,
 			success: function(data) {
@@ -1712,7 +1759,7 @@ class ImageUpload {
 				appManager.ui_controller.image_uploader.reset_input(jQuery("#fileElem"))
 
 				jQuery("#gallery").empty()
-				var thanks_div = jQuery('<div class="successful_upload"></div>').text(upload_complete[current_language])
+				var thanks_div = jQuery('<div class="successful_upload"></div>').text(appManager.data_manager.getTranslation("upload_complete"))
 				jQuery("#gallery").append(thanks_div);
 				jQuery('#drop-area-overlay').fadeOut('slow');
 				uploading = false;
@@ -1730,7 +1777,7 @@ class ImageUpload {
 				appManager.ui_controller.image_uploader.reset_input(jQuery("#fileElem"))
 
 				jQuery("#gallery").empty()
-				var thanks_div = jQuery('<div class="fail_upload"></div>').text(upload_failed[current_language])
+				var thanks_div = jQuery('<div class="fail_upload"></div>').text(appManager.data_manager.getTranslation("upload_failed"))
 				jQuery("#gallery").append(thanks_div)
 			}
 		});
@@ -1742,13 +1789,13 @@ class ImageUpload {
 	 * @param  {Node} element HTML Element
 	 */
 	reset_input(element) {
-		fd.delete("image_data[]");
+		appManager.ui_controller.image_uploader.fd.delete("image_data[]");
 
 		element.wrap('<form>').closest('form').get(0).reset();
 		element.unwrap();
 
 		element.replaceWith(element.val('').clone(true));
-		fd = new FormData(jQuery('#image_upload_form')[0]);
+		appManager.ui_controller.image_uploader.fd = new FormData(jQuery('#image_upload_form')[0]);
 		jQuery("#gallery").empty()
 
 		if (jQuery("#erase_upload_images").length != 0) {

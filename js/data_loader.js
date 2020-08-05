@@ -27,7 +27,10 @@ class DataLoader {
 				var dialect_data = appManager.data_manager.getTableData(dialect_array, "dialect");
 
 				if (!appManager.data_manager.dialect_modal_initialized) {
-					datatable_dialects = appManager.data_manager.create_dialect_list_modal(jQuery("#dialect_modal"), dialect_data);
+					let datatable_dialects = appManager.data_manager.create_dialect_list_modal(jQuery("#dialect_modal"), dialect_data);
+					console.log(datatable_dialects)
+					appManager.data_manager.addData("datatable_dialects", datatable_dialects)
+					appManager.data_manager.dialect_modal_initialized = true;
 				}
 
 				if (!jQuery("#welcome_modal").hasClass("in")) {

@@ -2439,17 +2439,44 @@ function suggest_dialect(){
 	global $va_xxx;
 
 	$dialect_name  = $_REQUEST['dialect'];
+	$cluster  = $_REQUEST['dialect_cluster'];
 
-	$dialect_to_save = array(
-	 			'Name' => $dialect_name
-	 			);
+	$exists_dialect = $va_xxx->get_results($va_xxx->prepare("SELECT * FROM `dialects` WHERE Name LIKE %s" ,$dialect_name ));
 
-	$va_xxx->insert(
-	 			'dialects',
-	 			$dialect_to_save
-	 			);
+	if(empty($exists_dialect)){
 
-	echo json_encode(array('dialect' => $dialect_name , 'id' => $va_xxx->insert_id));
+		if (!$cluster){
+			$cluster = "ak";
+		}
+
+		$dialect_to_save = array(
+		 			'Name' => $dialect_name,
+		 			);
+
+		$va_xxx->insert(
+		 			'dialects',
+		 			$dialect_to_save
+		 			);
+
+
+		$inserted_id = $va_xxx->insert_id;
+
+		$dialect_cluster_to_save = array(
+			'Id_dialect' => $inserted_id,
+			'Cluster' => $cluster
+		);
+
+		$va_xxx->insert(
+		 			'dialect_clusters',
+		 			$dialect_cluster_to_save
+		 			);
+
+		echo json_encode(array('dialect' => $dialect_name , 'id' => $inserted_id, 'new_dialect' => true));
+	}else{
+		$dialect_name = get_object_vars($exists_dialect[0])["Name"];
+		$dialect_id = get_object_vars($exists_dialect[0])["Id_dialect"];
+		echo json_encode(array('dialect' => $dialect_name , 'id' => $dialect_id,  'new_dialect' => false));
+	}
 
 	wp_die();
 }
