@@ -68,10 +68,11 @@ class AppManager {
 	 * Initializes the CS-Tool. Performes Ajax Calls to fetch data(locations, user entries) from the server. The gathered data is then stored in global variables.
 	 */
 	startMainTool() {
+		var current_language = appManager.data_manager.current_language
 
-		create_cookie(current_language);
+		appManager.data_loader.create_cookie(current_language);
 
-		var menu_content = jQuery(leftmenu_contents[current_language]);
+		var menu_content = jQuery(appManager.data_manager.getTranslation("leftmenu_contents"));
 
 		jQuery('#left_menu').append(menu_content);
 		menu_content.show();
@@ -81,11 +82,10 @@ class AppManager {
 
 		//translating text in register modal
 		if (!userLoggedIn) {
-			console.log(current_language)
 			appManager.ui_controller.add_translation_register_modal();
 		}
 
-		if (selected_dialect !== "") {
+		if (appManager.data_manager.selected_dialect !== "") {
 			appManager.ui_controller.display_dialect();
 		}
 

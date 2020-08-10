@@ -17,6 +17,7 @@ class UIController {
 
 
 		this.url = new URL(window.location.href);
+		console.log(this.url)
 		var url_concept_id = this.url.searchParams.get("concept");
 		// url_dialect_cluster = url.searchParams.get("dcluster");
 		// url_dialect = url.searchParams.get("dialect");
@@ -1112,7 +1113,7 @@ class UIController {
 
 		var number = Math.floor(Math.random() * 7) + 1;
 		var jpg = "titel_" + number.toString() + ".jpg";
-		var img_url = appManager.ui_controller.url.plugins_Url + '/assets/images/' + jpg;
+		var img_url = url.plugins_Url + '/assets/images/' + jpg;
 
 		jQuery('<img/>').attr('src', img_url).load(function() {
 			jQuery(this).remove();
@@ -1180,7 +1181,7 @@ class UIController {
 
 	display_dialect() {
 
-		jQuery("#user_dialect").text(selected_dialect);
+		jQuery("#user_dialect").text(appManager.data_manager.selected_dialect);
 
 		var parent_div = jQuery(".arrow");
 		parent_div.before(jQuery("user_dialect_container"));

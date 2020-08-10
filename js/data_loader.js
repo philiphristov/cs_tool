@@ -28,7 +28,6 @@ class DataLoader {
 
 				if (!appManager.data_manager.dialect_modal_initialized) {
 					let datatable_dialects = appManager.data_manager.create_dialect_list_modal(jQuery("#dialect_modal"), dialect_data);
-					console.log(datatable_dialects)
 					appManager.data_manager.addData("datatable_dialects", datatable_dialects)
 					appManager.data_manager.dialect_modal_initialized = true;
 				}
@@ -105,30 +104,30 @@ class DataLoader {
 	}
 
 
- getHighScoresFromDB(callback) {
+	getHighScoresFromDB(callback) {
 
-  jQuery.ajax({
-    url: ajax_object.ajax_url,
-    type: 'POST',
-    data: {
-      action: 'getHighScores',
-      lang: current_language,
-      num: 10
-    },
-    success: function(response) {
+		jQuery.ajax({
+			url: ajax_object.ajax_url,
+			type: 'POST',
+			data: {
+				action: 'getHighScores',
+				lang: current_language,
+				num: 10
+			},
+			success: function(response) {
 
-      var result = JSON.parse(response);
-      top_concepts = result["top_concepts"];
-      top_users = result["top_users"];
-      top_locations = result["top_locations"];
+				var result = JSON.parse(response);
+				top_concepts = result["top_concepts"];
+				top_users = result["top_users"];
+				top_locations = result["top_locations"];
 
-      if (typeof callback == "function")
-        callback();
+				if (typeof callback == "function")
+					callback();
 
-    }
+			}
 
-  });
-}
+		});
+	}
 
 	/**
 	 * Display markers for each location and the corresponding number of answers in each one.
@@ -564,6 +563,11 @@ class DataLoader {
 			}
 		}); //ajax end
 
+	}
+
+
+	create_cookie(lang) {
+		createCookie("language_crowder", lang);
 	}
 
 }

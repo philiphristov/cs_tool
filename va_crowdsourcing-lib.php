@@ -152,8 +152,7 @@ function enqueue_scripts() {
 		wp_register_script( 'scrollbar_js', plugins_url( '/plugin_va-crowd/assets/js/jquery.mCustomScrollbar.concat.min.js'),array( 'jquery' ), '1.0.0', true);
 		wp_register_script( 'selectboxit_js', plugins_url( '/plugin_va-crowd/assets/js/jquery.selectBoxIt.min.js'),array( 'jquery' ), '1.0.0', true);
 
-		wp_localize_script( 'actions_ajax', 'ajax_object',array( 'ajax_url' => admin_url( 'admin-ajax.php' )));
-		wp_localize_script( 'data_loader', 'ajax_object',array( 'ajax_url' => admin_url( 'admin-ajax.php' )));
+		
 
 		wp_enqueue_script('actions_ajax');
 		// wp_enqueue_script('content_interactions');
@@ -189,6 +188,9 @@ function enqueue_scripts() {
 		wp_enqueue_style( 'mapTypeStyle' );
 		wp_enqueue_style('webgl_css');	
 
+		wp_localize_script( 'actions_ajax', 'ajax_object',array( 'ajax_url' => admin_url( 'admin-ajax.php' )));
+		wp_localize_script( 'data_loader', 'ajax_object',array( 'ajax_url' => admin_url( 'admin-ajax.php' )));
+		wp_localize_script('ui_controller','url',array('plugins_Url'=>plugin_dir_url(__FILE__)));
 	
 
 	}

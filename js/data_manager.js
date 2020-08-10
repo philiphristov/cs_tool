@@ -107,8 +107,8 @@ class DataManager {
   getTableData(in_data, origin) {
     var data = [];
 
-    var wikidata_img_url = appManager.ui_controller.url.plugins_Url + '/assets/images/wikidata.png';
-
+    var wikidata_img_url = url.plugins_Url + '/assets/images/wikidata.png';
+    console.log(wikidata_img_url)
     var wikidata_img = "<img class='wikidata_image' src='" + wikidata_img_url + "'/>"
 
 
@@ -360,7 +360,7 @@ class DataManager {
                             }
 
                             /*mark new dialect as selected*/
-                            current_dialect_index = get_dialect_index(appManager.data_manager.selected_dialect, table); //datatable_dialects.rows().data().length - 1;
+                            current_dialect_index = appManager.data_manager.get_dialect_index(appManager.data_manager.selected_dialect, table); //datatable_dialects.rows().data().length - 1;
                             var row = table.row(current_dialect_index).node();
                             jQuery(row).addClass('green_row');
                             var icon = jQuery('<i class="fa fa-check" aria-hidden="true"></i>');
@@ -383,7 +383,7 @@ class DataManager {
                             }
 
                             /*mark new dialect as selected*/
-                            current_dialect_index = get_dialect_index(appManager.data_manager.selected_dialect, table); //datatable_dialects.rows().data().length - 1;
+                            current_dialect_index = appManager.data_manager.get_dialect_index(appManager.data_manager.selected_dialect, table); //datatable_dialects.rows().data().length - 1;
                             var row = table.row(current_dialect_index).node();
                             jQuery(row).addClass('green_row');
                             var icon = jQuery('<i class="fa fa-check" aria-hidden="true"></i>');
@@ -541,7 +541,7 @@ class DataManager {
 
     /*mark dialect as selected in the data table*/
     if (appManager.data_manager.selected_dialect) {
-      current_dialect_index = get_dialect_index(appManager.data_manager.selected_dialect, table);
+      var current_dialect_index = appManager.data_manager.get_dialect_index(appManager.data_manager.selected_dialect, table);
 
       var row = table.row(current_dialect_index).node();
       jQuery(row).addClass('green_row');
@@ -1176,15 +1176,7 @@ class DataManager {
 
   }
 
-  get_dialect_index(dialect, datatable) {
-    var index_dalect;
-    var arr = Array.from(datatable.rows().data());
-    var index = arr.findIndex(function(element) {
-      var dialect_name = element.name;
-      if (dialect_name.localeCompare(dialect) == 0) return index_dalect = arr.indexOf(element);
-    });
-    return index_dalect;
-  }
+
 
   populate_concept_span() {
     var url = new URL(window.location.href);
@@ -1766,6 +1758,13 @@ class DataManager {
 
     ];
 
+    this.translations["leftmenu_contents"]  = [
+      "#left_menu_content_ger",
+      "#left_menu_content_fr",
+      "#left_menu_content_ita",
+      "#left_menu_content_slo"
+    ];
+
     this.translations["lang_dialect_abbreviation"] = translations['CS_DIALECT_LANG']
 
 
@@ -1893,6 +1892,16 @@ class DataManager {
     }
     return arr;
   }
+
+ get_dialect_index(dialect, datatable) {
+  var index_dalect;
+  var arr = Array.from(datatable.rows().data());
+  var index = arr.findIndex(function(element) {
+    var dialect_name = element.name;
+    if (dialect_name.localeCompare(dialect) == 0) return index_dalect = arr.indexOf(element);
+  });
+  return index_dalect;
+}
 
 
   /**
