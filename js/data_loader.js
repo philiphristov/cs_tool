@@ -48,19 +48,19 @@ class DataLoader {
 
 	get_submited_answers(callback) {
 
-		if (!userLoggedIn) {
-			addLoginToolTip();
-			startLoginTimer();
+		if (!appManager.data_manager.user_data.userLoggedIn) {
+			appManager.ui_controller.addLoginToolTip();
+			appManager.ui_controller.startLoginTimer();
 		}
 
-		check_user_aeusserungen();
+		appManager.data_manager.check_user_aeusserungen();
 
 		jQuery.ajax({
 			url: ajax_object.ajax_url,
 			type: 'POST',
 			data: {
 				action: 'send_location_submited_asnswers_count',
-				lang: current_language
+				lang: appManager.data_manager.current_language
 			},
 			success: function(response) {
 				var data = JSON.parse(response);
@@ -69,7 +69,8 @@ class DataLoader {
 
 				appManager.data_loader.get_aeussetungen_locations_curLang(location_data_count, is_admin, callback);
 
-				aeusserungen_by_locationindex = new Object();
+				var aeusserungen_by_locationindex = new Object();
+				appManager.data_manager.addData("aeusserungen_by_locationindex", aeusserungen_by_locationindex);
 			}
 		});
 
@@ -83,7 +84,7 @@ class DataLoader {
 			type: 'POST',
 			data: {
 				action: 'get_submited_answers_current_location',
-				lang: current_language,
+				lang: appManager.data_manager.current_language,
 				location_id: location_id
 			},
 			success: function(response) {
@@ -91,7 +92,7 @@ class DataLoader {
 				var data = JSON.parse(response);
 				var submited_anwerts_current_location = data.submited_data;
 				var is_admin = data.can_edit;
-				aeusserungen_by_locationindex[location_id] = submited_anwerts_current_location;
+				appManager.data_manager.getData("aeusserungen_by_locationindex").data_value[location_id] = submited_anwerts_current_location;
 
 				//jQuery('#custom_backdrop i').css('top','0px');
 				//jQuery('#custom_backdrop').hide().css('background','');
@@ -111,15 +112,15 @@ class DataLoader {
 			type: 'POST',
 			data: {
 				action: 'getHighScores',
-				lang: current_language,
+				lang: appManager.data_manager.current_language,
 				num: 10
 			},
 			success: function(response) {
 
 				var result = JSON.parse(response);
-				top_concepts = result["top_concepts"];
-				top_users = result["top_users"];
-				top_locations = result["top_locations"];
+				appManager.data_manager.top_concepts = result["top_concepts"];
+				appManager.data_manager.top_users = result["top_users"];
+				appManager.data_manager.top_locations = result["top_locations"];
 
 				if (typeof callback == "function")
 					callback();
@@ -151,11 +152,14 @@ class DataLoader {
 				jQuery(this).remove();
 			});
 			console.log("ALL POLYGONS LOADED");
-			callback();
 
-			//jQuery('#custom_backdrop').fadeOut(200,function(){jQuery(this).remove(); console.log("hide custom_backdrop");});
-			//jQuery('#custom_backdrop').remove();
-			//console.log(jQuery('#custom_backdrop'));
+
+			// jQuery('#custom_backdrop').fadeOut(200,function(){jQuery(this).remove(); console.log("hide custom_backdrop");});
+			jQuery('#custom_backdrop').remove();
+			jQuery('#custom_backdrop').remove();
+			jQuery("#welcomeback_modal").hide()
+			callback();
+			// console.log(jQuery('#custom_backdrop'));
 		}, 300);
 	}
 
@@ -167,19 +171,20 @@ class DataLoader {
 			type: 'POST',
 			data: {
 				action: 'get_submited_answers_current_user',
-				lang: current_language
+				lang: appManager.data_manager.current_language
 			},
 			success: function(response) {
 				var data = JSON.parse(response);
 				var submited_answers_current_user = data.submited_answers_current_user;
 				var is_admin = data.can_edit;
 
-				add_submited_answers_to_index_submitedAnswers_array(submited_answers_current_user, is_admin);
+				appManager.data_loader.add_submited_answers_to_index_submitedAnswers_array(submited_answers_current_user, is_admin);
 
-				num_of_answers_by_id = createAnswersToEntryNumbers(submitedAnswers_indexed);
-				checkEnteredConcepts_indexed();
+				var num_of_answers_by_id = appManager.data_manager.createAnswersToEntryNumbers(appManager.data_manager.submitedAnswers_indexed);
+				appManager.data_manager.addData("num_of_answers_by_id", num_of_answers_by_id)
+				appManager.data_manager.checkEnteredConcepts_indexed();
 
-				populate_concept_span(function() {
+				appManager.ui_controller.populate_concept_span(function() {
 					console.log("test running")
 				});
 				callback();
@@ -204,29 +209,29 @@ class DataLoader {
 		var concept = jQuery('#word_span').html();
 		var concept_id = jQuery('#word_span').attr('data-id_concept');
 
-		if (!current_user_age) {
-			current_user_age = "";
+		if (!appManager.data_manager.user_data.current_user_age) {
+			appManager.data_manager.user_data.current_user_age = "";
 		}
 
 		//error handling, if user changes the va_phase after choosing a concept form a certain va_phase
-		if (get_table_index_by_va_phase(concept_id)) {
-			var concept_index = get_table_index_by_va_phase(concept_id);
+		if (appManager.data_loader.get_table_index_by_va_phase(concept_id)) {
+			var concept_index = appManager.data_loader.get_table_index_by_va_phase(concept_id);
 		} else {
-			if (va_phase == 1) {
-				va_phase = 2;
+			if (appManager.data_manager.va_phase == 1) {
+				appManager.data_manager.va_phase = 2;
 			} else {
-				va_phase = 1;
+				appManager.data_manager.va_phase = 1;
 			}
-			var concept_index = get_table_index_by_va_phase(concept_id);
+			var concept_index = appManager.data_loader.get_table_index_by_va_phase(concept_id);
 		}
 
 
 
 
 		/*Check if fields for Konzept and Region are filled*/
-		if (input_word.localeCompare("") != 0 && location_id != null && concept_selected == true) {
+		if (input_word.localeCompare("") != 0 && location_id != null && appManager.ui_controller.concept_selected == true) {
 
-			stage = 5;
+			appManager.ui_controller.stage = 5;
 			jQuery('#submitanswer').popover('hide');
 
 			var answer = {
@@ -236,7 +241,7 @@ class DataLoader {
 				location_id: location_id
 			};
 
-			if (!isDuplicate_indexed(answer)) {
+			if (!appManager.data_manager.isDuplicate_indexed(answer)) {
 
 				/**
 				 * Gets user's ID. Used to generate a unique crowder_id cookie, when the user submits an answer.
@@ -251,9 +256,11 @@ class DataLoader {
 					},
 					success: function(response) {
 
-						if (current_user == null) current_user = JSON.parse(response);
+						if (appManager.data_manager.user_data.current_user == null) {
+							appManager.data_manager.user_data.current_user = JSON.parse(response);
+						}
 
-						createCookie("crowder_id", current_user);
+						appManager.data_loader.createCookie("crowder_id", appManager.data_manager.user_data.current_user);
 						/**
 						 * Send all data(location, location id, concept, concept id, user answer and current user id(not logged in users) or user name(logged in users)) to server.
 						 * @function save_word_async
@@ -269,10 +276,10 @@ class DataLoader {
 								konzept: concept,
 								konzept_Id: concept_id,
 								bezeichnung: input_word,
-								current_user: current_user,
-								current_language: current_language,
-								current_dialect: selected_dialect,
-								current_user_age: current_user_age
+								current_user: appManager.data_manager.user_data.current_user,
+								current_language: appManager.data_manager.current_language,
+								current_dialect: appManager.data_manager.selected_dialect,
+								current_user_age: appManager.data_manager.user_data.current_user_age
 
 							},
 							beforeSend: function() {
@@ -308,12 +315,12 @@ class DataLoader {
 											id: location_id,
 											name: location
 										};
-										if (include(locations, ob) !== true) {
-											locations.push(ob);
+										if (appManager.data_loader.include(appManager.data_manager.getData("locations").data_value, ob) !== true) {
+											appManager.data_manager.getData("locations").data_value.push(ob);
 										}
 
-										session_answer_count++;
-										if (!userLoggedIn) checkLoginPopUp();
+										appManager.data_manager.session_answer_count++;
+										if (!appManager.data_manager.user_data.userLoggedIn) appManager.ui_controller.checkLoginPopUp();
 
 										var answer = {
 											concept: concept,
@@ -323,14 +330,14 @@ class DataLoader {
 											concept_id: concept_id,
 											concept_index: concept_index
 										};
-
-										submitedAnswers.push(answer);
-										submitedAnswers_indexed[id_aeusserung] = answer;
-										delete unanswered_concepts[concept_index];
+										if (!appManager.data_manager.getData("submitedAnswers")) appManager.data_manager.addData("submitedAnswers",[])
+										appManager.data_manager.getData("submitedAnswers").data_value.push(answer);
+										appManager.data_manager.submitedAnswers_indexed[id_aeusserung] = answer;
+										delete appManager.data_manager.unanswered_concepts[concept_index];
 
 										var entry = {};
 										entry[id_aeusserung] = {
-											author: current_user,
+											author: appManager.data_manager.user_data.current_user,
 											id_aeusserung: id_aeusserung.toString(),
 											id_concept: concept_id,
 											id_geo: location_id,
@@ -340,11 +347,11 @@ class DataLoader {
 											tokenisiert: "0"
 										};
 
-										if (aeusserungen_by_locationindex[location_id] == null) {
-											aeusserungen_by_locationindex[location_id] = entry;
+										if (appManager.data_manager.getData("aeusserungen_by_locationindex").data_value[location_id] == null) {
+											appManager.data_manager.getData("aeusserungen_by_locationindex").data_value[location_id] = entry;
 										} else {
-											aeusserungen_by_locationindex[location_id][id_aeusserung] = {
-												author: current_user,
+											appManager.data_manager.getData("aeusserungen_by_locationindex").data_value[location_id][id_aeusserung] = {
+												author: appManager.data_manager.user_data.current_user,
 												id_aeusserung: id_aeusserung.toString(),
 												id_concept: concept_id,
 												id_geo: location_id,
@@ -355,14 +362,14 @@ class DataLoader {
 											};
 										}
 
-										remove_location_search_listener();
-										add_user_marker(JSON.parse(response), id_aeusserung);
-										change_feature_style(old_feature, check_user_aesserungen_in_location(location));
+										appManager.map_controller.remove_location_search_listener();
+										appManager.map_controller.add_user_marker(JSON.parse(response), id_aeusserung);
+										appManager.map_controller.change_feature_style(appManager.map_controller.old_feature, appManager.data_manager.check_user_aesserungen_in_location(location));
 
 										setTimeout(function() {
 
-											if (location_markers[location_id]) {
-												change_marker(location_markers[location_id], 1, "green");
+											if (appManager.map_controller.location_markers[location_id]) {
+												appManager.map_controller.change_marker(appManager.map_controller.location_markers[location_id], 1, "green");
 											} else {
 												var obj = JSON.parse(response);
 												var element = {
@@ -378,16 +385,16 @@ class DataLoader {
 													location_name: location
 												};
 
-												display_location_markers(element);
-												pixioverlay.completeDraw();
+												appManager.map_controller.display_location_markers(element);
+												appManager.map_controller.pixioverlay.completeDraw();
 											}
 
 										}, 300);
 
 										//prompt user to register/send data anonimously
-										if (Object.keys(submitedAnswers_indexed).length == 1) {
+										if (Object.keys(appManager.data_manager.submitedAnswers_indexed).length == 1) {
 											setTimeout(function() {
-												openRegisterOrAnonymousModal();
+												appManager.ui_controller.openRegisterOrAnonymousModal();
 											}, 1000);
 										}
 
@@ -398,7 +405,7 @@ class DataLoader {
 											jQuery('#submitanswer').popover('hide');
 
 											jQuery('#user_input').val("");
-											jQuery('#word_span').text(the_word_concept[current_language]);
+											jQuery('#word_span').text(appManager.data_manager.getTranslation("the_word_concept"));
 											setTimeout(function() {
 
 												jQuery('#word_span').popover('show');
@@ -407,38 +414,38 @@ class DataLoader {
 													handleWordSpanClick();
 												}).addClass('c_hover');
 											}, 1000);
-											process_restarted = true;
+											appManager.ui_controller.process_restarted = true;
 
 										}).fadeIn();
 
-										concept_selected = false;
-										word_entered = false;
-										stage = 3;
+										appManager.ui_controller.concept_selected = false;
+										appManager.ui_controller.word_entered = false;
+										appManager.ui_controller.stage = 3;
 
-										deSelectTableEntry(concept_index);
+										appManager.ui_controller.deSelectTableEntry(concept_index);
 
-										var entry = num_of_answers_by_id[parseInt(concept_id)];
-										if (entry == null) num_of_answers_by_id[parseInt(concept_id)] = 1;
-										else num_of_answers_by_id[parseInt(concept_id)] += 1;
+										var entry = appManager.data_manager.getData("num_of_answers_by_id").data_value[parseInt(concept_id)];
+										if (entry == null) appManager.data_manager.getData("num_of_answers_by_id").data_value[parseInt(concept_id)] = 1;
+										else appManager.data_manager.getData("num_of_answers_by_id").data_value[parseInt(concept_id)] += 1;
 
-										checkTableEntry(concept_id);
+										appManager.data_manager.checkTableEntry(concept_id);
 
 
-										var row = jQuery(datatable_concepts.row(concept_index).node());
+										var row = jQuery(appManager.data_manager.getDataTable("datatable_concepts").row(concept_index).node());
 										if (row.find('.num_of_answers').length == 0) {
 											row.find('.dataparent').append(jQuery('<div class="num_of_answers">1</div>'));
 											if (row.find(".wiki_info").length == 1) row.find('.num_of_answers').addClass("answers_with_wiki");
 										} else {
-											row.find('.num_of_answers').text(num_of_answers_by_id[parseInt(concept_id)]);
+											row.find('.num_of_answers').text(appManager.data_manager.getData("num_of_answers_by_id").data_value[parseInt(concept_id)]);
 											if (row.find(".wiki_info").length == 1) row.find('.num_of_answers').addClass("answers_with_wiki");
 										}
 
-										current_concept_index = -1;
+										appManager.data_manager.current_concept_index = -1;
 
 										var ua = navigator.userAgent.toLowerCase();
 										var isAndroid = ua.indexOf("android") > -1;
 										if (isAndroid) {
-											map.panTo(location_markers[location_id].getPosition());
+											appManager.map_controller.map.panTo(appManager.map_controller.location_markers[location_id].getPosition());
 										}
 
 									}
@@ -451,25 +458,25 @@ class DataLoader {
 				});
 			} else {
 
-				for (var key in submitedAnswers_indexed) {
-					if (submitedAnswers_indexed.hasOwnProperty(key)) {
-						if (input_word.localeCompare(submitedAnswers_indexed[key].user_input) == 0 && concept.localeCompare(submitedAnswers_indexed[key].concept) == 0) {
-							var id_auesserung = submitedAnswers_indexed[key].id_auesserung;
-							var concept_id = submitedAnswers_indexed[key].concept_id;
+				for (var key in appManager.data_manager.submitedAnswers_indexed) {
+					if (appManager.data_manager.submitedAnswers_indexed.hasOwnProperty(key)) {
+						if (input_word.localeCompare(appManager.data_manager.submitedAnswers_indexed[key].user_input) == 0 && concept.localeCompare(appManager.data_manager.submitedAnswers_indexed[key].concept) == 0) {
+							var id_auesserung = appManager.data_manager.submitedAnswers_indexed[key].id_auesserung;
+							var concept_id = appManager.data_manager.submitedAnswers_indexed[key].concept_id;
 							break;
 						}
 					}
 				}
 
 
-				editInputA(id_auesserung, concept_id, location_id, concept, false);
+				appManager.ui_controller.editInputA(id_auesserung, concept_id, location_id, concept, false);
 
 
 
 
 			}
 		} else {
-			jQuery('.message_modal_content').text(user_input_not_full[current_language]);
+			jQuery('.message_modal_content').text(appManager.data_manager.getTranslation("user_input_not_full"));
 			jQuery('#message_modal').modal({
 				backdrop: 'static',
 				keyboard: false
@@ -519,8 +526,8 @@ class DataLoader {
 				searchedGemeinde: g_location,
 			},
 			success: function(response) {
-
-				existingLocations.push(JSON.parse(response).location_id);
+				if (!appManager.data_manager.getData("existingLocations").data_value) appManager.data_manager.addData("existingLocations", [])
+				appManager.data_manager.getData("existingLocations").data_value.push(JSON.parse(response).location_id);
 				appManager.map_controller.addGeometry(JSON.parse(response).polygonCoordinates, JSON.parse(response));
 
 
@@ -531,10 +538,10 @@ class DataLoader {
 				}
 
 
-				var lat = geo_manager.parseGeoDataFormated(JSON.parse(response).centerCoordinates).geoData.lat;
-				var lng = geo_manager.parseGeoDataFormated(JSON.parse(response).centerCoordinates).geoData.lng;
+				var lat = appManager.map_controller.geo_manager.parseGeoDataFormated(JSON.parse(response).centerCoordinates).geoData.lat;
+				var lng = appManager.map_controller.geo_manager.parseGeoDataFormated(JSON.parse(response).centerCoordinates).geoData.lng;
 
-				centerCoordinates_locations.push({
+				appManager.map_controller.centerCoordinates_locations.push({
 					'id': JSON.parse(response).location_id,
 					'lat': lat,
 					'lng': lng
@@ -551,8 +558,8 @@ class DataLoader {
 					//   smoothZoom(map, 11, map.getZoom());
 					// }, 200);
 				}
-				if (stage == 5) {
-					stage = 6;
+				if (appManager.ui_controller.stage == 5) {
+					appManager.ui_controller.stage = 6;
 
 					setTimeout(function() {
 						jQuery('#word_span').popover('show');
@@ -567,7 +574,138 @@ class DataLoader {
 
 
 	create_cookie(lang) {
-		createCookie("language_crowder", lang);
+		appManager.data_loader.createCookie("language_crowder", lang);
+	}
+
+
+	/**
+	 * Creates a cookie with name, value and exp. date
+	 * @param  {String} name  [description]
+	 * @param  {String} value [description]
+	 * @param  {Int} days  [description]
+	 *
+	 */
+	createCookie(name, value, days) {
+		if (days) {
+			var date = new Date();
+			date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+			var expires = "; expires=" + date.toGMTString();
+		} else var expires = "";
+		document.cookie = name + "=" + value + expires + "; path=/";
+	}
+
+
+	add_submited_answers_to_index_submitedAnswers_array(arrayA, can_edit) {
+		var result = {};
+		var is_admin = can_edit;
+
+
+		for (var i = 0; i < arrayA.length; i++) {
+			var obj = arrayA[i];
+
+			var concept_id = obj.id_concept;
+			var concept = obj.konzept;
+			var word_inputed = obj.word;
+			var location_name = obj.ortsname;
+			var id_auesserung = obj.id_aeusserung;
+			var author = obj.author;
+
+			if ((author.localeCompare(appManager.data_manager.user_data.current_user) == 0 && author.localeCompare("anonymousCrowder_90322") != 0) || is_admin) {
+
+
+				var concept_idx = appManager.data_loader.get_table_index_by_va_phase(parseInt(concept_id));
+
+
+				var answer = { concept: concept, user_input: word_inputed, location: location_name, id_auesserung: id_auesserung, concept_id: concept_id, concept_index: concept_idx };
+				appManager.data_manager.submitedAnswers_indexed[parseInt(id_auesserung)] = answer;
+			}
+
+		}
+
+
+	}
+
+	get_table_index_by_va_phase(_concept_id) {
+
+		var index;
+
+		if (appManager.data_manager.getData("concepts_index_by_id").data_value[parseInt(_concept_id)]) {
+			index = appManager.data_manager.getData("concepts_index_by_id").data_value[parseInt(_concept_id)].index;
+		}
+
+		return index;
+	}
+
+
+	get_location_and_display(lat, lng) {
+		/*concept selected when in url:*/
+
+
+		jQuery.ajax({
+			url: ajax_object.ajax_url,
+			type: 'POST',
+			data: {
+				action: 'searchLocation',
+				lat: lat,
+				lng: lng,
+			},
+			success: function(response) {
+
+				var data = JSON.parse(response);
+				//console.log(data);
+				var loc_name = data.name;
+				var loc_id = data.id;
+				//console.log(loc_name, loc_id);
+
+				if (loc_name != null) {
+					jQuery('#location_span').text(loc_name);
+					jQuery('#location_span').attr("data-id_location", loc_id);
+					//jQuery('#submitanswer').popover('hide');
+					//stage = 5;
+					appManager.ui_controller.location_selected = true;
+					if (appManager.ui_controller.concept_selected !== true) {
+						if (appManager.data_manager.url_concept_id) {
+							appManager.ui_controller.concept_selected = true;
+						} else {
+							appManager.ui_controller.concept_selected = false;
+						}
+					}
+					appManager.ui_controller.word_entered = false;
+					appManager.ui_controller.tutorial_running = true;
+
+					appManager.ui_controller.setDynamicContent('list');
+					appManager.ui_controller.displayTooltips(true);
+					appManager.ui_controller.showPopUp();
+
+
+					appManager.map_controller.showPolygon(loc_name, loc_id, false);
+					// jQuery('#custom_backdrop').hide().css('background','');
+				} else {
+					jQuery('#custom_backdrop').hide().css('background', '');
+					console.log("Nothing found");
+					jQuery('.message_modal_content').text(appManager.data_manager.getTranslation("nothing_found"));
+					jQuery('#message_modal').modal({
+						backdrop: 'static',
+						keyboard: false
+					});
+				}
+
+			}
+		});
+
+
+	}
+
+	/**
+	 * Used in saveWord(), checks if an location object allready exists in the locations array
+	 * @param  {Array} arr Array of Objects
+	 * @param  {Object} obj Single Object
+	 * @return {Boolean}     True if object is in the array
+	 */
+	include(arr, obj) {
+		for (var i = 0; i < arr.length; i++) {
+			if (arr[i].id == obj.id) return true;
+		}
 	}
 
 }

@@ -12,6 +12,7 @@ class MapController {
 
 		this.map_object = new Map(this.options)
 		this.map = this.map_object.map
+		this.geo_manager
 
 		this.styledMapType;
 		this.pixioverlay;
@@ -23,7 +24,6 @@ class MapController {
 		this.markers = [];
 		this.old_feature;
 		this.old_infowindow;
-		this.geo_manager;
 
 		this.location_markers = {};
 
@@ -34,6 +34,8 @@ class MapController {
 		this.info_window_dialect_change = false;
 		this.info_window_answer_change = false;
 		this.current_infowindow;
+
+		this.centerCoordinates_locations = []
 
 		this.IMGeoType = {
 			Point: 0,
@@ -46,7 +48,7 @@ class MapController {
 
 	initMap(callback) {
 
-		geo_manager = new GeoManager();
+		appManager.map_controller.geo_manager = new GeoManager();
 
 		var options = {
 			doubleClickZoom: false,
@@ -144,9 +146,9 @@ class MapController {
 	 */
 	addGeometryAlps(geoData, center) {
 
-		var polygon = geo_manager.parseGeoDataFormated(geoData);
-		var center_map = geo_manager.parseGeoDataFormated(center);
-		var type = getKeyByValue(IMGeoType, polygon.getType());
+		var polygon = appManager.map_controller.geo_manager.parseGeoDataFormated(geoData);
+		var center_map = appManager.map_controller.geo_manager.parseGeoDataFormated(center);
+		var type = appManager.map_controller.getKeyByValue(IMGeoType, polygon.getType());
 
 
 		var url = new URL(window.location.href);
@@ -204,14 +206,14 @@ class MapController {
 
 	add_location_search_listener() {
 
-		map.on('click', function(event) {
+		this.map.on('click', function(event) {
 
-			if (choosing_location_mode) {
+			if (appManager.ui_controller.choosing_location_mode) {
 
 				appManager.map_controller.closeAllInfoWindows();
 				var latitude = event.latlng.lat;
 				var longitude = event.latlng.lng;
-				get_location_and_display(latitude, longitude);
+				appManager.data_loader.get_location_and_display(latitude, longitude);
 			}
 		});
 
@@ -220,7 +222,7 @@ class MapController {
 	remove_location_search_listener() {
 
 		L.DomUtil.removeClass(this.map._container, 'crosshair-cursor-enabled');
-		choosing_location_mode = false;
+		appManager.ui_controller.choosing_location_mode = false;
 	}
 
 	/**
@@ -230,31 +232,30 @@ class MapController {
 	 */
 	addGeometry(geoData, data) {
 
-
 		var location_name = data.name;
 		location_name = location_name.replace(/\\/g, "");
 
-		var polygon = geo_manager.parseGeoDataFormated(geoData);
-		var center = geo_manager.parseGeoDataFormated(data.centerCoordinates).geoData;
-		var type = getKeyByValue(IMGeoType, polygon.getType());
+		var polygon = appManager.map_controller.geo_manager.parseGeoDataFormated(geoData);
+		var center = appManager.map_controller.geo_manager.parseGeoDataFormated(data.centerCoordinates).geoData;
+		var type = appManager.map_controller.getKeyByValue(IMGeoType, polygon.getType());
 
-		if (old_feature != null) {
-			this.pixioverlay.removePolygonOrLine(old_feature);
+		if (this.old_feature != null) {
+			this.pixioverlay.removePolygonOrLine(this.old_feature);
 		}
 
 
 
 
-		if (old_infowindow != null) {
-			old_infowindow.close();
-			old_infowindow = null;
+		if (this.old_infowindow != null) {
+			this.old_infowindow.close();
+			this.old_infowindow = null;
 		}
 
 		appManager.map_controller.closeAllInfoWindows();
 
 		var featureSelected;
 
-		var feature_selected = check_user_aesserungen_in_location(location_name);
+		var feature_selected = appManager.data_manager.check_user_aesserungen_in_location(location_name);
 
 
 		if (!feature_selected) featureSelected = appManager.map_controller.addPixiPolygon(polygon, type, "0x0000ff", "0x0000ff", 0.1);
@@ -262,7 +263,7 @@ class MapController {
 
 
 		featureSelected['selected'] = true;
-		featureSelected['selected'] = check_user_aesserungen_in_location(location_name);
+		featureSelected['selected'] = appManager.data_manager.check_user_aesserungen_in_location(location_name);
 		featureSelected['location'] = location_name;
 
 		var infoWindowContent = [
@@ -277,7 +278,7 @@ class MapController {
 			.setContent(infoWindowContent)
 			.openOn(this.map);
 
-		old_feature = featureSelected;
+		this.old_feature = featureSelected;
 
 		this.pixioverlay.completeDraw();
 
@@ -296,10 +297,10 @@ class MapController {
 	display_location_markers(element, can_edit) {
 
 
-		var polygon = geo_manager.parseGeoDataFormated(element.geo);
+		var polygon = appManager.map_controller.geo_manager.parseGeoDataFormated(element.geo);
 
 
-		var location_coordinates = geo_manager.parseGeoDataFormated(element.geo);
+		var location_coordinates = appManager.map_controller.geo_manager.parseGeoDataFormated(element.geo);
 		var count_aeusserung_per_location = element.count.toString();
 		var location_id = element.location_id.toString();
 		var location_name = element.location_name;
@@ -334,7 +335,7 @@ class MapController {
 
 
 		//location_markers[element.geo_data.location_id] = marker; // stable
-		location_markers[element.location_id] = marker; // testing
+		appManager.map_controller.location_markers[element.location_id] = marker; // testing
 	}
 
 	/**
@@ -345,7 +346,7 @@ class MapController {
 	add_user_marker(obj, aeusserung_id) {
 
 
-		var coordinates = geo_manager.parseGeoDataFormated(obj.centerCoordinates).geoData;
+		var coordinates = appManager.map_controller.geo_manager.parseGeoDataFormated(obj.centerCoordinates).geoData;
 		var infoWindowOrtsname = obj.name;
 		var concept = obj.concept;
 		var concept_id = obj.concept_id;
@@ -366,7 +367,7 @@ class MapController {
 
 		var markerSelected = L.marker([coordinates.lat, coordinates.lng], { icon: greenIcon }).bounce(2);
 
-		markerSelected.addTo(map);
+		markerSelected.addTo(this.map);
 
 		markerSelected.location_id = location_id;
 		markerSelected.location_name = infoWindowOrtsname;
@@ -376,16 +377,16 @@ class MapController {
 		appManager.map_controller.closeAllInfoWindows();
 
 
-		user_input_marker = markerSelected; /*global user_input_marker*/
+		this.user_input_marker = markerSelected; /*global user_input_marker*/
 
 
 		var infoWindowContent = [
 			"<div class='inputWrapper'>",
-			"" + translateInfoWindowText(infoWindowOrtsname, concept, bezeichnung, current_user) + "<br>",
-			"<div id='dialect_wrapper'><span id='i_span_2' style='display:inline-block'>" + the_word_dialect[current_language] + ":&nbsp;" + "</span>" + "<div id='dialect_infowindow' data-submited-answer=" + aeusserung_id + " style='display:inline-block'>" + selected_dialect + "</div></div>",
+			"" + this.translateInfoWindowText(infoWindowOrtsname, concept, bezeichnung, appManager.data_manager.user_data.current_user) + "<br>",
+			"<div id='dialect_wrapper'><span id='i_span_2' style='display:inline-block'>" + appManager.data_manager.getTranslation("the_word_dialect") + ":&nbsp;" + "</span>" + "<div id='dialect_infowindow' data-submited-answer=" + aeusserung_id + " style='display:inline-block'>" + appManager.data_manager.selected_dialect + "</div></div>",
 			"<div class='infbtnwrapper'>",
-			"<button style='display:inline-block;margin-right:5px;' id='edit_input' type='button' class='ifw_change_dialect btn btn-primary btn-sm'>" + change_answer[current_language] + " " + change_input[current_language] + "</button>",
-			"<button style='display:inline-block;' id='change_dialect' type='button' class='ifw_change_dialect btn btn-primary btn-sm'>" + change_dialect[current_language] + "</button>",
+			"<button style='display:inline-block;margin-right:5px;' id='edit_input' type='button' class='ifw_change_dialect btn btn-primary btn-sm'>" + appManager.data_manager.getTranslation("change_answer") + " " + appManager.data_manager.getTranslation("change_input") + "</button>",
+			"<button style='display:inline-block;' id='change_dialect' type='button' class='ifw_change_dialect btn btn-primary btn-sm'>" + appManager.data_manager.getTranslation("change_dialect") + "</button>",
 			"</div>"
 		].join("");
 
@@ -401,13 +402,13 @@ class MapController {
 			content.find('#change_dialect').on('click', function() {
 				info_window_dialect_change = true;
 				current_infowindow = popup;
-				get_dialects(function() { openDialectModal(); });
+				appManager.data_loader.get_dialects(function() { openDialectModal(); });
 			});
 
 			content.find('#edit_input').off('click').on('click', function() {
 				//editInputA(infoWindowOrtsname,concept,bezeichnung,aeusserung_id/*,concept_id,infowindow,true,location_id*/);
-				info_window_answer_change = true;
-				editInputA(aeusserung_id, concept_id, location_id, concept);
+				appManager.map_controller.info_window_answer_change = true;
+				appManager.ui_controller.editInputA(aeusserung_id, concept_id, location_id, concept);
 				marker_to_change = markerSelected;
 			});
 
@@ -425,7 +426,90 @@ class MapController {
 
 
 
+	/*When location is choosen show polygon will check if this location's polygon exists else it will get it from the database*/
+	/**
+	 * After Choosing a locations from the location data tables. Get the location's polygon and display it.
+	 * @param  {String} g_location    [description]
+	 * @param  {Int} g_location_id [description]
+	 * @param  {Int} index         [description]
+	 *
+	 */
+	showPolygon(g_location, g_location_id, zoom_active) {
+		jQuery.ajax({
+			url: ajax_object.ajax_url,
+			type: 'POST',
+			data: {
+				action: 'getPolygonGemeinde',
+				location_id: g_location_id,
+				searchedGemeinde: g_location,
+			},
+			success: function(response) {
+				if (!appManager.data_manager.getData("existingLocations").data_value) appManager.data_manager.addData("existingLocations", [])
+				appManager.data_manager.getData("existingLocations").data_value.push(JSON.parse(response).location_id);
+				appManager.map_controller.addGeometry(JSON.parse(response).polygonCoordinates, JSON.parse(response));
 
+
+				if (zoom_active) {
+					if (appManager.map_controller.map.getZoom() > 6) {
+						appManager.map_controller.map.setZoom(6);
+					}
+				}
+
+
+				var lat = appManager.map_controller.geo_manager.parseGeoDataFormated(JSON.parse(response).centerCoordinates).geoData.lat;
+				var lng = appManager.map_controller.geo_manager.parseGeoDataFormated(JSON.parse(response).centerCoordinates).geoData.lng;
+
+				appManager.map_controller.centerCoordinates_locations.push({
+					'id': JSON.parse(response).location_id,
+					'lat': lat,
+					'lng': lng
+				});
+
+				if (zoom_active) {
+					appManager.map_controller.map.flyTo([lat, lng], 10, { animate: true, duration: 0.5 });
+				}
+
+				if (appManager.ui_controller.stage == 5) {
+					appManager.ui_controller.stage = 6;
+
+					setTimeout(function() {
+						jQuery('#word_span').popover('show');
+						displayTooltips(true);
+					}, 2000);
+				}
+
+			}
+		}); //ajax end
+
+	}
+
+
+	chooseGemiendeOutsideOfAlpineConvention() {
+
+	  // map.setOptions({ draggableCursor: 'crosshair' });
+	  jQuery('#location_span').attr('data-content', appManager.data_manager.getTranslation("click_on_location")); // click_on_location 'Click your location on the map.'
+
+	  if (appManager.ui_controller.choosing_location_mode) {
+
+
+	    L.DomUtil.addClass(this.map._container, 'crosshair-cursor-enabled');
+	    // event_choose_loc = map.on("click", function(event) {
+
+	    if (!appManager.ui_controller.inside_location_listener_added) {
+
+	      this.map.on("click", function(event) {
+
+	        if (appManager.ui_controller.choosing_location_mode) {
+	          var latitude = event.latlng.lat;
+	          var longitude = event.latlng.lng;
+	          appManager.data_loader.get_location_and_display(latitude, longitude);
+	          appManager.ui_controller.inside_location_listener_added = true;
+	        }
+
+	      });
+	    }
+	  }
+	}
 
 	closeAllInfoWindows(location_infoWindow_only) {
 
@@ -447,7 +531,7 @@ class MapController {
 		var text = '';
 
 
-		if (current_user.localeCompare(author) != 0) {
+		if (appManager.data_manager.user_data.current_user.localeCompare(author) != 0) {
 
 			var string = author;
 			var substring = "anonymousCrowder_";
@@ -457,7 +541,7 @@ class MapController {
 
 			}
 
-			switch (current_language) {
+			switch (appManager.data_manager.current_language) {
 				case 0:
 					text = "In " + ort + " sagt " + author + " zu<br> <span id='i_span_2'>" + concept + ": </span>" + "<span id='i_span_1'>\"" + bezeichnung + "\"</span>";
 					break;
@@ -473,7 +557,7 @@ class MapController {
 			}
 		} else {
 
-			switch (current_language) {
+			switch (appManager.data_manager.current_language) {
 				case 0:
 					text = "Ihre Antwort:<br>" + "In " + ort + " sagt man zu <br><span id='i_span_2'>" + concept + ": </span>" + "<span id='i_span_1'>\"" + bezeichnung + "\"</span>";
 					break;
@@ -534,7 +618,7 @@ class MapController {
 		this.pixioverlay.removeMarker(marker);
 
 		if (num_entries <= 0) {
-			delete location_markers[marker.location_id];
+			delete appManager.map_controller.location_markers[marker.location_id];
 
 		} else if (cur_user_entries <= 0) {
 			color = "blue";
@@ -544,7 +628,7 @@ class MapController {
 			new_marker.aeusserungen_count = marker.aeusserungen_count;
 			new_marker.location_name = marker.location_name;
 			new_marker.user_marker = false;
-			location_markers[marker.location_id] = new_marker;
+			appManager.map_controller.location_markers[marker.location_id] = new_marker;
 
 		} else if (cur_user_entries > 0) {
 
@@ -555,7 +639,7 @@ class MapController {
 			new_marker.aeusserungen_count = marker.aeusserungen_count;
 			new_marker.location_name = marker.location_name;
 			new_marker.user_marker = true;
-			location_markers[marker.location_id] = new_marker;
+			appManager.map_controller.location_markers[marker.location_id] = new_marker;
 
 		}
 
@@ -636,13 +720,13 @@ class MapController {
 
 		this.pixioverlay.removePolygonOrLine(current_feature);
 		if (has_aesserungen) {
-			old_feature = appManager.map_controller.addPixiPolygon(current_feature.originalPolygon, current_feature.originalType, "0x009900", "0x009900", 0.1);
-			old_feature['selected'] = current_feature['selected'];
-			old_feature['location'] = current_feature['location'];
+			this.old_feature = appManager.map_controller.addPixiPolygon(current_feature.originalPolygon, current_feature.originalType, "0x009900", "0x009900", 0.1);
+			this.old_feature['selected'] = current_feature['selected'];
+			this.old_feature['location'] = current_feature['location'];
 		} else {
-			old_feature = appManager.map_controller.addPixiPolygon(current_feature.originalPolygon, current_feature.originalType, "0x0000ff", "0x0000ff", 0.1);
-			old_feature['selected'] = current_feature['selected'];
-			old_feature['location'] = current_feature['location'];
+			this.old_feature = appManager.map_controller.addPixiPolygon(current_feature.originalPolygon, current_feature.originalType, "0x0000ff", "0x0000ff", 0.1);
+			this.old_feature['selected'] = current_feature['selected'];
+			this.old_feature['location'] = current_feature['location'];
 		}
 		this.pixioverlay.completeDraw();
 	}
@@ -669,7 +753,7 @@ class MapController {
 	 *
 	 */
 	calculateCenter() {
-		center = this.map.getCenter();
+		this.center = this.map.getCenter();
 	}
 
 

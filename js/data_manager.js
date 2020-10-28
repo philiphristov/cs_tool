@@ -8,9 +8,27 @@ class DataManager {
     this.modal_list = new Object()
     this.translations = new Object()
     this.user_data = new Object()
+
+    /**
+     * States and Variables
+     */
+    this.modals_initialized = false
     this.dialect_modal_initialized = false
+    this.concepts_modal_initialized = false
     this.current_language = 0
     this.selected_dialect
+    this.va_phase
+    this.submitedAnswers_indexed = new Object()
+    this.current_concept_index = -1
+    this.saved_location_index
+    this.current_dialect_index
+    this.url_concept_id
+    this.session_answer_count
+    this.unanswered_concepts = new Object()
+    
+    this.top_concepts
+    this.top_users
+    this.top_locations
   }
 
   test() {
@@ -22,7 +40,13 @@ class DataManager {
   }
 
   getData(key_data) {
-    return this.data_list[key_data]
+    var data_to_return
+    if (this.data_list[key_data]) {
+      data_to_return = this.data_list[key_data]
+    }else{
+      data_to_return = false
+    }
+    return data_to_return
   }
 
   addDataTable(key_data, new_data) {
@@ -45,27 +69,19 @@ class DataManager {
     this.translations[key] = value
   }
 
-  getTranslation(key, single_element = true, array_elements = false) {
+  getTranslation(key, single_element = true, array_elements = false, index=0) {
     try {
-      // if (arguments.length == 1) {
-      //       return this.translations[key][current_language]
-      //     } else if (arguments.length > 1) {
-      //       if (arguments[2]) {
-      //         return this.translations[key]
-      //       }else if (arguments[1]) {
-      //         return this.translations[key][arguments[1]]
-      //       }
-      //     }
       if (single_element) {
-        return this.translations[key][this.current_language]
+        return this.translations[key][appManager.data_manager.current_language]
       } else if (array_elements) {
         return this.translations[key]
       } else {
-        return this.translations[key][0]
+        return this.translations[key][index]
       }
 
     } catch (e) {
       console.log(e)
+      console.log(key)
     }
 
   }
@@ -92,8 +108,15 @@ class DataManager {
       var crowder_lang = obj.crowder_lang; //null;
       appManager.data_manager.selected_dialect = obj.crowder_dialect;
     }
+    console.log("CUrrent lang " + crowder_lang)
     //console.log(obj);
-    this.user_data = obj
+    
+    if(crowder_lang){
+      crowder_lang = 0
+    }
+
+    appManager.data_manager.user_data = obj
+    appManager.data_manager.current_language = crowder_lang
   }
 
 
@@ -108,7 +131,6 @@ class DataManager {
     var data = [];
 
     var wikidata_img_url = url.plugins_Url + '/assets/images/wikidata.png';
-    console.log(wikidata_img_url)
     var wikidata_img = "<img class='wikidata_image' src='" + wikidata_img_url + "'/>"
 
 
@@ -141,7 +163,7 @@ class DataManager {
         filtered_name = name;
       }
 
-      if (origin == 'concept' && i < important_concepts_count) {
+      if (origin == 'concept' && i < appManager.data_manager.getData("important_concepts_count").data_value) {
         res.column1.html = '<div class="va_phase_hidden">' + filtered_name + ' va_phase=' + in_data[i].va_phase + ' </div><div  title="' + name + '" class="dataparent"><span class="dataspan"><i title="' + appManager.data_manager.getTranslation("important_concepts_texts") + '" class="fa fa-exclamation-triangle" aria-hidden="true"></i>' + in_data[i].name + '</span>' + wiki_el + '</div>';
       } else if (origin == 'concept') {
         res.column1.html = '<div class="va_phase_hidden"> ' + filtered_name + ' va_phase=' + in_data[i].va_phase + ' </div><div title="' + name + '" class="dataparent"><span class="dataspan">' + name + '</span>' + wiki_el + '</div>';
@@ -297,8 +319,8 @@ class DataManager {
 
 
                             /*remove choosen marker for previous selected dialect */
-                            if (current_dialect_index != -1) {
-                              var row = table.row(current_dialect_index).node();
+                            if (appManager.data_manager.current_dialect_index != -1) {
+                              var row = table.row(appManager.data_manager.current_dialect_index).node();
                               jQuery(row).removeClass('green_row');
                               jQuery(row).find('.fa-check').remove();
                             }
@@ -360,8 +382,8 @@ class DataManager {
                             }
 
                             /*mark new dialect as selected*/
-                            current_dialect_index = appManager.data_manager.get_dialect_index(appManager.data_manager.selected_dialect, table); //datatable_dialects.rows().data().length - 1;
-                            var row = table.row(current_dialect_index).node();
+                            appManager.data_manager.current_dialect_index = appManager.data_manager.get_dialect_index(appManager.data_manager.selected_dialect, table); //datatable_dialects.rows().data().length - 1;
+                            var row = table.row(appManager.data_manager.current_dialect_index).node();
                             jQuery(row).addClass('green_row');
                             var icon = jQuery('<i class="fa fa-check" aria-hidden="true"></i>');
                             jQuery(row).find('.dataspan').prepend(icon);
@@ -376,15 +398,15 @@ class DataManager {
 
 
                             /*remove choosen marker for previous selected dialect */
-                            if (current_dialect_index != -1) {
-                              var row = table.row(current_dialect_index).node();
+                            if (appManager.data_manager.current_dialect_index != -1) {
+                              var row = table.row(appManager.data_manager.current_dialect_index).node();
                               jQuery(row).removeClass('green_row');
                               jQuery(row).find('.fa-check').remove();
                             }
 
                             /*mark new dialect as selected*/
-                            current_dialect_index = appManager.data_manager.get_dialect_index(appManager.data_manager.selected_dialect, table); //datatable_dialects.rows().data().length - 1;
-                            var row = table.row(current_dialect_index).node();
+                            appManager.data_manager.current_dialect_index = appManager.data_manager.get_dialect_index(appManager.data_manager.selected_dialect, table); //datatable_dialects.rows().data().length - 1;
+                            var row = table.row(appManager.data_manager.current_dialect_index).node();
                             jQuery(row).addClass('green_row');
                             var icon = jQuery('<i class="fa fa-check" aria-hidden="true"></i>');
                             jQuery(row).find('.dataspan').prepend(icon);
@@ -405,7 +427,7 @@ class DataManager {
                           }
 
                           if (userLoggedIn) {
-                            save_user_dialect(current_user);
+                            save_user_dialect(appManager.data_manager.user_data.current_user);
                           }
 
                         }, 500);
@@ -443,7 +465,7 @@ class DataManager {
 
 
             /*mark selected dialect green*/
-            if (current_dialect_index != index) {
+            if (appManager.data_manager.current_dialect_index != index) {
 
               var row = table.row(index).node();
               jQuery(row).addClass('green_row');
@@ -454,21 +476,21 @@ class DataManager {
 
             //for unsetting green on pervious selection
 
-            if (current_dialect_index != -1 && current_dialect_index != index) {
+            if (appManager.data_manager.current_dialect_index != -1 && appManager.data_manager.current_dialect_index != index) {
 
-              var row = table.row(current_dialect_index).node();
+              var row = table.row(appManager.data_manager.current_dialect_index).node();
               jQuery(row).removeClass('green_row');
               jQuery(row).find('.fa-check').remove();
             }
 
-            current_dialect_index = index;
+            appManager.data_manager.current_dialect_index = index;
 
             jQuery("#dialekt_span").text(appManager.data_manager.getTranslation("lang_dialect_abbreviation") + " : " + name);
             appManager.data_manager.selected_dialect = name;
             //console.log(jQuery("#welcome_modal").data('bs.modal')._isShown);
 
             if (userLoggedIn) {
-              save_user_dialect(current_user);
+              save_user_dialect(appManager.data_manager.user_data.current_user);
             }
 
             if (info_window_dialect_change) {
@@ -541,9 +563,9 @@ class DataManager {
 
     /*mark dialect as selected in the data table*/
     if (appManager.data_manager.selected_dialect) {
-      var current_dialect_index = appManager.data_manager.get_dialect_index(appManager.data_manager.selected_dialect, table);
+      appManager.data_manager.current_dialect_index = appManager.data_manager.get_dialect_index(appManager.data_manager.selected_dialect, table);
 
-      var row = table.row(current_dialect_index).node();
+      var row = table.row(appManager.data_manager.current_dialect_index).node();
       jQuery(row).addClass('green_row');
       var icon = jQuery('<i class="fa fa-check" aria-hidden="true"></i>');
       jQuery(row).find('.dataspan').prepend(icon);
@@ -602,7 +624,7 @@ class DataManager {
 
         var buttonparent;
 
-        if (!modals_initialized && origin == "concept") {
+        if (!appManager.data_manager.modals_initialized && origin == "concept") {
 
           buttonparent = jQuery('<div class="list_modal_button_parent"></div>');
           jQuery('#concept_modal_table_filter').after(buttonparent);
@@ -616,20 +638,20 @@ class DataManager {
             if (!prevent_randomclick) {
               do_image_modal = false;
               prevent_randomclick = true;
-              if (jQuery('#concepts_modal').find('input').val() != "") datatable_concepts.search('').columns().search('').draw();
+              if (jQuery('#concepts_modal').find('input').val() != "") appManager.data_manager.getDataTable("datatable_concepts").search('').columns().search('').draw();
               var rnd_idx = getRandomUnAnsweredConceptIndex();
 
               if (rnd_idx > 0) {
 
-                datatable_concepts.row(rnd_idx).scrollTo();
-                // deSelectTableEntry(current_concept_index[va_phase]);
-                deSelectTableEntry(current_concept_index);
-                selectTableEntry(rnd_idx);
-                // current_concept_index[va_phase] = rnd_idx;
-                current_concept_index = rnd_idx;
+                appManager.data_manager.getDataTable("datatable_concepts").row(rnd_idx).scrollTo();
+                // deSelectTableEntry(appManager.data_manager.current_concept_index[va_phase]);
+                appManager.ui_controller.deSelectTableEntry(appManager.data_manager.current_concept_index);
+                appManager.ui_controller.selectTableEntry(rnd_idx);
+                // appManager.data_manager.current_concept_index[va_phase] = rnd_idx;
+                appManager.data_manager.current_concept_index = rnd_idx;
 
                 var name = concepts_cur_lang[rnd_idx].name;
-                concept_selected = true;
+                appManager.ui_controller.concept_selected = true;
                 var id = concepts_cur_lang[rnd_idx].id;
 
                 jQuery('#word_span').text(name);
@@ -656,7 +678,7 @@ class DataManager {
           /*button for suggesting new concepts*/
           var suggest_button = jQuery('<div class="list_modal_button_in_search"><i class="fa fa-plus" aria-hidden="true"></i> ' + appManager.data_manager.getTranslation("suggest_texts") + '</div>');
           buttonparent.append(suggest_button);
-          if (!userLoggedIn) suggest_button.addClass('disabled_feature');
+          if (!appManager.data_manager.user_data.userLoggedIn) suggest_button.addClass('disabled_feature');
 
           suggest_button.on('click', function() {
             if (!userLoggedIn) {
@@ -717,7 +739,7 @@ class DataManager {
             //ALTERNATIVE VA PHASE SWITCH (CHECKBOX STYLE)
             switch (selected_va_phase) {
               case 1:
-                current_concept_index = -1;
+                appManager.data_manager.current_concept_index = -1;
                 if (jQuery("#va_phase_wrapper_concept_list").find('.va_phase_1').hasClass('active')) {
                   jQuery("#va_phase_wrapper_concept_list").find('.va_phase_1').removeClass('active');
                   jQuery(".list_modal_button_va_phase.va_phase_1").find('i').removeClass('fa-check-square').addClass('fa-square');
@@ -728,7 +750,7 @@ class DataManager {
                 }
                 break;
               case 2:
-                current_concept_index = -1;
+                appManager.data_manager.current_concept_index = -1;
                 if (jQuery("#va_phase_wrapper_concept_list").find('.va_phase_2').hasClass('active')) {
                   jQuery("#va_phase_wrapper_concept_list").find('.va_phase_2').removeClass('active');
                   jQuery(".list_modal_button_va_phase.va_phase_2").find('i').removeClass('fa-check-square').addClass('fa-square');
@@ -739,7 +761,7 @@ class DataManager {
                 }
                 break;
               case 3:
-                current_concept_index = -1;
+                appManager.data_manager.current_concept_index = -1;
                 if (jQuery("#va_phase_wrapper_concept_list").find('.va_phase_3').hasClass('active')) {
                   jQuery("#va_phase_wrapper_concept_list").find('.va_phase_3').removeClass('active');
                   jQuery(".list_modal_button_va_phase.va_phase_3").find('i').removeClass('fa-check-square').addClass('fa-square');
@@ -753,7 +775,7 @@ class DataManager {
 
 
 
-            active_va_phases = check_active_concepts(jQuery('#va_phase_wrapper_concept_list').find('.active'));
+            active_va_phases = appManager.ui_controller.check_active_concepts(jQuery('#va_phase_wrapper_concept_list').find('.active'));
 
             /**
              * filter displayed concepts using hiddenhtml elment in the rows for the va_phase
@@ -769,9 +791,9 @@ class DataManager {
             table.columns().search(regexFromMyArray, true).draw();
 
 
-            if (current_concept_index != -1 && jQuery('#va_phase_wrapper_concept_list').find('.va_phase_' + va_phase).hasClass("active")) {
-              datatable_concepts.row(current_concept_index).scrollTo();
-              selectTableEntry(current_concept_index);
+            if (appManager.data_manager.current_concept_index != -1 && jQuery('#va_phase_wrapper_concept_list').find('.va_phase_' + va_phase).hasClass("active")) {
+              appManager.data_manager.getDataTable("datatable_concepts").row(appManager.data_manager.current_concept_index).scrollTo();
+              appManager.ui_controller.selectTableEntry(appManager.data_manager.current_concept_index);
             }
 
             jQuery(".wikidata_icon").off("click");
@@ -805,17 +827,17 @@ class DataManager {
 
               var name = row_data.concept_name; //concepts_cur_lang[index].name;
 
-              concept_selected = true;
+              appManager.ui_controller.concept_selected = true;
               var id = row_data.concept_id; //concepts_cur_lang[index].id;
 
-              // if (current_concept_index[va_phase] != -1) deSelectTableEntry(current_concept_index[va_phase]);
-              if (current_concept_index != -1) deSelectTableEntry(current_concept_index);
+              // if (appManager.data_manager.current_concept_index[va_phase] != -1) deSelectTableEntry(appManager.data_manager.current_concept_index[va_phase]);
+              if (appManager.data_manager.current_concept_index != -1) appManager.ui_controller.deSelectTableEntry(appManager.data_manager.current_concept_index);
 
-              selectTableEntry(index);
+              appManager.ui_controller.selectTableEntry(index);
 
 
-              // current_concept_index[va_phase] = index;
-              current_concept_index = index;
+              // appManager.data_manager.current_concept_index[va_phase] = index;
+              appManager.data_manager.current_concept_index = index;
 
 
               jQuery('#image_modal').modal('hide');
@@ -844,16 +866,16 @@ class DataManager {
 
 
 
-        if (!modals_initialized) {
+        if (!appManager.data_manager.modals_initialized) {
 
           setTimeout(function() {
             modal.modal('hide');
           }, 1); //for closing modal on init
 
-          concepts_modal_initialized = true;
+          appManager.data_manager.concepts_modal_initialized = true;
 
-          if (locations_modal_modals_initialized && concepts_modal_initialized) {
-            modals_initialized = true;
+          if (appManager.data_manager.locations_modal_modals_initialized && appManager.data_manager.concepts_modal_initialized) {
+            appManager.data_manager.modals_initialized = true;
 
             if (language_is_set) jQuery('#welcomeback_modal').modal('hide');
           }
@@ -934,7 +956,7 @@ class DataManager {
 
         var buttonparent;
 
-        if (!modals_initialized && origin == "location") {
+        if (!appManager.data_manager.modals_initialized && origin == "location") {
 
           buttonparent = jQuery('<div class="list_modal_button_parent"></div>');
           jQuery('#location_modal_table_filter').after(buttonparent);
@@ -944,7 +966,7 @@ class DataManager {
 
 
           search_location_button.on('click', function() {
-            init_location_search_mode(modal);
+            appManager.ui_controller.init_location_search_mode(modal);
           });
 
         }
@@ -962,15 +984,15 @@ class DataManager {
             if (origin == "concept") {
 
             } else {
-              location_selected = true;
-              if (url_concept_id) {
-                concept_selected = true;
+              appManager.ui_controller.location_selected = true;
+              if (appManager.data_manager.url_concept_id) {
+                appManager.ui_controller.concept_selected = true;
               }
 
-              var name = locations[index].name;
-              var id = locations[index].id;
+              var name = appManager.data_manager.getData("locations").data_value[index].name;
+              var id = appManager.data_manager.getData("locations").data_value[index].id;
 
-              if (saved_location_index != index) {
+              if (appManager.data_manager.saved_location_index != index) {
 
                 var row = table.row(index).node();
                 jQuery(row).addClass('green_row');
@@ -981,15 +1003,15 @@ class DataManager {
 
               //for unsetting green on pervious selection
 
-              if (saved_location_index != -1 && saved_location_index != index) {
+              if (appManager.data_manager.saved_location_index != -1 && appManager.data_manager.saved_location_index != index) {
 
-                var row = table.row(saved_location_index).node();
+                var row = table.row(appManager.data_manager.saved_location_index).node();
                 jQuery(row).removeClass('green_row');
                 jQuery(row).find('.fa-check').remove();
               }
 
-              saved_location_index = index;
-              saved_location_name = name;
+              appManager.data_manager.saved_location_index = index;
+              // saved_location_name = name;
 
 
               jQuery('#custom_modal_backdrop').fadeOut(function() { jQuery(this).remove() });
@@ -1003,7 +1025,7 @@ class DataManager {
               var g_location = name;
               var g_location_id = id;
 
-              var index = contains.call(existingLocations, g_location_id);
+              var index = appManager.data_manager.contains(appManager.data_manager.getData("existingLocations").data_value, g_location_id);
 
               appManager.data_loader.get_display_polygon(g_location, g_location_id, true);
               appManager.map_controller.remove_location_search_listener();
@@ -1012,24 +1034,24 @@ class DataManager {
 
             setTimeout(function() { modal.modal('hide'); }, 220); //delay to show select effect
           } else if (origin == "location" /*&& !choosing_location_mode*/ ) { /*when the location dataTable is empty - let user choose a Gemeinde*/
-            appManager.data_manager.init_location_search_mode(modal);
+            appManager.ui_controller.init_location_search_mode(modal);
 
           }
 
         });
-        if (!modals_initialized) {
+        if (!appManager.data_manager.modals_initialized) {
 
 
 
           setTimeout(function() { modal.modal('hide'); }, 1); //for closing modal on init
 
-          locations_modal_modals_initialized = true;
+          appManager.data_manager.locations_modal_modals_initialized = true;
 
 
-          if (locations_modal_modals_initialized && concepts_modal_initialized) {
-            modals_initialized = true;
+          if (appManager.data_manager.locations_modal_modals_initialized && appManager.data_manager.concepts_modal_initialized) {
+            appManager.data_manager.modals_initialized = true;
 
-            if (language_is_set) jQuery('#welcomeback_modal').modal('hide');
+            if (appManager.data_manager.user_data.language_is_set) jQuery('#welcomeback_modal').modal('hide');
           }
 
         }
@@ -1075,9 +1097,11 @@ class DataManager {
     jQuery('#concepts_modal').removeClass('fade');
     jQuery('#concepts_modal').modal({});
 
-    va_phase = 1;
+    var va_phase = 1;
     //datatable_concepts = createListModal(jQuery('#concepts_modal'),filtered_data_phase1,"concept"); //  concept_data
-    datatable_concepts = appManager.data_manager.createConceptsListModal(jQuery('#concepts_modal'), appManager.data_manager.getData("concept_data").data_value, "concept");
+    var datatable_concepts = appManager.data_manager.createConceptsListModal(jQuery('#concepts_modal'), appManager.data_manager.getData("concept_data").data_value, "concept");
+    appManager.data_manager.addDataTable("datatable_concepts", datatable_concepts)
+
     //bugfix for scrollerplugin (resize not working properly)
     var modal = jQuery(this);
     var oldheight = modal.find('.dataTables_scroll').height();
@@ -1085,7 +1109,7 @@ class DataManager {
     modal.find('input').on('input', function() {
       var height = modal.find('.dataTables_scroll').height()
       if (oldheight != height) {
-        datatable_concepts.scroller.measure();
+        appManager.data_manager.getDataTable("datatable_concepts").scroller.measure();
         oldheight = height;
       }
     })
@@ -1105,7 +1129,8 @@ class DataManager {
     jQuery('#locations_modal').removeClass('fade');
     jQuery('#locations_modal').modal({});
 
-    datatable_locations = appManager.data_manager.createLocationListModal(jQuery('#locations_modal'), location_data, "location");
+    var datatable_locations = appManager.data_manager.createLocationListModal(jQuery('#locations_modal'), appManager.data_manager.getData("location_data").data_value, "location");
+    appManager.data_manager.addDataTable("datatable_locations", datatable_locations)
 
     jQuery('[data-toggle="tooltip"]').tooltip();
     //bugfix for scrollerplugin (resize not working properly)
@@ -1178,40 +1203,26 @@ class DataManager {
 
 
 
-  populate_concept_span() {
-    var url = new URL(window.location.href);
-    url_concept_id = url.searchParams.get("concept");
-    if (url_concept_id) {
-      var already_submited = false;
-      //console.log(submitedAnswers_indexed);
-      for (var key in submitedAnswers_indexed) {
-        var obj = submitedAnswers_indexed[key];
 
-        //console.log(obj['concept_id']);
-        //console.log(url_concept_id);
-
-        if (obj['concept_id'] == url_concept_id) {
-          already_submited = true;
-          concept_selected = false;
-          url_concept_id = null;
-          break;
-        }
-      }
-
-      if (!already_submited) {
-        //console.log("populate span");
-        url_choosen_concept = appManager.data_manager.getData("concepts_index_by_id").data_value[va_phase][url_concept_id];
-        jQuery('#word_span').text(url_choosen_concept.name);
-        jQuery('#word_span').attr("data-id_concept", url_concept_id);
-        jQuery('#word_span').attr("data-id_concept_index", url_choosen_concept.index);
-        setDynamicContent('list');
-      } else {
-        //console.log("don't populate span");
-      }
-
+  checkEnteredConcepts() {
+    for (var i = 0; i < submitedAnswers.length; i++) {
+      appManager.data_manager.checkTableEntry(submitedAnswers[i].concept_id);
     }
 
   }
+
+  /**
+   * [checkEnteredConcepts_indexed description]
+   *
+   */
+  checkEnteredConcepts_indexed() {
+    for (var key in appManager.data_manager.submitedAnswers_indexed) {
+      if (appManager.data_manager.submitedAnswers_indexed.hasOwnProperty(key)) {
+        appManager.data_manager.checkTableEntry(appManager.data_manager.submitedAnswers_indexed[key].concept_id);
+      }
+    }
+  }
+
 
   createUnansweredIndex() {
 
@@ -1222,12 +1233,12 @@ class DataManager {
 
     var answers_by_concept_index = {};
 
-    for (var key in submitedAnswers_indexed) {
-      var sub = submitedAnswers_indexed[key];
+    for (var key in appManager.data_manager.submitedAnswers_indexed) {
+      var sub = appManager.data_manager.submitedAnswers_indexed[key];
       answers_by_concept_index[sub.concept_id] = sub;
     };
 
-
+    var concepts_cur_lang = appManager.data_manager.getData("concepts_cur_lang")
     for (var key in concepts_cur_lang) {
       var concept = concepts_cur_lang[key];
       if (concept.va_phase == 1 && answers_by_concept_index[concept['id']] == null) c_phase1_idx.push(appManager.data_manager.getData("concepts_index_by_id").data_value[concept['id']]);
@@ -1247,7 +1258,7 @@ class DataManager {
 
     for (var i = 0; i < active_va_phases.length; i++) {
       var active_phase = active_va_phases[i];
-      active_concepts = active_concepts.concat(unanswered_concepts[active_phase - 1]);
+      active_concepts = active_concepts.concat(this.unanswered_concepts[active_phase - 1]);
     }
 
     var length = active_concepts.length;
@@ -1268,7 +1279,7 @@ class DataManager {
 
   checkDataBeforeListModal(marker) {
     //console.log(marker);
-    if (aeusserungen_by_locationindex[marker.location_id] != null && !check_user_aesserungen_in_location(marker.location_name)) {
+    if (appManager.data_manager.getData("aeusserungen_by_locationindex").data_value[marker.location_id] != null && !appManager.data_manager.check_user_aesserungen_in_location(marker.location_name)) {
       appManager.data_manager.openLocationListModal(marker);
 
     } else {
@@ -1283,7 +1294,7 @@ class DataManager {
   createLocationListTable(table_data) {
 
 
-    va_phase = 1;
+    this.va_phase = 1;
     var searching = false;
     if (table_data.length > 10) searching = true;
 
@@ -1317,7 +1328,7 @@ class DataManager {
         zeroRecords: emptyTable
       },
       fnInitComplete: function(settings) {
-
+        var current_location_list_object = appManager.data_manager.getData("current_location_list_object").data_value
         var name = current_location_list_object[Object.keys(current_location_list_object)[0]].ortsname;
         var num = table_data.length; //Object.keys(current_location_list_object).length;
         var usergen = current_location_list_object[Object.keys(current_location_list_object)[0]].usergen;
@@ -1341,8 +1352,8 @@ class DataManager {
           jQuery('#location_list_modal').find('.custom_header').after(head);
         }
 
-        check_free_space_few_elements(num, few_elements);
-        add_few_elements_click_listener(current_location_list_object[Object.keys(current_location_list_object)[0]]);
+        appManager.ui_controller.check_free_space_few_elements(num, few_elements);
+        appManager.ui_controller.add_few_elements_click_listener(current_location_list_object[Object.keys(current_location_list_object)[0]]);
 
         var animating = false;
 
@@ -1463,13 +1474,13 @@ class DataManager {
 
           table.clear().draw();
 
-          var active_location_data = check_active_concepts(jQuery('#va_phase_wrapper_location_list').find('.active'));
+          var active_location_data = appManager.ui_controller.check_active_concepts(jQuery('#va_phase_wrapper_location_list').find('.active'));
           var list_elements = [];
 
           if (active_location_data.length > 0) {
             for (var i = 0; i < active_location_data.length; i++) {
-              table.rows.add(filtered_location_submited_data_phases[active_location_data[i] - 1]);
-              filtered_location_submited_data_phases[active_location_data[i] - 1].map(function(el) {
+              table.rows.add(appManager.data_manager.getData("filtered_location_submited_data_phases").data_value[active_location_data[i] - 1]);
+              appManager.data_manager.getData("filtered_location_submited_data_phases").data_value[active_location_data[i] - 1].map(function(el) {
                 list_elements.push(el);
               })
             }
@@ -1483,8 +1494,8 @@ class DataManager {
           table.columns.adjust().draw(); // Redraw the DataTable
 
           jQuery('.location_header_num').text(list_elements.length);
-          check_free_space_few_elements(list_elements.length, few_elements);
-          add_few_elements_click_listener(current_location_list_object[Object.keys(current_location_list_object)[0]]);
+          appManager.ui_controller.check_free_space_few_elements(list_elements.length, few_elements);
+          appManager.ui_controller.add_few_elements_click_listener(current_location_list_object[Object.keys(current_location_list_object)[0]]);
 
         });
 
@@ -1506,7 +1517,7 @@ class DataManager {
             var cur_obj = current_location_list_object[aeusserung_id];
             var row_to_update = jQuery(row);
 
-            editInputA(aeusserung_id, cur_obj.id_concept, cur_obj.id_geo, cur_obj.konzept, row_to_update);
+            appManager.ui_controller.editInputA(aeusserung_id, cur_obj.id_concept, cur_obj.id_geo, cur_obj.konzept, row_to_update);
           })
 
           jQuery(row).find('.delete_button_in_list').on('click', function() {
@@ -1518,7 +1529,7 @@ class DataManager {
 
             deleteInput(aeusserung_id, cur_obj.ortsname, cur_obj.id_concept, cur_obj.id_geo);
 
-            var remaining_num = Object.keys(aeusserungen_by_locationindex[cur_obj.id_geo]).length
+            var remaining_num = Object.keys(appManager.data_manager.getData("aeusserungen_by_locationindex").data_value[cur_obj.id_geo]).length
             jQuery('#location_list_modal').find('.location_header_num').text(remaining_num);
 
             if (check_for_current_user_entries(cur_obj.id_geo) <= 0) {
@@ -1554,14 +1565,14 @@ class DataManager {
       var user_data = false;
       var aeusserung_id = cur_data.id_aeusserung;
 
-      if (submitedAnswers_indexed[aeusserung_id] != null) {
+      if (appManager.data_manager.submitedAnswers_indexed[aeusserung_id] != null) {
         user_data = true;
       }
 
       var concept_name = cur_data.konzept;
       var author = cur_data.author;
       var word = cur_data.word;
-      var concept_idx = get_table_index_by_va_phase(cur_data.id_concept);
+      var concept_idx = appManager.data_loader.get_table_index_by_va_phase(cur_data.id_concept);
       var token = cur_data.tokenisiert;
 
       if (author.indexOf("anonymous") != -1) {
@@ -1570,7 +1581,7 @@ class DataManager {
 
       data[i] = [];
 
-      if (concept_idx < important_concepts_count) {
+      if (concept_idx < appManager.data_manager.getData("important_concepts_count").data_value) {
         data[i].push('<div ae_id="' + aeusserung_id + '" con_id="' + cur_data.id_concept + '" user_data="' + user_data +
           '" class="dataparent" title="' + concept_name +
           '" token="' + token + '"><span class="dataspan"><i title="' + appManager.data_manager.getTranslation("important_concepts_texts") +
@@ -1598,34 +1609,37 @@ class DataManager {
   openLocationListModal(marker) {
 
     if (jQuery('#custom_modal_backdrop').length < 1) {
-      showCustomModalBackdrop();
+      appManager.ui_controller.showCustomModalBackdrop();
     }
 
-    current_location_list_object = aeusserungen_by_locationindex[marker.location_id];
+    var current_location_list_object = appManager.data_manager.getData("aeusserungen_by_locationindex").data_value[marker.location_id];
 
+    appManager.data_manager.addData("current_location_list_object",current_location_list_object)
     // find the right object from the array
     function rightOne(obj) {
       return obj.id == marker.location_id;
     }
 
     //the correct translation of the location
-    var c_location_name = locations[locations.findIndex(rightOne)].name;
+    var c_location_name = appManager.data_manager.getData("locations").data_value[appManager.data_manager.getData("locations").data_value.findIndex(rightOne)].name;
     current_location_list_object[Object.keys(current_location_list_object)[0]].ortsname = c_location_name;
     current_location_list_object[Object.keys(current_location_list_object)[0]].usergen = marker.user_marker;
 
-    filtered_location_submited_data_phase1 = appManager.data_manager.getLocationListTableData(appManager.data_manager.filter_array(current_location_list_object, 1));
-    filtered_location_submited_data_phase2 = appManager.data_manager.getLocationListTableData(appManager.data_manager.filter_array(current_location_list_object, 2));
-    filtered_location_submited_data_phase3 = appManager.data_manager.getLocationListTableData(appManager.data_manager.filter_array(current_location_list_object, 3));
+    var filtered_location_submited_data_phase1 = appManager.data_manager.getLocationListTableData(appManager.data_manager.filter_array(current_location_list_object, 1));
+    var filtered_location_submited_data_phase2 = appManager.data_manager.getLocationListTableData(appManager.data_manager.filter_array(current_location_list_object, 2));
+    var filtered_location_submited_data_phase3 = appManager.data_manager.getLocationListTableData(appManager.data_manager.filter_array(current_location_list_object, 3));
 
 
     // FUTURE CHECK BOX FUNCTIONALITY
-    filtered_location_submited_data_phases = [];
+    var filtered_location_submited_data_phases = [];
     filtered_location_submited_data_phases.push(filtered_location_submited_data_phase1);
     filtered_location_submited_data_phases.push(filtered_location_submited_data_phase2);
     filtered_location_submited_data_phases.push(filtered_location_submited_data_phase3);
 
-    current_location_list_table_data = [].concat.apply([], filtered_location_submited_data_phases);
+    appManager.data_manager.addData("filtered_location_submited_data_phases", filtered_location_submited_data_phases)
 
+    var current_location_list_table_data = [].concat.apply([], filtered_location_submited_data_phases);
+    appManager.data_manager.addData("current_location_list_table_data", current_location_list_table_data)
     jQuery('#location_list_table').DataTable().destroy();
     jQuery('#location_list_modal').find('.location_header_parent').remove();
     jQuery('#location_list_modal').find('#va_phase_wrapper_location_list').remove();
@@ -1758,7 +1772,7 @@ class DataManager {
 
     ];
 
-    this.translations["leftmenu_contents"]  = [
+    this.translations["leftmenu_contents"] = [
       "#left_menu_content_ger",
       "#left_menu_content_fr",
       "#left_menu_content_ita",
@@ -1815,14 +1829,38 @@ class DataManager {
     this.translations["clear_images"] = translations["CS_clear_images"]
   }
 
+
+
+  /**
+   * [reMeasureDatatables description]
+   *
+   */
+  reMeasureDatatables() {
+
+    if (this.getDataTable("current_location_list_table") != null) {
+      this.getDataTable("current_location_list_table").scroller.measure();
+    }
+
+    if (this.getDataTable("datatable_locations") != null) {
+      this.getDataTable("datatable_locations").scroller.measure();
+    }
+
+    if (this.getDataTable("datatable_concepts") != null) {
+      this.getDataTable("datatable_concepts").scroller.measure();
+    }
+
+    if (this.getDataTable("current_top_list_table") != null) {
+      this.getDataTable("current_top_list_table").scroller.measure();
+    }
+  }
   /**
    * Check if user(only for not logged in users) has submited answers and delete crowder_id cookie if he has no answers.
    *
    */
   check_user_aeusserungen() {
-    if (isEmpty(submitedAnswers_indexed) && !userLoggedIn) {
+    if (appManager.data_manager.isEmpty(appManager.data_manager.submitedAnswers_indexed) && !appManager.data_manager.user_data.userLoggedIn) {
       eraseCookie("crowder_id");
-      current_user = null;
+      appManager.data_manager.user_data.current_user = null;
     }
   }
 
@@ -1834,9 +1872,9 @@ class DataManager {
   check_user_aesserungen_in_location(location) {
     var has_aeusserungen = false;
 
-    for (var key in submitedAnswers_indexed) {
-      if (submitedAnswers_indexed.hasOwnProperty(key)) {
-        if (location.localeCompare(submitedAnswers_indexed[key].location) == 0) {
+    for (var key in appManager.data_manager.submitedAnswers_indexed) {
+      if (appManager.data_manager.submitedAnswers_indexed.hasOwnProperty(key)) {
+        if (location.localeCompare(appManager.data_manager.submitedAnswers_indexed[key].location) == 0) {
           has_aeusserungen = true;
           break;
         }
@@ -1846,7 +1884,7 @@ class DataManager {
   }
 
   check_for_entries(location_id) {
-    var array_to_check = aeusserungen_by_locationindex[location_id];
+    var array_to_check = appManager.data_manager.getData("aeusserungen_by_locationindex").data_value[location_id];
     var entered_aeusserungen = 0;
 
     for (var key in array_to_check) {
@@ -1860,12 +1898,12 @@ class DataManager {
   }
 
   check_for_current_user_entries(location_id) {
-    var array_to_check = aeusserungen_by_locationindex[location_id];
+    var array_to_check = appManager.data_manager.getData("aeusserungen_by_locationindex").data_value[location_id];
     var user_entered_aeusserungen = 0;
 
     for (var key in array_to_check) {
       if (array_to_check.hasOwnProperty(key)) {
-        if (current_user.localeCompare(array_to_check[key].author) == 0) {
+        if (appManager.data_manager.user_data.current_user.localeCompare(array_to_check[key].author) == 0) {
           user_entered_aeusserungen++;
         }
       }
@@ -1893,49 +1931,161 @@ class DataManager {
     return arr;
   }
 
- get_dialect_index(dialect, datatable) {
-  var index_dalect;
-  var arr = Array.from(datatable.rows().data());
-  var index = arr.findIndex(function(element) {
-    var dialect_name = element.name;
-    if (dialect_name.localeCompare(dialect) == 0) return index_dalect = arr.indexOf(element);
-  });
-  return index_dalect;
-}
+  get_dialect_index(dialect, datatable) {
+    var index_dalect;
+    var arr = Array.from(datatable.rows().data());
+    var index = arr.findIndex(function(element) {
+      var dialect_name = element.name;
+      if (dialect_name.localeCompare(dialect) == 0) return index_dalect = arr.indexOf(element);
+    });
+    return index_dalect;
+  }
 
 
   /**
- * Replace special characters(from different languages) to siplify the search.
- * Used to simplify searching for concept or location that have spacial characters in different languages.
- * @param  {String} _in [description]
- * @return {String}     [description]
+   * Replace special characters(from different languages) to siplify the search.
+   * Used to simplify searching for concept or location that have spacial characters in different languages.
+   * @param  {String} _in [description]
+   * @return {String}     [description]
+   */
+  replaceSpecialChars(_in) {
+
+
+    var res = _in.replace(/[äÄáÁàÀâÂãÃåÅæÆ]/g, 'a')
+      .replace(/[çÇčČ]/g, 'c')
+      .replace(/[éÉèÈêÊëË]/g, 'e')
+      .replace(/[íÍìÌîÎïÏîĩĨĬĭ]/g, 'i')
+      .replace(/[ñÑ]/g, 'n')
+      .replace(/[öÖóÓòÒôÔœŒ]/g, 'o')
+      .replace(/[ßšŠ]/g, 's')
+      .replace(/[úÚùÙûÛ]/g, 'u')
+      .replace(/[ýÝŷŶŸÿ]/g, 'n')
+      .replace(/[áÁàÀâÂãÃåÅæÆ]/g, 'a')
+      .replace(/[çÇ]/g, 'c')
+      .replace(/[éÉèÈêÊëË]/g, 'e')
+      .replace(/[íÍìÌîÎïÏîĩĨĬĭ]/g, 'i')
+      .replace(/[ñÑ]/g, 'n')
+      .replace(/[óÓòÒôÔœŒ]/g, 'o')
+      .replace(/[ß]/g, 's')
+      .replace(/[üÜúÚùÙûÛ]/g, 'u')
+      .replace(/[ýÝŷŶŸÿ]/g, 'n')
+      .replace(/[Žž]/g, 'z');
+
+    return res;
+
+  }
+
+  /**
+ * Check if an object is empty.
+ * @param  {Object}  obj [description]
+ * @return {Boolean}     [description]
  */
-replaceSpecialChars(_in) {
+isEmpty(obj) {
+  for (var prop in obj) {
+    if (obj.hasOwnProperty(prop))
+      return false;
+  }
+
+  return true;
+}
 
 
-  var res = _in.replace(/[äÄáÁàÀâÂãÃåÅæÆ]/g, 'a')
-    .replace(/[çÇčČ]/g, 'c')
-    .replace(/[éÉèÈêÊëË]/g, 'e')
-    .replace(/[íÍìÌîÎïÏîĩĨĬĭ]/g, 'i')
-    .replace(/[ñÑ]/g, 'n')
-    .replace(/[öÖóÓòÒôÔœŒ]/g, 'o')
-    .replace(/[ßšŠ]/g, 's')
-    .replace(/[úÚùÙûÛ]/g, 'u')
-    .replace(/[ýÝŷŶŸÿ]/g, 'n')
-    .replace(/[áÁàÀâÂãÃåÅæÆ]/g, 'a')
-    .replace(/[çÇ]/g, 'c')
-    .replace(/[éÉèÈêÊëË]/g, 'e')
-    .replace(/[íÍìÌîÎïÏîĩĨĬĭ]/g, 'i')
-    .replace(/[ñÑ]/g, 'n')
-    .replace(/[óÓòÒôÔœŒ]/g, 'o')
-    .replace(/[ß]/g, 's')
-    .replace(/[üÜúÚùÙûÛ]/g, 'u')
-    .replace(/[ýÝŷŶŸÿ]/g, 'n')
-    .replace(/[Žž]/g, 'z');
+/**
+ * Checks if the user's answer is a dublicate(he has already entered the same answer for the same concept in that location).
+ * @param  {Array}  answer [description]
+ * @return {Boolean}        [description]
+ */
+isDuplicate_indexed(answer) {
+  //var answer = {concept: concept, user_input : input_word , location: location};
+  var exists = false;
 
-  return res;
+  for (var key in this.submitedAnswers_indexed) {
+    if (this.submitedAnswers_indexed.hasOwnProperty(key)) {
+      var cnt = this.submitedAnswers_indexed[key].concept;
+      var input = this.submitedAnswers_indexed[key].user_input;
+      var lct = this.submitedAnswers_indexed[key].location;
+      var lct_id = this.submitedAnswers_indexed[key].location_id;
+
+      if (input.localeCompare(answer.user_input) == 0 && lct.localeCompare(answer.location) == 0 && cnt.localeCompare(answer.concept) == 0) {
+        exists = true;
+        break;
+      }
+    }
+  }
+
+  return exists;
 
 }
+
+
+/**
+ * check if string contains a substring
+ * @param  {String} needle [description]
+ *
+ */
+contains(needle) {
+  // Per spec, the way to identify NaN is that it is not equal to itself
+  var findNaN = needle !== needle;
+  var indexOf;
+
+  if (!findNaN && typeof Array.prototype.indexOf === 'function') {
+    indexOf = Array.prototype.indexOf;
+  } else {
+    indexOf = function(needle) {
+      var i = -1,
+        index = -1;
+
+      for (i = 0; i < this.length; i++) {
+        var item = this[i];
+
+        if ((findNaN && item !== item) || item === needle) {
+          index = i;
+          break;
+        }
+      }
+
+      return index;
+    };
+  }
+
+  return indexOf.call(this, needle) > -1;
+};
+
+/**
+ * Adjust the Concept Datatables depending on Submited Answers to concepts 
+ * @param  {Int} _concept_id Concept ID
+ *
+ */
+ checkTableEntry(_concept_id) {
+
+  var table_index_t = appManager.data_loader.get_table_index_by_va_phase(_concept_id);
+
+
+
+  var row = appManager.data_manager.getDataTable("datatable_concepts").row(table_index_t).node();
+  jQuery(row).addClass('green_row');
+
+  var icon = jQuery('<i class="fa fa-check" aria-hidden="true"></i>');
+
+  if (jQuery(row).find('.fa-check').length == 0) {
+    jQuery(row).find('.dataspan').prepend(icon);
+  }
+
+
+  jQuery(row).find('.fa-exclamation-triangle').remove();
+
+  if (jQuery(row).find('.num_of_answers').length == 0) {
+    jQuery(row).find('.dataparent').append(jQuery('<div class="num_of_answers">1</div>'));
+    if (jQuery(row).find(".wiki_info").length == 1) jQuery(row).find('.num_of_answers').addClass("answers_with_wiki");
+  } else {
+    jQuery(row).find('.num_of_answers').text(appManager.data_manager.getData("num_of_answers_by_id").data_value[parseInt(_concept_id)]);
+    if (jQuery(row).find(".wiki_info").length == 1) jQuery(row).find('.num_of_answers').addClass("answers_with_wiki");
+  }
+
+}
+
+
+
 
 
 }

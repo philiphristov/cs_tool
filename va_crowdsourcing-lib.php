@@ -154,9 +154,9 @@ function enqueue_scripts() {
 
 		
 
-		wp_enqueue_script('actions_ajax');
+		// wp_enqueue_script('actions_ajax');
 		// wp_enqueue_script('content_interactions');
-		wp_enqueue_script('generateMap');
+		// wp_enqueue_script('generateMap');
 		// wp_localize_script('generateMap','url',array('plugins_Url'=>plugin_dir_url(__FILE__)));
 		// wp_enqueue_script('audio_controller');
 		// wp_enqueue_script('image_upload_controller');

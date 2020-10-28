@@ -12,9 +12,12 @@ class AppManager {
 		this.state = new Object()
 	}
 
+	/**
+	 * First Ajax calls, loading initial data
+	 * @return {[type]} [description]
+	 */
 	init_app() {
 		console.log("App Running")
-		this.data_manager.test()
 
 		var success_get_translations = function(response) {
 			console.log("SUCCESS 1")
@@ -40,8 +43,13 @@ class AppManager {
 			var coords = response.polygon;
 			var center = response.center;
 
+			// init image upload form
+			appManager.ui_controller.image_uploader.init_image_upload_form();
+
 			appManager.map_controller.addGeometryAlps(coords, center);
 			appManager.ui_controller.initTool();
+
+
 		}
 
 		var on_error = function(jqXHR, exception) {
@@ -58,9 +66,9 @@ class AppManager {
 		let ajax_getBordersGeoData = this.data_loader.init_ajax_call("POST", { action: "getBordersGeoData", geoData: 'alpenKonvention' }, success_getBordersGeoData, on_error, false)
 
 		ajax_get_translations.execute()
-			.then(function(){ajax_request_user_data.execute()})
-			.then(function(){ajax_getConceptCount.execute()})
-			.then(function(){ajax_getBordersGeoData.execute()})
+			.then(function() { ajax_request_user_data.execute() })
+			.then(function() { ajax_getConceptCount.execute() })
+			.then(function() { ajax_getBordersGeoData.execute() })
 
 	}
 
@@ -68,6 +76,8 @@ class AppManager {
 	 * Initializes the CS-Tool. Performes Ajax Calls to fetch data(locations, user entries) from the server. The gathered data is then stored in global variables.
 	 */
 	startMainTool() {
+
+		console.log("START MAIN TOOL")
 		var current_language = appManager.data_manager.current_language
 
 		appManager.data_loader.create_cookie(current_language);
@@ -81,7 +91,7 @@ class AppManager {
 		// wavesurfer = add_wavesurfer();
 
 		//translating text in register modal
-		if (!userLoggedIn) {
+		if (!appManager.data_manager.user_data.userLoggedIn) {
 			appManager.ui_controller.add_translation_register_modal();
 		}
 
@@ -89,16 +99,16 @@ class AppManager {
 			appManager.ui_controller.display_dialect();
 		}
 
-		if (!language_is_set) appManager.ui_controller.showCustomBackdrop();
+		if (!appManager.data_manager.user_data.language_is_set) appManager.ui_controller.showCustomBackdrop();
 
 		jQuery('#submitanswer').on('click', function() {
-			console.log('submit button: Before saveword() ' + submit_button_clicked);
+			console.log('submit button: Before saveword() ' + appManager.ui_controller.submit_button_clicked);
 
-			if (!submit_button_clicked) {
+			if (!appManager.ui_controller.submit_button_clicked) {
 				appManager.data_loader.saveWord();
-				submit_button_clicked = true;
+				appManager.ui_controller.submit_button_clicked = true;
 				setTimeout(function() {
-					submit_button_clicked = false; /*console.log('submit button: After saveword() ' + submit_button_clicked);*/
+					appManager.ui_controller.submit_button_clicked = false; /*console.log('submit button: After saveword() ' + appManager.ui_controller.submit_button_clicked);*/
 				}, 1000);
 
 
@@ -107,7 +117,7 @@ class AppManager {
 		})
 
 		/*set user language -> to be saved as current_language in the wp_db*/
-		if (!language_is_set) { // (crowder_lang/*.localeCompare("") == 0*/ || current_language != crowder_lang || /*crowder_lang.localeCompare("-1") ||*/ crowder_lang == -1 ) && userLoggedIn
+		if (!appManager.data_manager.user_data.language_is_set) { // (crowder_lang/*.localeCompare("") == 0*/ || current_language != crowder_lang || /*crowder_lang.localeCompare("-1") ||*/ crowder_lang == -1 ) && userLoggedIn
 
 			jQuery.ajax({
 				url: ajax_object.ajax_url,
@@ -137,7 +147,8 @@ class AppManager {
 				action: 'getImage',
 			},
 			success: function(response) {
-				images = JSON.parse(response);
+				var images = JSON.parse(response);
+				appManager.data_manager.addData("images", images )
 			}
 		});
 
@@ -154,9 +165,11 @@ class AppManager {
 				lang: current_language
 			},
 			success: function(response) {
-				locations = JSON.parse(response);
+				var locations = JSON.parse(response);
+				appManager.data_manager.addData("locations", locations)
 
-				location_data = appManager.data_manager.getTableData(locations, "location");
+				var location_data = appManager.data_manager.getTableData(locations, "location");
+				appManager.data_manager.addData("location_data", location_data)
 				appManager.data_manager.initLocationsModal();
 			}
 		});
@@ -177,8 +190,6 @@ class AppManager {
 				appManager.data_manager.addData("concepts_cur_lang", JSON.parse(response));
 				let concepts_cur_lang = appManager.data_manager.getData("concepts_cur_lang");
 
-				//init image upload form
-				appManager.ui_controller.image_uploader.init_image_upload_form();
 
 
 				//init concept data with all concept data
@@ -186,11 +197,11 @@ class AppManager {
 				appManager.data_manager.addData("concept_data", concept_data);
 
 
-				va_phase = 0;
+				appManager.data_manager.va_phase = 0;
 
 				appManager.data_manager.initConceptModal();
 
-				allow_select = true;
+				appManager.ui_controller.allow_select = true;
 
 				let concepts_index_by_id = appManager.data_manager.createConceptIndexList(concepts_cur_lang.data_value);
 				appManager.data_manager.addData("concepts_index_by_id", concepts_index_by_id)
@@ -199,12 +210,12 @@ class AppManager {
 					appManager.ui_controller.setDynamicContent();
 					jQuery('#left_menu').css('opacity', '0');
 					jQuery('#left_menu').show();
-					offsetHeight = document.getElementById('left_menu').offsetHeight;
-					jQuery('#left_menu').css('bottom', -offsetHeight);
+					appManager.ui_controller.offsetHeight = document.getElementById('left_menu').offsetHeight;
+					jQuery('#left_menu').css('bottom', -appManager.ui_controller.offsetHeight);
 
 					jQuery('#left_menu').css('opacity', '1');
 					jQuery('#left_menu').animate({
-						bottom: '+=' + offsetHeight
+						bottom: '+=' + appManager.ui_controller.offsetHeight
 					}, 400, 'swing', function() {
 						setTimeout(function() {
 							appManager.ui_controller.menu_is_up();
@@ -213,7 +224,7 @@ class AppManager {
 				});
 
 				appManager.data_loader.get_submited_answers_current_user(function() {
-					unanswered_concepts = appManager.data_manager.createUnansweredIndex();
+					var unanswered_concepts = appManager.data_manager.createUnansweredIndex();
 				});
 
 
@@ -226,7 +237,7 @@ class AppManager {
 				jQuery('#left_menu').hammer().bind("swipedown", function() {
 					if (jQuery(this).is(':visible')) {
 						jQuery(this).animate({
-							bottom: '-=' + offsetHeight
+							bottom: '-=' + appManager.ui_controller.offsetHeight
 						}, 400, 'swing', function() {
 							jQuery(this).hide();
 							jQuery('#fake_arrow').show();
@@ -238,7 +249,7 @@ class AppManager {
 				jQuery('#swipe-up-div').hammer().bind("swipedown", function() {
 					if (jQuery('#left_menu').is(':visible')) {
 						jQuery('#left_menu').animate({
-							bottom: '-=' + offsetHeight
+							bottom: '-=' + appManager.ui_controller.offsetHeight
 						}, 400, 'swing', function() {
 							jQuery('#left_menu').hide();
 							jQuery('#fake_arrow').show();
@@ -251,7 +262,7 @@ class AppManager {
 				jQuery('#swipe-up-div').hammer().bind("swipeup", function() {
 					if (jQuery('#left_menu').is(':hidden')) {
 						jQuery('#left_menu').show().animate({
-							bottom: '+=' + offsetHeight
+							bottom: '+=' + appManager.ui_controller.offsetHeight
 						}, 400, 'swing', function() {
 							jQuery('.popover').show();
 						});
@@ -262,7 +273,7 @@ class AppManager {
 				jQuery('#fake_arrow').hammer().bind("swipeup", function() {
 					if (jQuery('#left_menu').is(':hidden')) {
 						jQuery('#left_menu').show().animate({
-							bottom: '+=' + offsetHeight
+							bottom: '+=' + appManager.ui_controller.offsetHeight
 						}, 400, 'swing', function() {
 							jQuery('.popover').show();
 						});
@@ -285,44 +296,39 @@ class AppManager {
 
 
 				jQuery('#word_span').on('click', function() {
-
 					appManager.ui_controller.handleWordSpanClick();
 				});
 
 				jQuery('#location_span').on('click', function() {
-
 					appManager.ui_controller.handleLocationSpanClick();
-
 				})
 
 
 				jQuery('#user_input').on('keyup', function() {
 
-					if (process_restarted) {
+					if (appManager.ui_controller.process_restarted) {
 						appManager.map_controller.closeAllInfoWindows();
-						process_restarted = false;
+						appManager.ui_controller.process_restarted = false;
 					}
 
-					if (concept_selected && location_selected && stage == 3) {
-						word_entered = true;
+					if (appManager.ui_controller.concept_selected && appManager.ui_controller.location_selected && appManager.ui_controller.stage == 3) {
+						appManager.ui_controller.word_entered = true;
 
 						setTimeout(function() {
 
-							showPopUp();
+							appManager.ui_controller.showPopUp();
 						}, 100);
 
 					}
 
-
-
 				})
-
 
 
 			} //success
 
 		});
 
+		console.log("MAIN TOOL STARTED")
 
 
 	}
