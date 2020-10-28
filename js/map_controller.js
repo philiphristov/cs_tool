@@ -400,16 +400,16 @@ class MapController {
 			var content = jQuery(popup.getContent());
 
 			content.find('#change_dialect').on('click', function() {
-				info_window_dialect_change = true;
-				current_infowindow = popup;
-				appManager.data_loader.get_dialects(function() { openDialectModal(); });
+				appManager.data_manager.info_window_dialect_change = true;
+				appManager.map_controller.current_infowindow = popup;
+				appManager.data_loader.get_dialects(function() { appManager.ui_controller.openDialectModal(); });
 			});
 
 			content.find('#edit_input').off('click').on('click', function() {
 				//editInputA(infoWindowOrtsname,concept,bezeichnung,aeusserung_id/*,concept_id,infowindow,true,location_id*/);
 				appManager.map_controller.info_window_answer_change = true;
 				appManager.ui_controller.editInputA(aeusserung_id, concept_id, location_id, concept);
-				marker_to_change = markerSelected;
+				appManager.map_controller.marker_to_change = markerSelected;
 			});
 
 		});

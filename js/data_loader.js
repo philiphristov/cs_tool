@@ -330,7 +330,7 @@ class DataLoader {
 											concept_id: concept_id,
 											concept_index: concept_index
 										};
-										if (!appManager.data_manager.getData("submitedAnswers")) appManager.data_manager.addData("submitedAnswers",[])
+										if (!appManager.data_manager.getData("submitedAnswers")) appManager.data_manager.addData("submitedAnswers", [])
 										appManager.data_manager.getData("submitedAnswers").data_value.push(answer);
 										appManager.data_manager.submitedAnswers_indexed[id_aeusserung] = answer;
 										delete appManager.data_manager.unanswered_concepts[concept_index];
@@ -411,7 +411,7 @@ class DataLoader {
 												jQuery('#word_span').popover('show');
 
 												jQuery('.pop_word_span').parent().on('click', function() {
-													handleWordSpanClick();
+													appManager.ui_controller.handleWordSpanClick();
 												}).addClass('c_hover');
 											}, 1000);
 											appManager.ui_controller.process_restarted = true;
@@ -498,7 +498,7 @@ class DataLoader {
 			data: {
 				action: 'save_user_dialect',
 				user_name: parsed_name.toLowerCase(),
-				user_dialect: selected_dialect
+				user_dialect: appManager.data_manager.selected_dialect
 			},
 			success: function(response) {
 				console.log("Dialect Added");
@@ -593,6 +593,15 @@ class DataLoader {
 		} else var expires = "";
 		document.cookie = name + "=" + value + expires + "; path=/";
 	}
+
+	/**
+ * Delete cookie.
+ * @param  {String} name [description]
+ *
+ */
+ eraseCookie(name) {
+  createCookie(name, "", -1);
+}
 
 
 	add_submited_answers_to_index_submitedAnswers_array(arrayA, can_edit) {
@@ -706,6 +715,28 @@ class DataLoader {
 		for (var i = 0; i < arr.length; i++) {
 			if (arr[i].id == obj.id) return true;
 		}
+	}
+
+
+
+	sendSuggestEmail(entry, callback) {
+
+		jQuery.ajax({
+			url: ajax_object.ajax_url,
+			type: 'POST',
+			data: {
+				action: 'sendSuggestEmail',
+				entry: entry,
+				user: current_user,
+				email: user_email,
+			},
+			success: function(response) {
+
+				callback();
+			}
+
+		});
+
 	}
 
 }

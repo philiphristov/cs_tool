@@ -1056,7 +1056,7 @@ class UIController {
 
 
 		jQuery('#toplistmodal').on('show.bs.modal', function(e) {
-			appManager.ui_controller.current_top_list_table = appManager.ui_controller.createTopListTable(current_highscoredata);
+			appManager.ui_controller.current_top_list_table = appManager.ui_controller.createTopListTable(appManager.data_manager.getData("current_highscoredata").data_value);
 		})
 
 		jQuery('#toplistmodal').on('shown.bs.modal', function(e) {
@@ -1451,8 +1451,8 @@ class UIController {
 		appManager.data_manager.url_concept_id = url.searchParams.get("concept");
 		if (appManager.data_manager.url_concept_id) {
 			var already_submited = false;
-			for (var key in submitedAnswers_indexed) {
-				var obj = submitedAnswers_indexed[key];
+			for (var key in appManager.data_manager.submitedAnswers_indexed) {
+				var obj = appManager.data_manager.submitedAnswers_indexed[key];
 
 				if (obj['concept_id'] == appManager.data_manager.url_concept_id) {
 					already_submited = true;
@@ -1561,7 +1561,8 @@ class UIController {
 
 		}
 
-		current_highscoredata = table_data;
+		var current_highscoredata = table_data;
+		appManager.data_manager.addData("current_highscoredata", current_highscoredata)
 		jQuery('#highscore_select_modal').modal('hide');
 		jQuery('#toplistmodal').modal();
 
@@ -1605,7 +1606,7 @@ class UIController {
 
 		var table = jQuery('#toplistmodal').find('#top_list_table').DataTable({
 
-			data: current_highscoredata,
+			data: appManager.data_manager.getData("current_highscoredata").data_value,
 			deferRender: false, //otherwise .node() won't always work
 			scrollY: "75vh",
 			scrollX: false,
@@ -1842,9 +1843,9 @@ class UIController {
 
 		jQuery('#image_modal').modal('hide');
 		if (appManager.ui_controller.location_selected) {
-			jQuery('#location_span').text(the_word_location[current_language]);
+			jQuery('#location_span').text(appManager.data_manager.getTranslation("the_word_location"));
 			jQuery('#user_input').val('');
-			setDynamicContent('list');
+			appManager.ui_controller.setDynamicContent('list');
 			//stage = 1;
 			appManager.ui_controller.location_selected = false;
 			appManager.ui_controller.word_entered = false;
@@ -1938,8 +1939,8 @@ class UIController {
 
 		var stop = false;
 
-		for (var key in submitedAnswers_indexed) {
-			var oldanswer = submitedAnswers_indexed[key].user_input;
+		for (var key in appManager.data_manager.submitedAnswers_indexed) {
+			var oldanswer = appManager.data_manager.submitedAnswers_indexed[key].user_input;
 			if (oldanswer == new_auesserung) stop = true;
 
 		}
@@ -1951,7 +1952,7 @@ class UIController {
 				row_to_update.find('td:nth-child(2)').first().text("\"" + new_auesserung + "\"");
 			}
 
-			updateAnswers_indexed(id_auesserung, new_auesserung, id_location);
+			appManager.data_manager.updateAnswers_indexed(id_auesserung, new_auesserung, id_location);
 
 			jQuery.ajax({
 				url: ajax_object.ajax_url,
@@ -1963,10 +1964,10 @@ class UIController {
 				},
 				success: function(response) {
 
-					if (info_window_answer_change) {
+					if (appManager.map_controller.info_window_answer_change) {
 						jQuery("#i_span_1").text('"' + new_auesserung + '"');
 					}
-					appManager.ui_controller.info_window_answer_change = false;
+					appManager.map_controller.info_window_answer_change = false;
 				}
 			});
 
@@ -1987,14 +1988,14 @@ class UIController {
 	 */
 	deleteInput(id_auesserung, ort, concept_id, location_id) {
 
-		deleteFromAnswers_indexed(id_auesserung, location_id);
-		change_marker(location_markers[location_id], -1, "green");
+		appManager.data_manager.deleteFromAnswers_indexed(id_auesserung, location_id);
+		appManager.map_controller.change_marker(location_markers[location_id], -1, "green");
 
 		num_of_answers_by_id[concept_id]--;
 		if (num_of_answers_by_id[concept_id] == 0) {
-			deleteFromConceptTable(concept_id);
+			appManager.data_manager.deleteFromConceptTable(concept_id);
 		} else {
-			checkTableEntry(concept_id);
+			appManager.data_manager.checkTableEntry(concept_id);
 		}
 
 		jQuery.ajax({
@@ -2010,15 +2011,15 @@ class UIController {
 			success: function(response) {
 				/*If informant was deleted from db and has no other submited answers, delete cookie and current_user*/
 				var user_deleted = JSON.parse(response);
-				if (user_deleted && isEmpty(submitedAnswers_indexed) && !userLoggedIn) {
-					eraseCookie("crowder_id");
+				if (user_deleted && isEmpty(appManager.data_manager.submitedAnswers_indexed) && !userLoggedIn) {
+					appManager.data_loader.eraseCookie("crowder_id");
 					current_user = null;
 				}
 			}
 		});
 
 		if (old_feature != null && ort.localeCompare(old_feature['location']) == 0) {
-			change_feature_style(old_feature, check_user_aesserungen_in_location(ort));
+			appManager.map_controller.change_feature_style(old_feature, check_user_aesserungen_in_location(ort));
 		}
 	}
 

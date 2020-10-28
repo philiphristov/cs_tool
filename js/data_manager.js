@@ -18,6 +18,7 @@ class DataManager {
     this.current_language = 0
     this.selected_dialect
     this.va_phase
+    this.active_va_phases
     this.submitedAnswers_indexed = new Object()
     this.current_concept_index = -1
     this.saved_location_index
@@ -25,7 +26,7 @@ class DataManager {
     this.url_concept_id
     this.session_answer_count
     this.unanswered_concepts = new Object()
-    
+
     this.top_concepts
     this.top_users
     this.top_locations
@@ -43,7 +44,7 @@ class DataManager {
     var data_to_return
     if (this.data_list[key_data]) {
       data_to_return = this.data_list[key_data]
-    }else{
+    } else {
       data_to_return = false
     }
     return data_to_return
@@ -69,7 +70,7 @@ class DataManager {
     this.translations[key] = value
   }
 
-  getTranslation(key, single_element = true, array_elements = false, index=0) {
+  getTranslation(key, single_element = true, array_elements = false, index = 0) {
     try {
       if (single_element) {
         return this.translations[key][appManager.data_manager.current_language]
@@ -110,8 +111,8 @@ class DataManager {
     }
     console.log("CUrrent lang " + crowder_lang)
     //console.log(obj);
-    
-    if(crowder_lang){
+
+    if (crowder_lang) {
       crowder_lang = 0
     }
 
@@ -337,7 +338,7 @@ class DataManager {
                             dialect_array.push({ id_dialect: new_dialect_id, name: new_dialect_name });
 
 
-                            if (info_window_dialect_change) {
+                            if (appManager.map_controller.info_window_dialect_change) {
 
                               jQuery("#dialect_infowindow").text(appManager.data_manager.selected_dialect);
                               var id_submited_answer = jQuery("#dialect_infowindow").data("submited-answer");
@@ -359,7 +360,7 @@ class DataManager {
 
                               });
 
-                              info_window_dialect_change = false;
+                              appManager.map_controller.info_window_dialect_change = false;
 
 
 
@@ -426,8 +427,8 @@ class DataManager {
 
                           }
 
-                          if (userLoggedIn) {
-                            save_user_dialect(appManager.data_manager.user_data.current_user);
+                          if (appManager.data_manager.user_data.userLoggedIn) {
+                            appManager.data_loader.save_user_dialect(appManager.data_manager.user_data.current_user);
                           }
 
                         }, 500);
@@ -489,11 +490,11 @@ class DataManager {
             appManager.data_manager.selected_dialect = name;
             //console.log(jQuery("#welcome_modal").data('bs.modal')._isShown);
 
-            if (userLoggedIn) {
-              save_user_dialect(appManager.data_manager.user_data.current_user);
+            if (appManager.data_manager.user_data.userLoggedIn) {
+              appManager.data_loader.save_user_dialect(appManager.data_manager.user_data.current_user);
             }
 
-            if (info_window_dialect_change) {
+            if (appManager.map_controller.info_window_dialect_change) {
 
               jQuery("#dialect_infowindow").text(appManager.data_manager.selected_dialect);
               var id_submited_answer = jQuery("#dialect_infowindow").data("submited-answer");
@@ -515,7 +516,7 @@ class DataManager {
 
               });
 
-              info_window_dialect_change = false;
+              appManager.map_controller.info_window_dialect_change = false;
             }
 
             jQuery("#user_dialect").text(appManager.data_manager.selected_dialect);
@@ -681,8 +682,8 @@ class DataManager {
           if (!appManager.data_manager.user_data.userLoggedIn) suggest_button.addClass('disabled_feature');
 
           suggest_button.on('click', function() {
-            if (!userLoggedIn) {
-              prevent_backdrop = true;
+            if (!appManager.data_manager.user_data.userLoggedIn) {
+              appManager.ui_controller.prevent_backdrop = true;
               jQuery('#concepts_modal').modal('hide');
               openWhyRegisterModal();
             } else {
@@ -697,9 +698,9 @@ class DataManager {
 
               suggest_button_submit.off().on('click', function() {
                 if (suggest_field.val() == "") {
-                  markInputRed(suggest_field);
+                  appManager.ui_controller.markInputRed(suggest_field);
                 } else {
-                  sendSuggestEmail(suggest_field.val(), function() {
+                  appManager.data_loader.sendSuggestEmail(suggest_field.val(), function() {
                     suggest_button_submit.fadeOut('fast', function() {
                       jQuery('.input_modal_content').append(feedback_div);
                       feedback_div.fadeIn('fast');
@@ -746,7 +747,7 @@ class DataManager {
                 } else {
                   jQuery("#va_phase_wrapper_concept_list").find('.va_phase_1').addClass('active');
                   jQuery(".list_modal_button_va_phase.va_phase_1").find('i').removeClass('fa-square').addClass('fa-check-square');
-                  va_phase = 1;
+                  appManager.data_manager.va_phase = 1;
                 }
                 break;
               case 2:
@@ -757,7 +758,7 @@ class DataManager {
                 } else {
                   jQuery("#va_phase_wrapper_concept_list").find('.va_phase_2').addClass('active');
                   jQuery(".list_modal_button_va_phase.va_phase_2").find('i').removeClass('fa-square').addClass('fa-check-square');
-                  va_phase = 2;
+                  appManager.data_manager.va_phase = 2;
                 }
                 break;
               case 3:
@@ -768,20 +769,20 @@ class DataManager {
                 } else {
                   jQuery("#va_phase_wrapper_concept_list").find('.va_phase_3').addClass('active');
                   jQuery(".list_modal_button_va_phase.va_phase_3").find('i').removeClass('fa-square').addClass('fa-check-square');
-                  va_phase = 3;
+                  appManager.data_manager.va_phase = 3;
                 }
                 break;
             }
 
 
 
-            active_va_phases = appManager.ui_controller.check_active_concepts(jQuery('#va_phase_wrapper_concept_list').find('.active'));
+            appManager.data_manager.active_va_phases = appManager.ui_controller.check_active_concepts(jQuery('#va_phase_wrapper_concept_list').find('.active'));
 
             /**
              * filter displayed concepts using hiddenhtml elment in the rows for the va_phase
              */
-            if (active_va_phases.length > 0) {
-              var regexFromMyArray = '.*va_phase=(' + active_va_phases.join("|") + ').*'
+            if (appManager.data_manager.active_va_phases.length > 0) {
+              var regexFromMyArray = '.*va_phase=(' + appManager.data_manager.active_va_phases.join("|") + ').*'
 
             } else {
               var regexFromMyArray = '.*va_phase=(0).*'
@@ -1256,8 +1257,8 @@ class DataManager {
 
     var active_concepts = [];
 
-    for (var i = 0; i < active_va_phases.length; i++) {
-      var active_phase = active_va_phases[i];
+    for (var i = 0; i < appManager.data_manager.active_va_phases.length; i++) {
+      var active_phase = appManager.data_manager.active_va_phases[i];
       active_concepts = active_concepts.concat(this.unanswered_concepts[active_phase - 1]);
     }
 
@@ -1514,7 +1515,7 @@ class DataManager {
 
           jQuery(row).find('.change_button_in_list').on('click', function() {
             var aeusserung_id = jQuery(row).find('.dataparent').attr('ae_id');
-            var cur_obj = current_location_list_object[aeusserung_id];
+            var cur_obj = appManager.data_manager.getData("current_location_list_object").data_value[aeusserung_id];
             var row_to_update = jQuery(row);
 
             appManager.ui_controller.editInputA(aeusserung_id, cur_obj.id_concept, cur_obj.id_geo, cur_obj.konzept, row_to_update);
@@ -1525,7 +1526,7 @@ class DataManager {
             table.scroller.measure();
 
             var aeusserung_id = jQuery(row).find('.dataparent').attr('ae_id');
-            var cur_obj = current_location_list_object[aeusserung_id];
+            var cur_obj = appManager.data_manager.getData("current_location_list_object").data_value[aeusserung_id];
 
             deleteInput(aeusserung_id, cur_obj.ortsname, cur_obj.id_concept, cur_obj.id_geo);
 
@@ -1614,7 +1615,7 @@ class DataManager {
 
     var current_location_list_object = appManager.data_manager.getData("aeusserungen_by_locationindex").data_value[marker.location_id];
 
-    appManager.data_manager.addData("current_location_list_object",current_location_list_object)
+    appManager.data_manager.addData("current_location_list_object", current_location_list_object)
     // find the right object from the array
     function rightOne(obj) {
       return obj.id == marker.location_id;
@@ -1859,7 +1860,7 @@ class DataManager {
    */
   check_user_aeusserungen() {
     if (appManager.data_manager.isEmpty(appManager.data_manager.submitedAnswers_indexed) && !appManager.data_manager.user_data.userLoggedIn) {
-      eraseCookie("crowder_id");
+      appManager.data_loader.eraseCookie("crowder_id");
       appManager.data_manager.user_data.current_user = null;
     }
   }
@@ -1976,117 +1977,165 @@ class DataManager {
   }
 
   /**
- * Check if an object is empty.
- * @param  {Object}  obj [description]
- * @return {Boolean}     [description]
- */
-isEmpty(obj) {
-  for (var prop in obj) {
-    if (obj.hasOwnProperty(prop))
-      return false;
-  }
-
-  return true;
-}
-
-
-/**
- * Checks if the user's answer is a dublicate(he has already entered the same answer for the same concept in that location).
- * @param  {Array}  answer [description]
- * @return {Boolean}        [description]
- */
-isDuplicate_indexed(answer) {
-  //var answer = {concept: concept, user_input : input_word , location: location};
-  var exists = false;
-
-  for (var key in this.submitedAnswers_indexed) {
-    if (this.submitedAnswers_indexed.hasOwnProperty(key)) {
-      var cnt = this.submitedAnswers_indexed[key].concept;
-      var input = this.submitedAnswers_indexed[key].user_input;
-      var lct = this.submitedAnswers_indexed[key].location;
-      var lct_id = this.submitedAnswers_indexed[key].location_id;
-
-      if (input.localeCompare(answer.user_input) == 0 && lct.localeCompare(answer.location) == 0 && cnt.localeCompare(answer.concept) == 0) {
-        exists = true;
-        break;
-      }
+   * Check if an object is empty.
+   * @param  {Object}  obj [description]
+   * @return {Boolean}     [description]
+   */
+  isEmpty(obj) {
+    for (var prop in obj) {
+      if (obj.hasOwnProperty(prop))
+        return false;
     }
+
+    return true;
   }
 
-  return exists;
-
-}
 
 
-/**
- * check if string contains a substring
- * @param  {String} needle [description]
- *
- */
-contains(needle) {
-  // Per spec, the way to identify NaN is that it is not equal to itself
-  var findNaN = needle !== needle;
-  var indexOf;
+  /**
+   * Checks if the user's answer is a dublicate(he has already entered the same answer for the same concept in that location).
+   * @param  {Array}  answer [description]
+   * @return {Boolean}        [description]
+   */
+  isDuplicate_indexed(answer) {
+    //var answer = {concept: concept, user_input : input_word , location: location};
+    var exists = false;
 
-  if (!findNaN && typeof Array.prototype.indexOf === 'function') {
-    indexOf = Array.prototype.indexOf;
-  } else {
-    indexOf = function(needle) {
-      var i = -1,
-        index = -1;
+    for (var key in this.submitedAnswers_indexed) {
+      if (this.submitedAnswers_indexed.hasOwnProperty(key)) {
+        var cnt = this.submitedAnswers_indexed[key].concept;
+        var input = this.submitedAnswers_indexed[key].user_input;
+        var lct = this.submitedAnswers_indexed[key].location;
+        var lct_id = this.submitedAnswers_indexed[key].location_id;
 
-      for (i = 0; i < this.length; i++) {
-        var item = this[i];
-
-        if ((findNaN && item !== item) || item === needle) {
-          index = i;
+        if (input.localeCompare(answer.user_input) == 0 && lct.localeCompare(answer.location) == 0 && cnt.localeCompare(answer.concept) == 0) {
+          exists = true;
           break;
         }
       }
+    }
 
-      return index;
-    };
-  }
+    return exists;
 
-  return indexOf.call(this, needle) > -1;
-};
-
-/**
- * Adjust the Concept Datatables depending on Submited Answers to concepts 
- * @param  {Int} _concept_id Concept ID
- *
- */
- checkTableEntry(_concept_id) {
-
-  var table_index_t = appManager.data_loader.get_table_index_by_va_phase(_concept_id);
-
-
-
-  var row = appManager.data_manager.getDataTable("datatable_concepts").row(table_index_t).node();
-  jQuery(row).addClass('green_row');
-
-  var icon = jQuery('<i class="fa fa-check" aria-hidden="true"></i>');
-
-  if (jQuery(row).find('.fa-check').length == 0) {
-    jQuery(row).find('.dataspan').prepend(icon);
   }
 
 
-  jQuery(row).find('.fa-exclamation-triangle').remove();
+  /**
+   * check if string contains a substring
+   * @param  {String} needle [description]
+   *
+   */
+  contains(needle) {
+    // Per spec, the way to identify NaN is that it is not equal to itself
+    var findNaN = needle !== needle;
+    var indexOf;
 
-  if (jQuery(row).find('.num_of_answers').length == 0) {
-    jQuery(row).find('.dataparent').append(jQuery('<div class="num_of_answers">1</div>'));
-    if (jQuery(row).find(".wiki_info").length == 1) jQuery(row).find('.num_of_answers').addClass("answers_with_wiki");
-  } else {
-    jQuery(row).find('.num_of_answers').text(appManager.data_manager.getData("num_of_answers_by_id").data_value[parseInt(_concept_id)]);
-    if (jQuery(row).find(".wiki_info").length == 1) jQuery(row).find('.num_of_answers').addClass("answers_with_wiki");
+    if (!findNaN && typeof Array.prototype.indexOf === 'function') {
+      indexOf = Array.prototype.indexOf;
+    } else {
+      indexOf = function(needle) {
+        var i = -1,
+          index = -1;
+
+        for (i = 0; i < this.length; i++) {
+          var item = this[i];
+
+          if ((findNaN && item !== item) || item === needle) {
+            index = i;
+            break;
+          }
+        }
+
+        return index;
+      };
+    }
+
+    return indexOf.call(this, needle) > -1;
+  };
+
+  /**
+   * Adjust the Concept Datatables depending on Submited Answers to concepts 
+   * @param  {Int} _concept_id Concept ID
+   *
+   */
+  checkTableEntry(_concept_id) {
+
+    var table_index_t = appManager.data_loader.get_table_index_by_va_phase(_concept_id);
+
+
+
+    var row = appManager.data_manager.getDataTable("datatable_concepts").row(table_index_t).node();
+    jQuery(row).addClass('green_row');
+
+    var icon = jQuery('<i class="fa fa-check" aria-hidden="true"></i>');
+
+    if (jQuery(row).find('.fa-check').length == 0) {
+      jQuery(row).find('.dataspan').prepend(icon);
+    }
+
+
+    jQuery(row).find('.fa-exclamation-triangle').remove();
+
+    if (jQuery(row).find('.num_of_answers').length == 0) {
+      jQuery(row).find('.dataparent').append(jQuery('<div class="num_of_answers">1</div>'));
+      if (jQuery(row).find(".wiki_info").length == 1) jQuery(row).find('.num_of_answers').addClass("answers_with_wiki");
+    } else {
+      jQuery(row).find('.num_of_answers').text(appManager.data_manager.getData("num_of_answers_by_id").data_value[parseInt(_concept_id)]);
+      if (jQuery(row).find(".wiki_info").length == 1) jQuery(row).find('.num_of_answers').addClass("answers_with_wiki");
+    }
+
   }
 
-}
+
+  /**
+   * Delete user's answer from submitedAnswers_indexed and aeusserungen_by_locationindex.
+   * @param  {Int} id_auesserung Submited answer Id
+   * @param  {Int} id_location   Location Id
+   *
+   */
+  deleteFromAnswers_indexed(id_auesserung, id_location) {
+    delete this.submitedAnswers_indexed[id_auesserung];
+    delete appManager.data_manager.getData("aeusserungen_by_locationindex").data_value[id_location][id_auesserung];
+  }
 
 
 
+  /**
+   * Update user's answer in submitedAnswers_indexed and aeusserungen_by_locationindex.
+   * @param  {Int} id_auesserung Submited answer Id
+   * @param  {String} input         User's Input
+   * @param  {Int} id_location   Location Id
+   *
+   */
+  updateAnswers_indexed(id_auesserung, input, id_location) {
+    this.submitedAnswers_indexed[id_auesserung].user_input = input;
+    appManager.data_manager.getData("aeusserungen_by_locationindex").data_value[id_location][id_auesserung].word = input;
+  }
 
+
+  /**
+   * [deleteFromConceptTable description]
+   * @param  {Int} _concept_id [description]
+   *
+   */
+  deleteFromConceptTable(_concept_id) {
+
+    var table_index_t = appManager.data_loader.get_table_index_by_va_phase(_concept_id); //concepts_index_by_id[va_phase][parseInt(_concept_id)].index;
+    //var name  = concepts_index_by_id[va_phase][parseInt(_concept_id)].name;
+    var row = datatable_concepts.row(table_index_t).node();
+
+    jQuery(row).removeClass('green_row');
+    jQuery(row).find('.num_of_answers').remove();
+    jQuery(row).find('.dataspan').find('.fa-check').remove();
+
+    if (table_index_t < important_concepts_count) {
+
+      var icon = jQuery('<i class="fa fa-exclamation-triangle" aria-hidden="true"></i>');
+      jQuery(row).find('.dataspan').prepend(icon);
+    }
+    this.unanswered_concepts[table_index_t] = concepts_cur_lang[table_index_t]; //add concept back to unanswered list;
+
+  }
 
 }
 
