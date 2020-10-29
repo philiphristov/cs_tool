@@ -116,9 +116,10 @@ class AppManager {
 
 		})
 
-		/*set user language -> to be saved as current_language in the wp_db*/
-		if (!appManager.data_manager.user_data.language_is_set) { // (crowder_lang/*.localeCompare("") == 0*/ || current_language != crowder_lang || /*crowder_lang.localeCompare("-1") ||*/ crowder_lang == -1 ) && userLoggedIn
-
+		/**
+		 * set user language -> to be saved as current_language in the wp_db
+		 */
+		if (!appManager.data_manager.user_data.language_is_set) {
 			jQuery.ajax({
 				url: ajax_object.ajax_url,
 				type: 'POST',
@@ -133,7 +134,6 @@ class AppManager {
 			});
 		}
 
-		/*ajax call to get all locations in the choosen language*/
 		/**
 		 * Get all images links from server.
 		 * @async
@@ -148,7 +148,7 @@ class AppManager {
 			},
 			success: function(response) {
 				var images = JSON.parse(response);
-				appManager.data_manager.addData("images", images )
+				appManager.data_manager.addData("images", images)
 			}
 		});
 
@@ -184,18 +184,13 @@ class AppManager {
 				lang: current_language
 			},
 			success: function(response) {
-				// appManager.data_manager.addData("concept_data", JSON.parse(response));
-				// let concept_data = appManager.data_manager.getData("concept_data");
 
 				appManager.data_manager.addData("concepts_cur_lang", JSON.parse(response));
 				let concepts_cur_lang = appManager.data_manager.getData("concepts_cur_lang");
 
-
-
 				//init concept data with all concept data
 				let concept_data = appManager.data_manager.getTableData(concepts_cur_lang.data_value, "concept");
 				appManager.data_manager.addData("concept_data", concept_data);
-
 
 				appManager.data_manager.va_phase = 0;
 
@@ -228,9 +223,9 @@ class AppManager {
 				});
 
 
-				/*
-				AUDIO FUNCTION
-				*/
+				/**
+				 * AUDIO Recording FUNCTION
+				 */
 				//add_audio_html();
 
 

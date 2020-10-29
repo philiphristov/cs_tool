@@ -41,9 +41,18 @@ class UIController {
 		this.url = new URL(window.location.href);
 		appManager.data_manager.url_concept_id = this.url.searchParams.get("concept");
 		var current_language = 0;
-		// url_dialect_cluster = url.searchParams.get("dcluster");
-		// url_dialect = url.searchParams.get("dialect");
 
+		if (this.url.searchParams.get("dcluster")) {
+			appManager.data_manager.url_dialect_cluster = this.url.searchParams.get("dcluster");
+		} else {
+			appManager.data_manager.url_dialect_cluster = "";
+		}
+
+		if (this.url.searchParams.get("dialect")) {
+			appManager.data_manager.url_dialect = this.url.searchParams.get("dialect");
+		} else {
+			appManager.data_manager.url_dialect = "";
+		}
 
 		if (appManager.data_manager.url_concept_id) jQuery('body').addClass('bavaria_version');
 
@@ -55,12 +64,10 @@ class UIController {
 			appManager.data_loader.get_dialects();
 		}
 
-
 		this.addModalListeners();
 
 		if (appManager.data_manager.user_data.language_is_set && appManager.data_manager.user_data.crowder_dialect) {
 			console.log("Lang and Dialect Selected");
-
 
 			this.setRandomTitelImage(function() {
 				jQuery('#welcomeback_modal').addClass("fade");
@@ -109,7 +116,6 @@ class UIController {
 				'margin-left': -'5px'
 			});
 
-
 			this.setRandomTitelImage(function() {
 
 				jQuery('#welcome_modal').modal({
@@ -130,6 +136,7 @@ class UIController {
 
 		} else {
 			console.log("Lang And Dialect NOT Selected");
+
 			current_language = -1;
 			appManager.data_manager.current_language = current_language
 			this.initWelcomeModal();
@@ -181,7 +188,6 @@ class UIController {
 			});
 
 			appManager.ui_controller.cycleText(jQuery("#slogan_id"), appManager.data_manager.getTranslation("slogan_texts", false, true), 0);
-
 			appManager.ui_controller.cycleText(jQuery("#navigation_languages"), appManager.data_manager.getTranslation("navigation_languages", false, true), 0);
 
 
@@ -196,7 +202,6 @@ class UIController {
 
 			selectbox.on('change', function() {
 
-				// var select_index =  jQuery('#language_selectSelectBoxItOptions').find(".active").attr('data-id');
 				var current_lang;
 				var idx = jQuery(this).val();
 
@@ -206,8 +211,9 @@ class UIController {
 				select_index = appManager.data_manager.getTranslation("languages", false, true).indexOf(idx);
 
 
-				current_language = select_index;
+				var current_language = select_index;
 				appManager.data_manager.current_language = current_language
+
 				var clone_1;
 				var clone_2;
 				var clone_3;
@@ -382,33 +388,25 @@ class UIController {
 		var offsetHeight = jQuery('#left_menu').outerHeight(); //update height for leftmenu
 
 		if (doc_width <= 330) {
-
 			jQuery('#left_menu').css('padding-left', "9px").css('padding-right', "0px");
 			jQuery('.row_2').css('text-align', 'center');
-
 		} else {
 			jQuery('#left_menu').css('padding-left', "20px").css('padding-right', "20px");
 			jQuery('.row_2').css('text-align', 'right');
-
-
 		}
 
 
 		if (doc_width < 576) {
 			jQuery('.row_1').css('font-size', "17px");
 			jQuery('.row_2').css('font-size', "17px").css('margin-left', "0px");
-
 		}
 
 		if (doc_width > 1400) {
 			jQuery('.row_1').css('font-size', "48px");
 			jQuery('.row_2').css('font-size', "48px");
-
-
 		} else if (doc_width < 1200 && doc_width > 576) {
 			jQuery('.row_1').css('font-size', "3vw");
 			jQuery('.row_2').css('font-size', "3vw");
-
 		}
 
 
@@ -418,7 +416,6 @@ class UIController {
 
 			var modal_margin = 30;
 			if (doc_width < 576) modal_margin = 10;
-
 
 			var modal_height = jQuery('#image_modal').find('.i_fake_body').height() + 23 + modal_margin; //23 = footer, 30 = margin top
 			var offsetHeight_l = document.getElementById('left_menu').offsetHeight + 20; //20 = before;
@@ -446,16 +443,13 @@ class UIController {
 			appManager.ui_controller.addToolTips(appManager.data_manager.getTranslation("tooltips", false, true));
 
 			if (jQuery('.login_popover').parent().parent().hasClass('in')) {
-
 				jQuery('#icon_login').popover('dispose');
 				appManager.ui_controller.addLoginToolTip();
 				appManager.ui_controller.showLoginPopUp();
-
 			}
 
 
 			if (jQuery('.list_modal').hasClass('in')) {
-
 				appManager.ui_controller.displayTooltips(false);
 				if (appManager.data_manager.modals_initialized) {
 					appManager.data_manager.reMeasureDatatables();
@@ -468,11 +462,9 @@ class UIController {
 				var offsetstring = "0 0";
 
 				if (appManager.data_manager.current_language == 0) {
-
 					if (doc_width < 338 && doc_width > 329) { offsetstring = "0 -10"; }
 					if (doc_width < 323) offsetstring = "0 20";
 					if (doc_width < 307) { offsetstring = "0 -25"; }
-
 				}
 
 				if (appManager.data_manager.current_language == 1) {
@@ -483,7 +475,6 @@ class UIController {
 					if (doc_width < 315) offsetstring = "0 10";
 					if (doc_width < 302) offsetstring = "0 -20";
 				}
-
 
 
 				jQuery('#location_span').popover('dispose');
@@ -789,7 +780,7 @@ class UIController {
 
 
 		jQuery("#icon_login").on('click', function() {
-			display_all_register_login_elements();
+			appManager.ui_controller.display_all_register_login_elements();
 			appManager.ui_controller.setRandomTitelImage(function() {
 				jQuery('#register_modal').modal();
 			}, '#register_modal')
@@ -875,7 +866,7 @@ class UIController {
 				appManager.ui_controller.do_image_modal = false;
 
 
-				if (appManager.data_manager.current_concept_index != -1 && jQuery('#va_phase_wrapper_concept_list').find('.va_phase_' + va_phase).hasClass("active")) {
+				if (appManager.data_manager.current_concept_index != -1 && jQuery('#va_phase_wrapper_concept_list').find('.va_phase_' + appManager.data_manager.va_phase).hasClass("active")) {
 					appManager.data_manager.getDataTable("datatable_concepts").row(appManager.data_manager.current_concept_index).scrollTo();
 					appManager.ui_controller.selectTableEntry(appManager.data_manager.current_concept_index);
 				}
@@ -964,7 +955,7 @@ class UIController {
 			})
 
 			//add_anonymous_data_popover();
-			register_login_modal_events();
+			appManager.ui_controller.register_login_modal_events();
 
 		})
 
@@ -1169,7 +1160,6 @@ class UIController {
 		jQuery('#lwa_user_remember').val(appManager.data_manager.getTranslation("enter_username_or_email"));
 
 		try {
-
 			jQuery('#login_btn').contents().last()[0].textContent = white_space + appManager.data_manager.getTranslation("login_btn");
 			jQuery('.login_slider').contents().last()[0].textContent = white_space + appManager.data_manager.getTranslation("login_btn");
 			jQuery('.register_btn').contents().last()[0].textContent = white_space + appManager.data_manager.getTranslation("register");
@@ -1209,8 +1199,6 @@ class UIController {
 
 		jQuery("#user_dialect_container").on('click', function() {
 
-
-
 			if (appManager.data_manager.dialect_modal_initialized) {
 				if (!jQuery("#welcome_modal").hasClass("in")) {
 					appManager.ui_controller.showCustomModalBackdrop();
@@ -1234,7 +1222,6 @@ class UIController {
 
 		if (appManager.ui_controller.allow_select) {
 
-
 			if (!jQuery('#concepts_modal').hasClass('fade')) {
 				jQuery('#concepts_modal').css('opacity', "1");
 				jQuery('#concepts_modal').addClass('fade');
@@ -1254,10 +1241,8 @@ class UIController {
 
 		appManager.map_controller.closeAllInfoWindows();
 
-
 		jQuery('#word_span').text(con);
 		jQuery('#word_span').attr("data-id_concept", id);
-
 
 		var index = appManager.data_manager.getData("concepts_index_by_id").data_value[parseInt(id)].index;
 
@@ -1384,15 +1369,13 @@ class UIController {
 
 	showLoginPopUp() {
 
-
 		jQuery('#icon_login').popover('show');
 		jQuery('.login_popover').parent().on('click', function() {
 			appManager.ui_controller.setRandomTitelImage(function() {
-				display_all_register_login_elements();
+				appManager.ui_controller.display_all_register_login_elements();
 				jQuery('#register_modal').modal();
 			}, '#register_modal');
 		}).addClass('c_hover');
-
 
 	}
 
@@ -1463,7 +1446,7 @@ class UIController {
 			}
 
 			if (!already_submited) {
-				url_choosen_concept = appManager.data_manager.getData("concepts_index_by_id").data_value[va_phase][appManager.data_manager.url_concept_id];
+				url_choosen_concept = appManager.data_manager.getData("concepts_index_by_id").data_value[appManager.data_manager.va_phase][appManager.data_manager.url_concept_id];
 				jQuery('#word_span').text(url_choosen_concept.name);
 				jQuery('#word_span').attr("data-id_concept", appManager.data_manager.url_concept_id);
 				jQuery('#word_span').attr("data-id_concept_index", url_choosen_concept.index);
@@ -1483,9 +1466,9 @@ class UIController {
 		if (!jQuery('.login_popover').parent().parent().hasClass('in') && !jQuery('#register_modal').hasClass('in')) {
 
 			setTimeout(function() {
-				if (!jQuery('.modal').hasClass('in')) { showLoginPopUp(); } else {
+				if (!jQuery('.modal').hasClass('in')) { appManager.ui_controller.showLoginPopUp(); } else {
 					jQuery('.modal').one('hidden.bs.modal', function() {
-						showLoginPopUp();
+						appManager.ui_controller.showLoginPopUp();
 					})
 				}
 
@@ -1989,10 +1972,10 @@ class UIController {
 	deleteInput(id_auesserung, ort, concept_id, location_id) {
 
 		appManager.data_manager.deleteFromAnswers_indexed(id_auesserung, location_id);
-		appManager.map_controller.change_marker(location_markers[location_id], -1, "green");
+		appManager.map_controller.change_marker(appManager.map_controller.location_markers[location_id], -1, "green");
 
-		num_of_answers_by_id[concept_id]--;
-		if (num_of_answers_by_id[concept_id] == 0) {
+		appManager.data_manager.getData("num_of_answers_by_id").data_value[concept_id]--;
+		if (appManager.data_manager.getData("num_of_answers_by_id").data_value[concept_id] == 0) {
 			appManager.data_manager.deleteFromConceptTable(concept_id);
 		} else {
 			appManager.data_manager.checkTableEntry(concept_id);
@@ -2006,20 +1989,20 @@ class UIController {
 				id_auesserung: id_auesserung,
 				ort: ort,
 				gemeinde_id: location_id,
-				current_user: current_user
+				current_user: appManager.data_manager.user_data.current_user
 			},
 			success: function(response) {
 				/*If informant was deleted from db and has no other submited answers, delete cookie and current_user*/
 				var user_deleted = JSON.parse(response);
-				if (user_deleted && isEmpty(appManager.data_manager.submitedAnswers_indexed) && !userLoggedIn) {
+				if (user_deleted && appManager.data_manager.isEmpty(appManager.data_manager.submitedAnswers_indexed) && !userLoggedIn) {
 					appManager.data_loader.eraseCookie("crowder_id");
-					current_user = null;
+					appManager.data_manager.user_data.current_user = null;
 				}
 			}
 		});
 
-		if (old_feature != null && ort.localeCompare(old_feature['location']) == 0) {
-			appManager.map_controller.change_feature_style(old_feature, check_user_aesserungen_in_location(ort));
+		if (appManager.map_controller.old_feature != null && ort.localeCompare(appManager.map_controller.old_feature['location']) == 0) {
+			appManager.map_controller.change_feature_style(appManager.map_controller.old_feature, appManager.data_manager.check_user_aesserungen_in_location(ort));
 		}
 	}
 
@@ -2042,6 +2025,100 @@ class UIController {
 		  jQuery('.editInput_modal_content').html("<div>" + field_not_full[current_language] + "</div>");*/
 
 	}
+
+
+	checkLoginPopUp() {
+		if (appManager.data_manager.session_answer_count == 3) {
+			if (!jQuery('.login_popover').parent().parent().hasClass('in')) appManager.ui_controller.showLoginPopUp();
+		}
+	}
+
+	openRegisterOrAnonymousModal() {
+		this.setRandomTitelImage(function() {
+			jQuery('#register_modal').modal();
+
+			jQuery('#login_slide').removeClass('active');
+			jQuery('#register_slide').addClass('active');
+
+			jQuery('.custom-modal-footer').show();
+
+			jQuery('.login_slider').hide();
+			jQuery('.forgot_pass_slider').hide();
+			jQuery('.reset_slider').hide();
+			jQuery('.new_acc_slider').hide();
+
+			appManager.ui_controller.add_anonymous_data_popover();
+		}, '#register_modal');
+	}
+
+
+	add_anonymous_data_popover() {
+		jQuery('.send_anonymous_btn').popover('dispose');
+
+		jQuery('#no_anoymous_user_data_text').text("Please enter Data on the map first.");
+
+		jQuery('.send_anonymous_btn').popover({
+			trigger: "hover",
+			placement: "top",
+			container: "#register_slide",
+			html: true,
+			content: '<div class="custom_popover_content">' + appManager.data_manager.getTranslation("send_anonymous_data_modal_text") + '</div>',
+			animation: true
+		});
+
+		jQuery('.send_anonymous_btn').popover('show');
+		jQuery('.send_anonymous_btn').popover('hide');
+
+		var popover_id_anonym = '#' + jQuery('.send_anonymous_btn').attr('aria-describedby');
+
+		jQuery(popover_id_anonym).each(function() {
+			this.style.setProperty('z-index', '10000', 'important');
+		});
+
+		// jQuery('body').on('click', function (e) {
+		//     //did not click a popover toggle or popover
+		//     if (jQuery(e.target).data('toggle') !== 'popover'
+		//         && jQuery(e.target).parents('.popover.in').length === 0) {
+		//         jQuery('[data-toggle="popover"]').popover('hide');
+		//         jQuery('body').unbind();
+		//     }
+		// });
+
+		//highlight anonymous data(age input field)
+		jQuery('.send_anonymous_btn').hover(function() {
+			jQuery('#user_login').css('opacity', '0.3');
+			jQuery('#user_email').css('opacity', '0.3');
+			jQuery('.send_anonymous_btn').popover('show');
+			console.log("Popover show");
+		}, function() {
+			jQuery('#user_login').css('opacity', '1');
+			jQuery('#user_email').css('opacity', '1');
+			jQuery('.send_anonymous_btn').popover('hide');
+			console.log("Popover hide");
+		});
+
+	}
+
+
+	register_login_modal_events() {
+		jQuery(".register_btn").css("opacity", "0.5");
+
+		var initial_login = jQuery('#user_login').val();
+		var initial_age = jQuery('#user_age').val();
+		var initial_email = jQuery('#user_email').val();
+		//console.log(initial_login + initial_age + initial_email);
+
+		jQuery('.form-control').keypress(function() {
+			if (jQuery('#user_login').val() != initial_login || jQuery('#user_email').val() != initial_email) {
+				jQuery(".register_btn").css("opacity", "1");
+			} else {
+				jQuery(".register_btn").css("opacity", "0.5");
+			}
+		});
+
+		console.log(jQuery("#user_login").val());
+	}
+
 }
 
 class UIElement {
@@ -2317,4 +2394,105 @@ class Modal {
 	constructor(modal_id) {
 		this.modal_id = modal_id
 	}
+}
+
+
+/**
+ * Funtions for the Login/Register Modal.
+ * Need to be difectly callable. Used in The Child Theme LoginWithAjax Files.
+ */
+
+function showSlide(x) {
+	jQuery('.send_anonymous_btn').popover('dispose');
+
+	switch (x) {
+		case "login":
+			jQuery('.active').removeClass('active');
+			jQuery('#login_slide').addClass('active');
+			break;
+		case "remember":
+			jQuery('.active').removeClass('active');
+			jQuery('#remember_slide').addClass('active');
+			break;
+		case "register":
+			jQuery('.active').removeClass('active');
+			jQuery('#register_slide').addClass('active');
+			appManager.ui_controller.add_anonymous_data_popover();
+			break;
+		case "anonymous_data_slide":
+			jQuery('.active').removeClass('active');
+			jQuery('#anonymous_data_slide').addClass('active');
+			break;
+	}
+}
+
+
+function refresh_page() { /*Choose another language*/
+	eraseCookie("language_crowder");
+	console.log(document.cookie);
+	location.reload();
+}
+
+/**
+ * Saves the choosen language of the user in the database.
+ * @param  {String} user_name [description]
+ *
+ */
+function userRegisterDone(user_name, user_age, anonymous_data) {
+
+	if (anonymous_data) { anonymous_data = "1" } else { anonymous_data = "0" };
+
+	user_age = (new Date()).getFullYear() - user_age;
+	if (isNaN(user_age) || user_age < 0) {
+		user_age = '';
+	}
+	jQuery.ajax({
+		url: ajax_object.ajax_url,
+		type: 'POST',
+		data: {
+			action: 'save_user_language',
+			user_lang: appManager.data_manager.current_language,
+			anonymous_id: appManager.data_manager.user_data.current_user,
+			user_name: user_name,
+			user_dialect: appManager.data_manager.selected_dialect,
+			user_age: user_age,
+			anonymous_data: anonymous_data
+		},
+		success: function(response) {
+			console.log({
+				action: 'save_user_language',
+				user_lang: appManager.data_manager.current_language,
+				anonymous_id: appManager.data_manager.user_data.current_user,
+				user_name: user_name,
+				user_dialect: appManager.data_manager.selected_dialect,
+				user_age: user_age,
+				anonymous_data: anonymous_data
+			});
+
+			console.log("Language Added");
+			console.log(JSON.parse(response));
+		}
+	});
+}
+
+
+function send_anonymous_data() {
+	var anonymous_age = jQuery('#user_age').val();
+	// anonymous_age = (new Date()).getFullYear() - anonymous_age;
+	console.log(anonymous_age);
+	if (appManager.data_manager.user_data.current_user != "" && appManager.data_manager.user_data.current_user != null) {
+		if (!isNaN(anonymous_age)) {
+			userRegisterDone(appManager.data_manager.user_data.current_user, anonymous_age, true);
+			current_user_age = anonymous_age;
+			jQuery('#register_modal').modal('hide');
+		} else {
+			jQuery('#no_anoymous_user_data').modal('show');
+			jQuery('#no_anoymous_user_data_text').text("Please enter a valid number!");
+		}
+
+	} else {
+		console.log("no user to register");
+		jQuery('#no_anoymous_user_data').modal('show');
+	}
+
 }

@@ -8,11 +8,11 @@ class DataLoader {
 
 	init_ajax_call(type, ajax_data, success_callback, error_callback, async = false) {
 		let ajax_call = new AjaxCaller(type, ajax_data, success_callback, error_callback, async).prepareAjax()
-		// return ajax_call.get_results()
 		return ajax_call
 	}
 
 	get_dialects(callbackOpenModal) {
+
 		jQuery.ajax({
 			url: ajax_object.ajax_url,
 			type: 'POST',
@@ -41,7 +41,6 @@ class DataLoader {
 			}
 
 		});
-
 
 	}
 
@@ -94,8 +93,6 @@ class DataLoader {
 				var is_admin = data.can_edit;
 				appManager.data_manager.getData("aeusserungen_by_locationindex").data_value[location_id] = submited_anwerts_current_location;
 
-				//jQuery('#custom_backdrop i').css('top','0px');
-				//jQuery('#custom_backdrop').hide().css('background','');
 				jQuery('#custom_backdrop').fadeOut('slow');
 				appManager.data_manager.openLocationListModal(marker);
 
@@ -122,8 +119,7 @@ class DataLoader {
 				appManager.data_manager.top_users = result["top_users"];
 				appManager.data_manager.top_locations = result["top_locations"];
 
-				if (typeof callback == "function")
-					callback();
+				if (typeof callback == "function") callback();
 
 			}
 
@@ -145,21 +141,17 @@ class DataLoader {
 
 		appManager.map_controller.pixioverlay.completeDraw(); //inital DRAW
 
-
 		setTimeout(function() {
 
 			jQuery('#custom_backdrop').fadeOut('slow', function() {
 				jQuery(this).remove();
 			});
-			console.log("ALL POLYGONS LOADED");
 
-
-			// jQuery('#custom_backdrop').fadeOut(200,function(){jQuery(this).remove(); console.log("hide custom_backdrop");});
 			jQuery('#custom_backdrop').remove();
 			jQuery('#custom_backdrop').remove();
 			jQuery("#welcomeback_modal").hide()
 			callback();
-			// console.log(jQuery('#custom_backdrop'));
+
 		}, 300);
 	}
 
@@ -188,7 +180,6 @@ class DataLoader {
 					console.log("test running")
 				});
 				callback();
-				//init_left_menu();
 			}
 
 		});
@@ -200,8 +191,6 @@ class DataLoader {
 	 * @function saveWord
 	 */
 	saveWord() {
-
-
 
 		var input_word = jQuery("#user_input").val();
 		var location = jQuery('#location_span').html();
@@ -228,7 +217,7 @@ class DataLoader {
 
 
 
-		/*Check if fields for Konzept and Region are filled*/
+		/*Check if fields for conzept and region are filled*/
 		if (input_word.localeCompare("") != 0 && location_id != null && appManager.ui_controller.concept_selected == true) {
 
 			appManager.ui_controller.stage = 5;
@@ -261,6 +250,7 @@ class DataLoader {
 						}
 
 						appManager.data_loader.createCookie("crowder_id", appManager.data_manager.user_data.current_user);
+
 						/**
 						 * Send all data(location, location id, concept, concept id, user answer and current user id(not logged in users) or user name(logged in users)) to server.
 						 * @function save_word_async
@@ -330,6 +320,7 @@ class DataLoader {
 											concept_id: concept_id,
 											concept_index: concept_index
 										};
+
 										if (!appManager.data_manager.getData("submitedAnswers")) appManager.data_manager.addData("submitedAnswers", [])
 										appManager.data_manager.getData("submitedAnswers").data_value.push(answer);
 										appManager.data_manager.submitedAnswers_indexed[id_aeusserung] = answer;
@@ -425,11 +416,14 @@ class DataLoader {
 										appManager.ui_controller.deSelectTableEntry(concept_index);
 
 										var entry = appManager.data_manager.getData("num_of_answers_by_id").data_value[parseInt(concept_id)];
-										if (entry == null) appManager.data_manager.getData("num_of_answers_by_id").data_value[parseInt(concept_id)] = 1;
-										else appManager.data_manager.getData("num_of_answers_by_id").data_value[parseInt(concept_id)] += 1;
+
+										if (entry == null) {
+											appManager.data_manager.getData("num_of_answers_by_id").data_value[parseInt(concept_id)] = 1;
+										} else {
+											appManager.data_manager.getData("num_of_answers_by_id").data_value[parseInt(concept_id)] += 1;
+										}
 
 										appManager.data_manager.checkTableEntry(concept_id);
-
 
 										var row = jQuery(appManager.data_manager.getDataTable("datatable_concepts").row(concept_index).node());
 										if (row.find('.num_of_answers').length == 0) {
@@ -484,14 +478,13 @@ class DataLoader {
 		}
 
 
-
 	}
 
 
 	save_user_dialect(user_name) {
 
 		var parsed_name = user_name.replace(/\s/g, ".");
-		console.log(parsed_name.toLowerCase());
+
 		jQuery.ajax({
 			url: ajax_object.ajax_url,
 			type: 'POST',
@@ -530,13 +523,11 @@ class DataLoader {
 				appManager.data_manager.getData("existingLocations").data_value.push(JSON.parse(response).location_id);
 				appManager.map_controller.addGeometry(JSON.parse(response).polygonCoordinates, JSON.parse(response));
 
-
 				if (zoom_active) {
 					if (appManager.map_controller.map.getZoom() > 6) {
 						appManager.map_controller.map.setZoom(6);
 					}
 				}
-
 
 				var lat = appManager.map_controller.geo_manager.parseGeoDataFormated(JSON.parse(response).centerCoordinates).geoData.lat;
 				var lng = appManager.map_controller.geo_manager.parseGeoDataFormated(JSON.parse(response).centerCoordinates).geoData.lng;
@@ -549,15 +540,8 @@ class DataLoader {
 
 				if (zoom_active) {
 					appManager.map_controller.map.flyTo([lat, lng], 10, { animate: true, duration: 0.5 });
-
-					// map.panTo({
-					//   lat: lat_g,
-					//   lng: lng_g
-					// });
-					// setTimeout(function() {
-					//   smoothZoom(map, 11, map.getZoom());
-					// }, 200);
 				}
+
 				if (appManager.ui_controller.stage == 5) {
 					appManager.ui_controller.stage = 6;
 
@@ -579,6 +563,15 @@ class DataLoader {
 
 
 	/**
+	 * Delete cookie.
+	 * @param  {String} name [description]
+	 *
+	 */
+	eraseCookie(name) {
+		this.createCookie(name, "", -1);
+	}
+
+	/**
 	 * Creates a cookie with name, value and exp. date
 	 * @param  {String} name  [description]
 	 * @param  {String} value [description]
@@ -593,16 +586,6 @@ class DataLoader {
 		} else var expires = "";
 		document.cookie = name + "=" + value + expires + "; path=/";
 	}
-
-	/**
- * Delete cookie.
- * @param  {String} name [description]
- *
- */
- eraseCookie(name) {
-  createCookie(name, "", -1);
-}
-
 
 	add_submited_answers_to_index_submitedAnswers_array(arrayA, can_edit) {
 		var result = {};
@@ -620,17 +603,13 @@ class DataLoader {
 			var author = obj.author;
 
 			if ((author.localeCompare(appManager.data_manager.user_data.current_user) == 0 && author.localeCompare("anonymousCrowder_90322") != 0) || is_admin) {
-
-
 				var concept_idx = appManager.data_loader.get_table_index_by_va_phase(parseInt(concept_id));
-
 
 				var answer = { concept: concept, user_input: word_inputed, location: location_name, id_auesserung: id_auesserung, concept_id: concept_id, concept_index: concept_idx };
 				appManager.data_manager.submitedAnswers_indexed[parseInt(id_auesserung)] = answer;
 			}
 
 		}
-
 
 	}
 
@@ -647,8 +626,6 @@ class DataLoader {
 
 
 	get_location_and_display(lat, lng) {
-		/*concept selected when in url:*/
-
 
 		jQuery.ajax({
 			url: ajax_object.ajax_url,
@@ -661,16 +638,13 @@ class DataLoader {
 			success: function(response) {
 
 				var data = JSON.parse(response);
-				//console.log(data);
 				var loc_name = data.name;
 				var loc_id = data.id;
-				//console.log(loc_name, loc_id);
 
 				if (loc_name != null) {
 					jQuery('#location_span').text(loc_name);
 					jQuery('#location_span').attr("data-id_location", loc_id);
-					//jQuery('#submitanswer').popover('hide');
-					//stage = 5;
+
 					appManager.ui_controller.location_selected = true;
 					if (appManager.ui_controller.concept_selected !== true) {
 						if (appManager.data_manager.url_concept_id) {
@@ -688,7 +662,6 @@ class DataLoader {
 
 
 					appManager.map_controller.showPolygon(loc_name, loc_id, false);
-					// jQuery('#custom_backdrop').hide().css('background','');
 				} else {
 					jQuery('#custom_backdrop').hide().css('background', '');
 					console.log("Nothing found");
@@ -701,7 +674,6 @@ class DataLoader {
 
 			}
 		});
-
 
 	}
 

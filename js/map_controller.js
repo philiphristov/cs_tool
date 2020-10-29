@@ -53,12 +53,7 @@ class MapController {
 		var options = {
 			doubleClickZoom: false,
 			zoomControl: false
-			// minZoom : position.minZoom
 		}
-
-
-		// map = L.map('map', options).setView([45.483678, 11.410439], 6);
-
 
 		var base_map_1 = L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
 			attribution: '&copy; <a href="https://osm.org/copyright">OpenStreetMap</a> contributors'
@@ -150,12 +145,10 @@ class MapController {
 		var center_map = appManager.map_controller.geo_manager.parseGeoDataFormated(center);
 		var type = appManager.map_controller.getKeyByValue(IMGeoType, polygon.getType());
 
-
 		var url = new URL(window.location.href);
 		var poly = url.searchParams.get("poly");
 
 		appManager.map_controller.addPixiPolygon(polygon, type, "0x0000ff", null, null);
-
 	}
 
 
@@ -243,9 +236,6 @@ class MapController {
 			this.pixioverlay.removePolygonOrLine(this.old_feature);
 		}
 
-
-
-
 		if (this.old_infowindow != null) {
 			this.old_infowindow.close();
 			this.old_infowindow = null;
@@ -257,10 +247,8 @@ class MapController {
 
 		var feature_selected = appManager.data_manager.check_user_aesserungen_in_location(location_name);
 
-
 		if (!feature_selected) featureSelected = appManager.map_controller.addPixiPolygon(polygon, type, "0x0000ff", "0x0000ff", 0.1);
 		else featureSelected = appManager.map_controller.addPixiPolygon(polygon, type, "0x009900", "0x009900", 0.1);
-
 
 		featureSelected['selected'] = true;
 		featureSelected['selected'] = appManager.data_manager.check_user_aesserungen_in_location(location_name);
@@ -296,9 +284,7 @@ class MapController {
 	 */
 	display_location_markers(element, can_edit) {
 
-
 		var polygon = appManager.map_controller.geo_manager.parseGeoDataFormated(element.geo);
-
 
 		var location_coordinates = appManager.map_controller.geo_manager.parseGeoDataFormated(element.geo);
 		var count_aeusserung_per_location = element.count.toString();
@@ -314,12 +300,9 @@ class MapController {
 
 		if (userMarker == 0) {
 			marker_color = "blue";
-
 		} else {
 			marker_color = "green";
-
 		}
-
 
 		var marker = appManager.map_controller.addCircleMarker(location_coordinates.geoData, count_aeusserung_per_location, marker_color);
 
@@ -333,7 +316,6 @@ class MapController {
 			marker.user_marker = true;
 		}
 
-
 		//location_markers[element.geo_data.location_id] = marker; // stable
 		appManager.map_controller.location_markers[element.location_id] = marker; // testing
 	}
@@ -345,7 +327,6 @@ class MapController {
 	 */
 	add_user_marker(obj, aeusserung_id) {
 
-
 		var coordinates = appManager.map_controller.geo_manager.parseGeoDataFormated(obj.centerCoordinates).geoData;
 		var infoWindowOrtsname = obj.name;
 		var concept = obj.concept;
@@ -353,7 +334,6 @@ class MapController {
 		var bezeichnung = obj.bezeichnung;
 		var aeusserung_id = aeusserung_id;
 		var location_id = obj.location_id;
-
 
 
 		var greenIcon = new L.Icon({
@@ -372,13 +352,10 @@ class MapController {
 		markerSelected.location_id = location_id;
 		markerSelected.location_name = infoWindowOrtsname;
 
-
 		/*close all other infowindows*/
 		appManager.map_controller.closeAllInfoWindows();
 
-
 		this.user_input_marker = markerSelected; /*global user_input_marker*/
-
 
 		var infoWindowContent = [
 			"<div class='inputWrapper'>",
@@ -424,11 +401,8 @@ class MapController {
 	}
 
 
-
-
-	/*When location is choosen show polygon will check if this location's polygon exists else it will get it from the database*/
 	/**
-	 * After Choosing a locations from the location data tables. Get the location's polygon and display it.
+	 * After Choosing a locations from the location data tables. Get the location's polygon and display it. When location is choosen show polygon will check if this location's polygon exists else it will get it from the database
 	 * @param  {String} g_location    [description]
 	 * @param  {Int} g_location_id [description]
 	 * @param  {Int} index         [description]
@@ -448,13 +422,11 @@ class MapController {
 				appManager.data_manager.getData("existingLocations").data_value.push(JSON.parse(response).location_id);
 				appManager.map_controller.addGeometry(JSON.parse(response).polygonCoordinates, JSON.parse(response));
 
-
 				if (zoom_active) {
 					if (appManager.map_controller.map.getZoom() > 6) {
 						appManager.map_controller.map.setZoom(6);
 					}
 				}
-
 
 				var lat = appManager.map_controller.geo_manager.parseGeoDataFormated(JSON.parse(response).centerCoordinates).geoData.lat;
 				var lng = appManager.map_controller.geo_manager.parseGeoDataFormated(JSON.parse(response).centerCoordinates).geoData.lng;
@@ -483,7 +455,10 @@ class MapController {
 
 	}
 
-
+	/**
+	 * [chooseGemiendeOutsideOfAlpineConvention description]
+	 * @return {[type]} [description]
+	 */
 	chooseGemiendeOutsideOfAlpineConvention() {
 
 	  // map.setOptions({ draggableCursor: 'crosshair' });
@@ -511,25 +486,27 @@ class MapController {
 	  }
 	}
 
+
+	/**
+	 * [closeAllInfoWindows description]
+	 * @param  {[type]} location_infoWindow_only [description]
+	 * @return {[type]}                          [description]
+	 */
 	closeAllInfoWindows(location_infoWindow_only) {
-
 		this.map.closePopup();
-
-	};
-
+	}
 
 
-	// jQuery(".userAuesserung").focus(function(){
-	//   jQuery(this).attr('id', 'currentInput');
-	// });
-
-
-
-
-
+	/**
+	 * [translateInfoWindowText description]
+	 * @param  {[type]} ort         [description]
+	 * @param  {[type]} concept     [description]
+	 * @param  {[type]} bezeichnung [description]
+	 * @param  {[type]} author      [description]
+	 * @return {[type]}             [description]
+	 */
 	translateInfoWindowText(ort, concept, bezeichnung, author) {
 		var text = '';
-
 
 		if (appManager.data_manager.user_data.current_user.localeCompare(author) != 0) {
 
@@ -578,7 +555,12 @@ class MapController {
 
 
 
-
+	/**
+	 * [addCircleMarker description]
+	 * @param {[type]} position [description]
+	 * @param {[type]} label    [description]
+	 * @param {[type]} color    [description]
+	 */
 	addCircleMarker(position, label, color) {
 
 		var image = appManager.map_controller.create_marker_image(label, color);
@@ -604,6 +586,13 @@ class MapController {
 
 	}
 
+	/**
+	 * [change_marker description]
+	 * @param  {[type]} marker [description]
+	 * @param  {[type]} number [description]
+	 * @param  {[type]} color  [description]
+	 * @return {[type]}        [description]
+	 */
 	change_marker(marker, number, color) {
 
 		var label = (parseInt(marker.aeusserungen_count) + (number)).toString();
@@ -649,11 +638,15 @@ class MapController {
 
 
 
-
+	/**
+	 * [create_marker_image description]
+	 * @param  {[type]} label [description]
+	 * @param  {[type]} color [description]
+	 * @return {[type]}       [description]
+	 */
 	create_marker_image(label, color) {
 
 		var size;
-
 
 		if (label.length == 1) size = 24;
 		else if (label.length == 2) size = 32;
@@ -670,10 +663,6 @@ class MapController {
 
 		var canvas = document.createElement('canvas');
 		var context = canvas.getContext("2d");
-
-
-		// context.imageSmoothingQuality('high');
-
 
 		canvas.width = size;
 		canvas.height = size;
@@ -711,11 +700,15 @@ class MapController {
 		context.textBaseline = "middle";
 		context.fillText(label, centerX, y);
 
-
-
 		return canvas;
 	}
 
+	/**
+	 * [change_feature_style description]
+	 * @param  {[type]}  current_feature [description]
+	 * @param  {Boolean} has_aesserungen [description]
+	 * @return {[type]}                  [description]
+	 */
 	change_feature_style(current_feature, has_aesserungen) {
 
 		this.pixioverlay.removePolygonOrLine(current_feature);
@@ -732,6 +725,10 @@ class MapController {
 	}
 
 
+	/**
+	 * [isMobile description]
+	 * @return {Boolean} [description]
+	 */
 	isMobile() {
 		var isMobile = false; //initiate as false
 		// device detection
@@ -742,6 +739,12 @@ class MapController {
 		return isMobile;
 	}
 
+	/**
+	 * [getKeyByValue description]
+	 * @param  {[type]} object [description]
+	 * @param  {[type]} value  [description]
+	 * @return {[type]}        [description]
+	 */
 	getKeyByValue(object, value) {
 		return Object.keys(object).find(key => object[key] === value);
 	}

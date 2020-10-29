@@ -27,13 +27,13 @@ class DataManager {
     this.session_answer_count
     this.unanswered_concepts = new Object()
 
+    this.dialect_cluster
+    this.url_dialect_cluster
+    this.url_dialect
+
     this.top_concepts
     this.top_users
     this.top_locations
-  }
-
-  test() {
-    console.log("working")
   }
 
   addData(key_data, new_data) {
@@ -109,8 +109,7 @@ class DataManager {
       var crowder_lang = obj.crowder_lang; //null;
       appManager.data_manager.selected_dialect = obj.crowder_dialect;
     }
-    console.log("CUrrent lang " + crowder_lang)
-    //console.log(obj);
+    console.log("Current lang: " + crowder_lang)
 
     if (crowder_lang) {
       crowder_lang = 0
@@ -144,7 +143,6 @@ class DataManager {
         if (in_data[i].qid != 0 && in_data[i].qid != null) {
           var wikidata_url = "https://www.wikidata.org/wiki/Q" + in_data[i].qid;
 
-          // var wiki_el = '<div class="wiki_info"><div class="wikidata_container"><i title="Wikidata" class="fa fa-wikipedia-w wikidata_icon" href=" ' + wikidata_url + ' " aria-hidden="true">' + wikidata_img + '</i></div></div>';
           var wiki_el = '<div class="wiki_info"><div class="wikidata_container"><i class="wikidata_icon"  title="Wikidata" href=" ' + wikidata_url + ' " aria-hidden="true">' + wikidata_img + '</i></div></div>';
 
         } else {
@@ -178,13 +176,15 @@ class DataManager {
       data.push(res);
     }
 
-
-
     return data;
-
   }
 
-  /*begin: for dialect list modal*/
+  /**
+   * [create_dialect_list_modal description]
+   * @param  {[type]} modal [description]
+   * @param  {[type]} data  [description]
+   * @return {[type]}       [description]
+   */
   create_dialect_list_modal(modal, data) {
 
     jQuery('body').addClass('modal_init');
@@ -192,12 +192,12 @@ class DataManager {
     jQuery('#dialect_modal').removeClass('fade');
 
     var bavaria_version = false;
+
     if (jQuery('body').hasClass('bavaria_version')) bavaria_version = true;
 
     var id;
     var scrollY;
     var emptyTable;
-
 
     id = "#dialect_modal_table";
     scrollY = "76vh";
@@ -227,10 +227,7 @@ class DataManager {
       },
       retrieve: true,
 
-
-
       fnInitComplete: function(settings) {
-
 
         if (!bavaria_version) {
 
@@ -245,7 +242,6 @@ class DataManager {
 
           var suggest_button = jQuery('<div class="list_modal_button_in_search suggest_dialect"><i class="fa fa-plus" aria-hidden="true"></i> <span id="suggest_dialect_span">' + appManager.data_manager.getTranslation("suggest_dialect_texts") + '</span></div>');
           buttonparent.append(suggest_button);
-
 
           suggest_button.on('click', function() {
 
@@ -269,8 +265,6 @@ class DataManager {
                 jQuery('#input_modal').modal('hide');
                 jQuery('.input_modal_content').empty();
 
-
-
                 setTimeout(function() {
                   var suggest_headline = jQuery('<div class="suggest_headline dont-break-out">' + appManager.data_manager.getTranslation("selected_dialect_texts") + ": <em>" + choosen_dialect + '</em></div>');
                   var suggest_button_submit = jQuery('<div id="choose_dialect" class="suggest_button_submit suggest_btn green_button"><i class="fa fa-check" aria-hidden="true"></i> ' + appManager.data_manager.getTranslation("submit_dialect_texts") + '</div><div id= "regect_btn" class="suggest_button_submit suggest_btn red_button"><i class="fa fa-times" aria-hidden="true"></i> ' + appManager.data_manager.getTranslation("abort_dialect_texts") + '</div>');
@@ -287,10 +281,10 @@ class DataManager {
                   /*yes, sure*/
                   jQuery("#choose_dialect").one('click', function() {
 
-                    if (url_dialect_cluster) {
-                      dialect_cluster = url_dialect_cluster
+                    if (appManager.data_manager.url_dialect_cluster) {
+                      appManager.data_manager.dialect_cluster = appManager.data_manager.url_dialect_cluster
                     } else {
-                      dialect_cluster = "ak"
+                      appManager.data_manager.dialect_cluster = "ak"
                     }
 
                     /*handle suggest dialect ajax call*/
@@ -300,7 +294,7 @@ class DataManager {
                       data: {
                         action: 'suggest_dialect',
                         dialect: choosen_dialect,
-                        dialect_cluster: dialect_cluster
+                        dialect_cluster: appManager.data_manager.dialect_cluster
                       },
                       success: function(response) {
                         var new_dialect = JSON.parse(response);
@@ -318,14 +312,12 @@ class DataManager {
                           if (new_dialect_added) {
                             console.log("NEW DIALECT")
 
-
                             /*remove choosen marker for previous selected dialect */
                             if (appManager.data_manager.current_dialect_index != -1) {
                               var row = table.row(appManager.data_manager.current_dialect_index).node();
                               jQuery(row).removeClass('green_row');
                               jQuery(row).find('.fa-check').remove();
                             }
-
 
                             appManager.data_manager.selected_dialect = choosen_dialect;
 
@@ -342,7 +334,6 @@ class DataManager {
 
                               jQuery("#dialect_infowindow").text(appManager.data_manager.selected_dialect);
                               var id_submited_answer = jQuery("#dialect_infowindow").data("submited-answer");
-
 
                               /*TODO ajax call here for dialect changing of an answer*/
                               jQuery.ajax({
@@ -361,8 +352,6 @@ class DataManager {
                               });
 
                               appManager.map_controller.info_window_dialect_change = false;
-
-
 
                               setTimeout(function() {
                                 modal.modal('hide');
@@ -447,9 +436,7 @@ class DataManager {
 
               }
             })
-          })
-
-          /*end handle suggest button click*/
+          }) /*end handle suggest button click*/
 
         } //end if not bavaria version
         else {
@@ -460,25 +447,19 @@ class DataManager {
           /*prevents error if user clicks on an empty data table*/
           if (table.page.info().recordsDisplay !== 0) {
 
-
             var index = table.row(this).index();
             var name = table.row(this).data().name;
 
-
             /*mark selected dialect green*/
             if (appManager.data_manager.current_dialect_index != index) {
-
               var row = table.row(index).node();
               jQuery(row).addClass('green_row');
               var icon = jQuery('<i class="fa fa-check" aria-hidden="true"></i>');
               jQuery(row).find('.dataspan').prepend(icon);
-
             }
 
             //for unsetting green on pervious selection
-
             if (appManager.data_manager.current_dialect_index != -1 && appManager.data_manager.current_dialect_index != index) {
-
               var row = table.row(appManager.data_manager.current_dialect_index).node();
               jQuery(row).removeClass('green_row');
               jQuery(row).find('.fa-check').remove();
@@ -488,7 +469,6 @@ class DataManager {
 
             jQuery("#dialekt_span").text(appManager.data_manager.getTranslation("lang_dialect_abbreviation") + " : " + name);
             appManager.data_manager.selected_dialect = name;
-            //console.log(jQuery("#welcome_modal").data('bs.modal')._isShown);
 
             if (appManager.data_manager.user_data.userLoggedIn) {
               appManager.data_loader.save_user_dialect(appManager.data_manager.user_data.current_user);
@@ -498,7 +478,6 @@ class DataManager {
 
               jQuery("#dialect_infowindow").text(appManager.data_manager.selected_dialect);
               var id_submited_answer = jQuery("#dialect_infowindow").data("submited-answer");
-
 
               /*TODO ajax call here for dialect changing of an answer*/
               jQuery.ajax({
@@ -540,11 +519,7 @@ class DataManager {
     });
 
 
-
-
     table.on('draw.dt', function() {
-
-      // console.log("DRAW");
 
       if (jQuery('#dialect_modal .dataTables_empty').length > 0) {
 
@@ -572,12 +547,16 @@ class DataManager {
       jQuery(row).find('.dataspan').prepend(icon);
     }
 
-
-
     return table;
-
   }
 
+  /**
+   * [createConceptsListModal description]
+   * @param  {[type]} modal  [description]
+   * @param  {[type]} data   [description]
+   * @param  {[type]} origin [description]
+   * @return {[type]}        [description]
+   */
   createConceptsListModal(modal, data, origin) {
     var id;
     var scrollY;
@@ -613,14 +592,14 @@ class DataManager {
         zeroRecords: emptyTable
       },
 
-
       fnInitComplete: function(settings) {
 
         var input = modal.find('input');
         if (origin == 'location') {
           input.attr('autofocus', "");
-          input.attr('id', 'focusinput');
-        } //id for js call in bind show listeners
+          input.attr('id', 'focusinput'); //id for js call in bind show listeners
+        }
+
         input.attr('autocomplete', "off");
 
         var buttonparent;
@@ -639,16 +618,16 @@ class DataManager {
             if (!prevent_randomclick) {
               do_image_modal = false;
               prevent_randomclick = true;
+
               if (jQuery('#concepts_modal').find('input').val() != "") appManager.data_manager.getDataTable("datatable_concepts").search('').columns().search('').draw();
+
               var rnd_idx = getRandomUnAnsweredConceptIndex();
 
               if (rnd_idx > 0) {
 
                 appManager.data_manager.getDataTable("datatable_concepts").row(rnd_idx).scrollTo();
-                // deSelectTableEntry(appManager.data_manager.current_concept_index[va_phase]);
                 appManager.ui_controller.deSelectTableEntry(appManager.data_manager.current_concept_index);
                 appManager.ui_controller.selectTableEntry(rnd_idx);
-                // appManager.data_manager.current_concept_index[va_phase] = rnd_idx;
                 appManager.data_manager.current_concept_index = rnd_idx;
 
                 var name = concepts_cur_lang[rnd_idx].name;
@@ -728,16 +707,13 @@ class DataManager {
           va_phase_wrapper.append(alm);
           va_phase_wrapper.append(natur);
           va_phase_wrapper.append(modern);
-          //jQuery('#concepts_modal').children().prepend(va_phase_wrapper);
 
           jQuery('#concepts_modal').children().find('.modal-content').append(va_phase_wrapper);
 
           jQuery("#va_phase_wrapper_concept_list").find('.list_modal_button_va_phase').on('click', function() {
             var selected_va_phase = jQuery(this).data('va_phase');
 
-
-
-            //ALTERNATIVE VA PHASE SWITCH (CHECKBOX STYLE)
+            // VA PHASE SWITCH (CHECKBOX STYLE)
             switch (selected_va_phase) {
               case 1:
                 appManager.data_manager.current_concept_index = -1;
@@ -774,8 +750,6 @@ class DataManager {
                 break;
             }
 
-
-
             appManager.data_manager.active_va_phases = appManager.ui_controller.check_active_concepts(jQuery('#va_phase_wrapper_concept_list').find('.active'));
 
             /**
@@ -783,14 +757,11 @@ class DataManager {
              */
             if (appManager.data_manager.active_va_phases.length > 0) {
               var regexFromMyArray = '.*va_phase=(' + appManager.data_manager.active_va_phases.join("|") + ').*'
-
             } else {
               var regexFromMyArray = '.*va_phase=(0).*'
-
             }
 
             table.columns().search(regexFromMyArray, true).draw();
-
 
             if (appManager.data_manager.current_concept_index != -1 && jQuery('#va_phase_wrapper_concept_list').find('.va_phase_' + va_phase).hasClass("active")) {
               appManager.data_manager.getDataTable("datatable_concepts").row(appManager.data_manager.current_concept_index).scrollTo();
@@ -802,7 +773,6 @@ class DataManager {
               e.stopPropagation();
               window.open(jQuery(this).attr('href'), '_blank');
             });
-
 
           }) //click
 
@@ -821,25 +791,20 @@ class DataManager {
 
             var index = table.row(this).index();
 
-
             var row_data = table.row(this).data();
             if (origin == "concept") {
-
 
               var name = row_data.concept_name; //concepts_cur_lang[index].name;
 
               appManager.ui_controller.concept_selected = true;
               var id = row_data.concept_id; //concepts_cur_lang[index].id;
 
-              // if (appManager.data_manager.current_concept_index[va_phase] != -1) deSelectTableEntry(appManager.data_manager.current_concept_index[va_phase]);
               if (appManager.data_manager.current_concept_index != -1) appManager.ui_controller.deSelectTableEntry(appManager.data_manager.current_concept_index);
 
               appManager.ui_controller.selectTableEntry(index);
 
-
               // appManager.data_manager.current_concept_index[va_phase] = index;
               appManager.data_manager.current_concept_index = index;
-
 
               jQuery('#image_modal').modal('hide');
 
@@ -853,7 +818,6 @@ class DataManager {
                 jQuery(this).remove()
               });
 
-              /*END*/
               appManager.map_controller.remove_location_search_listener();
             }
 
@@ -863,9 +827,6 @@ class DataManager {
             }, 220); //delay to show select effect
           }
         });
-
-
-
 
         if (!appManager.data_manager.modals_initialized) {
 
@@ -886,10 +847,7 @@ class DataManager {
       }
     });
 
-
-
     return table;
-
   }
 
 
@@ -903,17 +861,13 @@ class DataManager {
   createLocationListModal(modal, data, origin) {
     // used only for locations modal list
 
-
     var id;
     var scrollY;
     var emptyTable;
 
-
     id = "#location_modal_table";
     scrollY = "76vh";
     emptyTable = appManager.data_manager.getTranslation("search_for_location");
-
-
 
     var table = modal.find(id).DataTable({
 
@@ -944,10 +898,6 @@ class DataManager {
 
       fnInitComplete: function(settings) {
 
-
-
-
-
         var input = modal.find('input');
         if (origin == 'location') {
           input.attr('autofocus', "");
@@ -965,22 +915,17 @@ class DataManager {
           var search_location_button = jQuery('<div class="list_modal_button_in_search"><i class="fa fa-map-marker" aria-hidden="true"></i> ' + appManager.data_manager.getTranslation("search_map_location") + '</div>');
           buttonparent.append(search_location_button);
 
-
           search_location_button.on('click', function() {
             appManager.ui_controller.init_location_search_mode(modal);
           });
 
         }
 
-
-
         modal.find('tbody').on('click', 'tr', function() {
           /*prevents error if user clicks on an empty data table*/
           if (table.page.info().recordsDisplay !== 0) {
 
             var index = table.row(this).index()
-
-
 
             if (origin == "concept") {
 
@@ -1003,7 +948,6 @@ class DataManager {
               }
 
               //for unsetting green on pervious selection
-
               if (appManager.data_manager.saved_location_index != -1 && appManager.data_manager.saved_location_index != index) {
 
                 var row = table.row(appManager.data_manager.saved_location_index).node();
@@ -1012,8 +956,6 @@ class DataManager {
               }
 
               appManager.data_manager.saved_location_index = index;
-              // saved_location_name = name;
-
 
               jQuery('#custom_modal_backdrop').fadeOut(function() { jQuery(this).remove() });
               jQuery('#location_span').text(name);
@@ -1021,7 +963,6 @@ class DataManager {
               appManager.ui_controller.setDynamicContent('list'); // for offset since hight of left menu could change
 
               /*Show Gemeinde Grenzen*/
-
               jQuery('#image_modal').modal('hide');
               var g_location = name;
               var g_location_id = id;
@@ -1030,7 +971,6 @@ class DataManager {
 
               appManager.data_loader.get_display_polygon(g_location, g_location_id, true);
               appManager.map_controller.remove_location_search_listener();
-              /*END*/
             }
 
             setTimeout(function() { modal.modal('hide'); }, 220); //delay to show select effect
@@ -1040,14 +980,12 @@ class DataManager {
           }
 
         });
+
         if (!appManager.data_manager.modals_initialized) {
-
-
 
           setTimeout(function() { modal.modal('hide'); }, 1); //for closing modal on init
 
           appManager.data_manager.locations_modal_modals_initialized = true;
-
 
           if (appManager.data_manager.locations_modal_modals_initialized && appManager.data_manager.concepts_modal_initialized) {
             appManager.data_manager.modals_initialized = true;
@@ -1065,9 +1003,7 @@ class DataManager {
 
       table.on('draw.dt', function() {
 
-
         if (jQuery('#locations_modal .dataTables_empty').length > 0) {
-
           jQuery('#locations_modal .dataTables_empty').css('white-space', 'normal');
           jQuery('#locations_modal .dataTables_scrollBody').css('overflow', 'hidden');
           jQuery('#locations_modal .dataTables_scrollBody').css('min-height', '88px');
@@ -1084,7 +1020,6 @@ class DataManager {
     }
 
     return table;
-
   }
 
 
@@ -1099,7 +1034,6 @@ class DataManager {
     jQuery('#concepts_modal').modal({});
 
     var va_phase = 1;
-    //datatable_concepts = createListModal(jQuery('#concepts_modal'),filtered_data_phase1,"concept"); //  concept_data
     var datatable_concepts = appManager.data_manager.createConceptsListModal(jQuery('#concepts_modal'), appManager.data_manager.getData("concept_data").data_value, "concept");
     appManager.data_manager.addDataTable("datatable_concepts", datatable_concepts)
 
@@ -1161,10 +1095,6 @@ class DataManager {
   createConceptIndexList(concepts_cur_lang, concept_va_phase) {
     var result = {};
 
-    // for (var y = 0; y < concepts_cur_lang.length; y++) {
-    //   result[parseInt(concepts_cur_lang[y].id)] = { index: y, name: concepts_cur_lang[y].name, va_phase: concept_va_phase };
-    // }
-
     for (var y = 0; y < concepts_cur_lang.length; y++) {
       result[parseInt(concepts_cur_lang[y].id)] = { index: y, name: concepts_cur_lang[y].name, va_phase: concepts_cur_lang[y].va_phase };
     }
@@ -1180,36 +1110,20 @@ class DataManager {
   createAnswersToEntryNumbers(submitedAnswersIndexed) {
     var result = {};
 
-
     for (var key in submitedAnswersIndexed) {
-
       var entry = result[parseInt(submitedAnswersIndexed[key].concept_id)];
       if (entry == null) result[parseInt(submitedAnswersIndexed[key].concept_id)] = 1;
       else result[parseInt(submitedAnswersIndexed[key].concept_id)] += 1;
-
     }
 
-    // for(var i=0;i<submitedAnswers.length;i++){
-
-    //   var entry = result[parseInt(submitedAnswers[i].concept_id)];
-
-    //   if(entry==null) result[parseInt(submitedAnswers[i].concept_id)] = 1;
-    //   else result[parseInt(submitedAnswers[i].concept_id)] +=1;
-
-    // }
-
     return result;
-
   }
-
-
 
 
   checkEnteredConcepts() {
     for (var i = 0; i < submitedAnswers.length; i++) {
       appManager.data_manager.checkTableEntry(submitedAnswers[i].concept_id);
     }
-
   }
 
   /**
@@ -1226,7 +1140,6 @@ class DataManager {
 
 
   createUnansweredIndex() {
-
 
     var c_phase1_idx = [];
     var c_phase2_idx = [];
@@ -1248,12 +1161,10 @@ class DataManager {
     }
 
     return [c_phase1_idx, c_phase2_idx, c_phase3_idx];
-
   }
 
 
   getRandomUnAnsweredConceptIndex() {
-
 
     var active_concepts = [];
 
@@ -1272,28 +1183,23 @@ class DataManager {
       var random_concept = active_concepts[idx];
       var result = random_concept['index'];
 
+    } else {
+      result = -1;
+    }
 
-    } else result = -1;
     return result;
-
   }
 
   checkDataBeforeListModal(marker) {
-    //console.log(marker);
     if (appManager.data_manager.getData("aeusserungen_by_locationindex").data_value[marker.location_id] != null && !appManager.data_manager.check_user_aesserungen_in_location(marker.location_name)) {
       appManager.data_manager.openLocationListModal(marker);
-
     } else {
-      // jQuery('#custom_backdrop i').css('top','-150px');
       jQuery('#custom_backdrop').show().css('background', 'rgba(0, 0, 0, 0.8)');
-
-
       appManager.data_loader.get_submited_answers_current_location(marker.location_id, marker);
     }
   }
 
   createLocationListTable(table_data) {
-
 
     this.va_phase = 1;
     var searching = false;
@@ -1343,7 +1249,6 @@ class DataManager {
           head.find('.location_header_num').addClass('user_generated_m');
         }
 
-
         if (searching) {
           jQuery('#location_list_modal').find('#location_list_table_filter').prepend(head);
           head.css('display', 'inline-block');
@@ -1391,7 +1296,6 @@ class DataManager {
 
               var clicked_index = table.row(this).index();
 
-
               table.rows().eq(0).each(function(index) {
                 var row = table.row(index);
                 var jrow = jQuery(row.node());
@@ -1414,7 +1318,6 @@ class DataManager {
         })
 
         /*add Buttons Alm/Nature Submited Answers*/
-        /*location_aeusserungen*/
         var buttonparent = jQuery('.location_header_parent');
         var alm = jQuery('<div class="list_modal_button_va_phase va_phase_1 active noselect"  data-va_phase = "1"><i class="far fa-check-square"></i>' + appManager.data_manager.getTranslation("alpine_agriculture") + '</div>'); //width:50%; 'Almwirtschaft'
         var natur = jQuery('<div class="list_modal_button_va_phase va_phase_2 active noselect"   data-va_phase = "2"><i class="far fa-check-square"></i>' + appManager.data_manager.getTranslation("alpine_nature") + '</div>'); //width:50%; 'Natur'
@@ -1428,8 +1331,6 @@ class DataManager {
         va_phase_wrapper.append(modern);
 
         jQuery('#location_list_modal').children().find('.modal-content').append(va_phase_wrapper);
-
-        //jQuery('.va_phase_1').css('opacity', 1.0);
 
         jQuery("#va_phase_wrapper_location_list").find('.list_modal_button_va_phase').on('click', function() {
 
@@ -1486,8 +1387,6 @@ class DataManager {
               })
             }
           } else {
-            // list_elements = [].concat.apply([], filtered_location_submited_data_phases);
-            // table.rows.add(list_elements);
             list_elements = [];
             table.rows.add(list_elements);
           }
@@ -1528,12 +1427,12 @@ class DataManager {
             var aeusserung_id = jQuery(row).find('.dataparent').attr('ae_id');
             var cur_obj = appManager.data_manager.getData("current_location_list_object").data_value[aeusserung_id];
 
-            deleteInput(aeusserung_id, cur_obj.ortsname, cur_obj.id_concept, cur_obj.id_geo);
+            appManager.ui_controller.deleteInput(aeusserung_id, cur_obj.ortsname, cur_obj.id_concept, cur_obj.id_geo);
 
             var remaining_num = Object.keys(appManager.data_manager.getData("aeusserungen_by_locationindex").data_value[cur_obj.id_geo]).length
             jQuery('#location_list_modal').find('.location_header_num').text(remaining_num);
 
-            if (check_for_current_user_entries(cur_obj.id_geo) <= 0) {
+            if (appManager.data_manager.check_for_current_user_entries(cur_obj.id_geo) <= 0) {
               jQuery('#location_list_modal').find('.location_header_num').removeClass('user_generated_m');
             }
 
@@ -1547,7 +1446,6 @@ class DataManager {
     })
 
     return table;
-
   }
 
   /**
@@ -1881,6 +1779,7 @@ class DataManager {
         }
       }
     }
+
     return has_aeusserungen;
   }
 
@@ -1893,7 +1792,6 @@ class DataManager {
         entered_aeusserungen++;
       }
     }
-
 
     return entered_aeusserungen;
   }
@@ -1915,7 +1813,6 @@ class DataManager {
 
 
   filter_array(array_data, va_phase_cur) {
-
     var arr = [];
     for (var key in array_data) {
       if (array_data.hasOwnProperty(key)) {
@@ -1929,6 +1826,7 @@ class DataManager {
 
       }
     }
+
     return arr;
   }
 
@@ -1939,6 +1837,7 @@ class DataManager {
       var dialect_name = element.name;
       if (dialect_name.localeCompare(dialect) == 0) return index_dalect = arr.indexOf(element);
     });
+
     return index_dalect;
   }
 
@@ -1973,7 +1872,6 @@ class DataManager {
       .replace(/[Žž]/g, 'z');
 
     return res;
-
   }
 
   /**
@@ -1989,7 +1887,6 @@ class DataManager {
 
     return true;
   }
-
 
 
   /**
@@ -2062,8 +1959,6 @@ class DataManager {
 
     var table_index_t = appManager.data_loader.get_table_index_by_va_phase(_concept_id);
 
-
-
     var row = appManager.data_manager.getDataTable("datatable_concepts").row(table_index_t).node();
     jQuery(row).addClass('green_row');
 
@@ -2072,7 +1967,6 @@ class DataManager {
     if (jQuery(row).find('.fa-check').length == 0) {
       jQuery(row).find('.dataspan').prepend(icon);
     }
-
 
     jQuery(row).find('.fa-exclamation-triangle').remove();
 
@@ -2121,8 +2015,7 @@ class DataManager {
   deleteFromConceptTable(_concept_id) {
 
     var table_index_t = appManager.data_loader.get_table_index_by_va_phase(_concept_id); //concepts_index_by_id[va_phase][parseInt(_concept_id)].index;
-    //var name  = concepts_index_by_id[va_phase][parseInt(_concept_id)].name;
-    var row = datatable_concepts.row(table_index_t).node();
+    var row = appManager.data_manager.getDataTable("datatable_concepts").row(table_index_t).node();
 
     jQuery(row).removeClass('green_row');
     jQuery(row).find('.num_of_answers').remove();
