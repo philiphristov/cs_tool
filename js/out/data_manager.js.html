@@ -1,4 +1,32 @@
-/**
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: data_manager.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: data_manager.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
  * DataManager
  */
 class DataManager {
@@ -210,19 +238,19 @@ class DataManager {
     var data = [];
 
     var wikidata_img_url = url.plugins_Url + '/assets/images/wikidata.png';
-    var wikidata_img = "<img class='wikidata_image' src='" + wikidata_img_url + "'/>"
+    var wikidata_img = "&lt;img class='wikidata_image' src='" + wikidata_img_url + "'/>"
 
 
-    for (var i = 0; i < in_data.length; i++) {
+    for (var i = 0; i &lt; in_data.length; i++) {
 
       if (origin == 'dialect') {
         var res = { name: in_data[i].name, id: in_data[i].id_dialect, column1: {} };
       } else if (origin == 'concept') {
         var res = { va_phase: in_data[i].va_phase, column1: {}, concept_id: in_data[i].id, concept_name: in_data[i].name, qid: in_data[i].qid };
-        if (in_data[i].qid != 0 && in_data[i].qid != null) {
+        if (in_data[i].qid != 0 &amp;&amp; in_data[i].qid != null) {
           var wikidata_url = "https://www.wikidata.org/wiki/Q" + in_data[i].qid;
 
-          var wiki_el = '<div class="wiki_info"><div class="wikidata_container"><i class="wikidata_icon"  title="Wikidata" href=" ' + wikidata_url + ' " aria-hidden="true">' + wikidata_img + '</i></div></div>';
+          var wiki_el = '&lt;div class="wiki_info">&lt;div class="wikidata_container">&lt;i class="wikidata_icon"  title="Wikidata" href=" ' + wikidata_url + ' " aria-hidden="true">' + wikidata_img + '&lt;/i>&lt;/div>&lt;/div>';
 
         } else {
           var wiki_el = "";
@@ -241,14 +269,14 @@ class DataManager {
         filtered_name = name;
       }
 
-      if (origin == 'concept' && i < app.manager.getData("important_concepts_count").data_value) {
-        res.column1.html = '<div class="va_phase_hidden">' + filtered_name + ' va_phase=' + in_data[i].va_phase + ' </div><div  title="' + name + '" class="dataparent"><span class="dataspan"><i title="' + app.manager.getTranslation("important_concepts_texts") + '" class="fa fa-exclamation-triangle" aria-hidden="true"></i>' + in_data[i].name + '</span>' + wiki_el + '</div>';
+      if (origin == 'concept' &amp;&amp; i &lt; app.manager.getData("important_concepts_count").data_value) {
+        res.column1.html = '&lt;div class="va_phase_hidden">' + filtered_name + ' va_phase=' + in_data[i].va_phase + ' &lt;/div>&lt;div  title="' + name + '" class="dataparent">&lt;span class="dataspan">&lt;i title="' + app.manager.getTranslation("important_concepts_texts") + '" class="fa fa-exclamation-triangle" aria-hidden="true">&lt;/i>' + in_data[i].name + '&lt;/span>' + wiki_el + '&lt;/div>';
       } else if (origin == 'concept') {
-        res.column1.html = '<div class="va_phase_hidden"> ' + filtered_name + ' va_phase=' + in_data[i].va_phase + ' </div><div title="' + name + '" class="dataparent"><span class="dataspan">' + name + '</span>' + wiki_el + '</div>';
+        res.column1.html = '&lt;div class="va_phase_hidden"> ' + filtered_name + ' va_phase=' + in_data[i].va_phase + ' &lt;/div>&lt;div title="' + name + '" class="dataparent">&lt;span class="dataspan">' + name + '&lt;/span>' + wiki_el + '&lt;/div>';
       } else if (origin == 'dialect') {
-        res.column1.html = '<div title="' + name + '" class="dataparent"><span class="dataspan">' + name + '</span></div>';
+        res.column1.html = '&lt;div title="' + name + '" class="dataparent">&lt;span class="dataspan">' + name + '&lt;/span>&lt;/div>';
       } else {
-        res.column1.html = '<div class="dataparent"><span title="' + name + '" class="dataspan">' + name + '</span></div>';
+        res.column1.html = '&lt;div class="dataparent">&lt;span title="' + name + '" class="dataspan">' + name + '&lt;/span>&lt;/div>';
       }
 
       res.column1.filtered_name = filtered_name;
@@ -314,21 +342,21 @@ class DataManager {
 
           input.attr('autocomplete', "off");
 
-          buttonparent = jQuery('<div class="list_modal_button_parent"></div>');
+          buttonparent = jQuery('&lt;div class="list_modal_button_parent">&lt;/div>');
           jQuery('#dialect_modal_table_filter').after(buttonparent);
 
           var buttonparent;
 
-          var suggest_button = jQuery('<div class="list_modal_button_in_search suggest_dialect"><i class="fa fa-plus" aria-hidden="true"></i> <span id="suggest_dialect_span">' + app.manager.getTranslation("suggest_dialect_texts") + '</span></div>');
+          var suggest_button = jQuery('&lt;div class="list_modal_button_in_search suggest_dialect">&lt;i class="fa fa-plus" aria-hidden="true">&lt;/i> &lt;span id="suggest_dialect_span">' + app.manager.getTranslation("suggest_dialect_texts") + '&lt;/span>&lt;/div>');
           buttonparent.append(suggest_button);
 
           suggest_button.on('click', function() {
 
             jQuery('.input_modal_content').empty();
-            var suggest_headline = jQuery('<div class="suggest_headline">' + app.manager.getTranslation("suggest_dialect_texts") + ':</div>');
-            var suggest_field = jQuery('<input class="suggest_field"></input>');
-            var suggest_button_submit = jQuery('<div id="suggest_dialect" class="suggest_button_submit suggest_btn">' + app.manager.getTranslation("submit_texts") + '</div>');
-            var feedback_div = jQuery('<div class="feedback_suggest">' + app.manager.getTranslation("feedback_texts") + '</div>');
+            var suggest_headline = jQuery('&lt;div class="suggest_headline">' + app.manager.getTranslation("suggest_dialect_texts") + ':&lt;/div>');
+            var suggest_field = jQuery('&lt;input class="suggest_field">&lt;/input>');
+            var suggest_button_submit = jQuery('&lt;div id="suggest_dialect" class="suggest_button_submit suggest_btn">' + app.manager.getTranslation("submit_texts") + '&lt;/div>');
+            var feedback_div = jQuery('&lt;div class="feedback_suggest">' + app.manager.getTranslation("feedback_texts") + '&lt;/div>');
             jQuery('.input_modal_content').append(suggest_headline).append(suggest_field).append(suggest_button_submit);
 
             jQuery('#input_modal').modal();
@@ -345,9 +373,9 @@ class DataManager {
                 jQuery('.input_modal_content').empty();
 
                 setTimeout(function() {
-                  var suggest_headline = jQuery('<div class="suggest_headline dont-break-out">' + app.manager.getTranslation("selected_dialect_texts") + ": <em>" + choosen_dialect + '</em></div>');
-                  var suggest_button_submit = jQuery('<div id="choose_dialect" class="suggest_button_submit suggest_btn green_button"><i class="fa fa-check" aria-hidden="true"></i> ' + app.manager.getTranslation("submit_dialect_texts") + '</div><div id= "regect_btn" class="suggest_button_submit suggest_btn red_button"><i class="fa fa-times" aria-hidden="true"></i> ' + app.manager.getTranslation("abort_dialect_texts") + '</div>');
-                  var feedback_div = jQuery('<div class="feedback_suggest">' + app.manager.getTranslation("feedback_texts") + '</div>');
+                  var suggest_headline = jQuery('&lt;div class="suggest_headline dont-break-out">' + app.manager.getTranslation("selected_dialect_texts") + ": &lt;em>" + choosen_dialect + '&lt;/em>&lt;/div>');
+                  var suggest_button_submit = jQuery('&lt;div id="choose_dialect" class="suggest_button_submit suggest_btn green_button">&lt;i class="fa fa-check" aria-hidden="true">&lt;/i> ' + app.manager.getTranslation("submit_dialect_texts") + '&lt;/div>&lt;div id= "regect_btn" class="suggest_button_submit suggest_btn red_button">&lt;i class="fa fa-times" aria-hidden="true">&lt;/i> ' + app.manager.getTranslation("abort_dialect_texts") + '&lt;/div>');
+                  var feedback_div = jQuery('&lt;div class="feedback_suggest">' + app.manager.getTranslation("feedback_texts") + '&lt;/div>');
                   jQuery('.input_modal_content').append(suggest_headline).append(suggest_button_submit);
 
                   /*not sure*/
@@ -404,7 +432,7 @@ class DataManager {
                             jQuery('#input_modal').modal('hide');
                             jQuery('.input_modal_content').empty();
 
-                            var data_to_add = '<div title="' + app.manager.selected_dialect + '" class="dataparent"><span title="' + app.manager.selected_dialect + '" class="dataspan">' + app.manager.selected_dialect + '</span></div>';
+                            var data_to_add = '&lt;div title="' + app.manager.selected_dialect + '" class="dataparent">&lt;span title="' + app.manager.selected_dialect + '" class="dataspan">' + app.manager.selected_dialect + '&lt;/span>&lt;/div>';
                             table.row.add({ name: app.manager.selected_dialect, id: new_dialect_id, column1: { filtered_name: app.manager.selected_dialect, html: data_to_add } }).draw();
                             dialect_array.push({ id_dialect: new_dialect_id, name: new_dialect_name });
 
@@ -454,7 +482,7 @@ class DataManager {
                             app.manager.current_dialect_index = app.manager.get_dialect_index(app.manager.selected_dialect, table); //datatable_dialects.rows().data().length - 1;
                             var row = table.row(app.manager.current_dialect_index).node();
                             jQuery(row).addClass('green_row');
-                            var icon = jQuery('<i class="fa fa-check" aria-hidden="true"></i>');
+                            var icon = jQuery('&lt;i class="fa fa-check" aria-hidden="true">&lt;/i>');
                             jQuery(row).find('.dataspan').prepend(icon);
 
                             /**
@@ -477,7 +505,7 @@ class DataManager {
                             app.manager.current_dialect_index = app.manager.get_dialect_index(app.manager.selected_dialect, table); //datatable_dialects.rows().data().length - 1;
                             var row = table.row(app.manager.current_dialect_index).node();
                             jQuery(row).addClass('green_row');
-                            var icon = jQuery('<i class="fa fa-check" aria-hidden="true"></i>');
+                            var icon = jQuery('&lt;i class="fa fa-check" aria-hidden="true">&lt;/i>');
                             jQuery(row).find('.dataspan').prepend(icon);
 
                             jQuery("#dialekt_span").text(app.manager.getTranslation("lang_dialect_abbreviation") + " : " + app.manager.selected_dialect);
@@ -533,12 +561,12 @@ class DataManager {
             if (app.manager.current_dialect_index != index) {
               var row = table.row(index).node();
               jQuery(row).addClass('green_row');
-              var icon = jQuery('<i class="fa fa-check" aria-hidden="true"></i>');
+              var icon = jQuery('&lt;i class="fa fa-check" aria-hidden="true">&lt;/i>');
               jQuery(row).find('.dataspan').prepend(icon);
             }
 
             //for unsetting green on pervious selection
-            if (app.manager.current_dialect_index != -1 && app.manager.current_dialect_index != index) {
+            if (app.manager.current_dialect_index != -1 &amp;&amp; app.manager.current_dialect_index != index) {
               var row = table.row(app.manager.current_dialect_index).node();
               jQuery(row).removeClass('green_row');
               jQuery(row).find('.fa-check').remove();
@@ -622,7 +650,7 @@ class DataManager {
 
       var row = table.row(app.manager.current_dialect_index).node();
       jQuery(row).addClass('green_row');
-      var icon = jQuery('<i class="fa fa-check" aria-hidden="true"></i>');
+      var icon = jQuery('&lt;i class="fa fa-check" aria-hidden="true">&lt;/i>');
       jQuery(row).find('.dataspan').prepend(icon);
     }
 
@@ -683,12 +711,12 @@ class DataManager {
 
         var buttonparent;
 
-        if (!app.manager.modals_initialized && origin == "concept") {
+        if (!app.manager.modals_initialized &amp;&amp; origin == "concept") {
 
-          buttonparent = jQuery('<div class="list_modal_button_parent"></div>');
+          buttonparent = jQuery('&lt;div class="list_modal_button_parent">&lt;/div>');
           jQuery('#concept_modal_table_filter').after(buttonparent);
 
-          var random_button = jQuery('<div class="list_modal_button_in_search"><i class="fa fa-random" aria-hidden="true"></i> ' + app.manager.getTranslation("random_texts") + '</div>');
+          var random_button = jQuery('&lt;div class="list_modal_button_in_search">&lt;i class="fa fa-random" aria-hidden="true">&lt;/i> ' + app.manager.getTranslation("random_texts") + '&lt;/div>');
           buttonparent.append(random_button);
 
           /*button for choosing random concept*/
@@ -735,7 +763,7 @@ class DataManager {
           })
 
           /*button for suggesting new concepts*/
-          var suggest_button = jQuery('<div class="list_modal_button_in_search"><i class="fa fa-plus" aria-hidden="true"></i> ' + app.manager.getTranslation("suggest_texts") + '</div>');
+          var suggest_button = jQuery('&lt;div class="list_modal_button_in_search">&lt;i class="fa fa-plus" aria-hidden="true">&lt;/i> ' + app.manager.getTranslation("suggest_texts") + '&lt;/div>');
           buttonparent.append(suggest_button);
           if (!app.manager.user_data.userLoggedIn) suggest_button.addClass('disabled_feature');
 
@@ -746,10 +774,10 @@ class DataManager {
               app.ui.openWhyRegisterModal();
             } else {
               jQuery('.input_modal_content').empty();
-              var suggest_headline = jQuery('<div class="suggest_headline">' + app.manager.getTranslation("suggest_texts") + ':</div>');
-              var suggest_field = jQuery('<input class="suggest_field"></input>');
-              var suggest_button_submit = jQuery('<div class="suggest_button_submit suggest_btn">' + app.manager.getTranslation("submit_texts") + '</div>');
-              var feedback_div = jQuery('<div class="feedback_suggest">' + app.manager.getTranslation("feedback_texts") + '</div>');
+              var suggest_headline = jQuery('&lt;div class="suggest_headline">' + app.manager.getTranslation("suggest_texts") + ':&lt;/div>');
+              var suggest_field = jQuery('&lt;input class="suggest_field">&lt;/input>');
+              var suggest_button_submit = jQuery('&lt;div class="suggest_button_submit suggest_btn">' + app.manager.getTranslation("submit_texts") + '&lt;/div>');
+              var feedback_div = jQuery('&lt;div class="feedback_suggest">' + app.manager.getTranslation("feedback_texts") + '&lt;/div>');
               jQuery('.input_modal_content').append(suggest_headline).append(suggest_field).append(suggest_button_submit);
 
               jQuery('#input_modal').modal();
@@ -776,12 +804,12 @@ class DataManager {
           })
 
           /*change va_phase concepte*/
-          var alm = jQuery('<div class="list_modal_button_va_phase va_phase_1 active noselect" data-va_phase = "1"><i class="far fa-check-square"></i>' + app.manager.getTranslation("alpine_agriculture") + '</div>'); // 'Almwirtschaft'
-          var natur = jQuery('<div class="list_modal_button_va_phase va_phase_2 active noselect" data-va_phase = "2"><i class="far fa-check-square"></i>' + app.manager.getTranslation("alpine_nature") + '</div>'); // 'Natur'
-          var modern = jQuery('<div class="list_modal_button_va_phase va_phase_3 active noselect" data-va_phase = "3"><i class="far fa-check-square"></i>' + app.manager.getTranslation("alpine_modern") + '</div>'); // 'Modern'
+          var alm = jQuery('&lt;div class="list_modal_button_va_phase va_phase_1 active noselect" data-va_phase = "1">&lt;i class="far fa-check-square">&lt;/i>' + app.manager.getTranslation("alpine_agriculture") + '&lt;/div>'); // 'Almwirtschaft'
+          var natur = jQuery('&lt;div class="list_modal_button_va_phase va_phase_2 active noselect" data-va_phase = "2">&lt;i class="far fa-check-square">&lt;/i>' + app.manager.getTranslation("alpine_nature") + '&lt;/div>'); // 'Natur'
+          var modern = jQuery('&lt;div class="list_modal_button_va_phase va_phase_3 active noselect" data-va_phase = "3">&lt;i class="far fa-check-square">&lt;/i>' + app.manager.getTranslation("alpine_modern") + '&lt;/div>'); // 'Modern'
 
           jQuery("#va_phase_wrapper_concept_list").remove();
-          var va_phase_wrapper = jQuery('<div id="va_phase_wrapper_concept_list" class="va_phase_wrapper"></div>');
+          var va_phase_wrapper = jQuery('&lt;div id="va_phase_wrapper_concept_list" class="va_phase_wrapper">&lt;/div>');
 
           va_phase_wrapper.append(alm);
           va_phase_wrapper.append(natur);
@@ -842,7 +870,7 @@ class DataManager {
 
             table.columns().search(regexFromMyArray, true).draw();
 
-            if (app.manager.current_concept_index != -1 && jQuery('#va_phase_wrapper_concept_list').find('.va_phase_' + va_phase).hasClass("active")) {
+            if (app.manager.current_concept_index != -1 &amp;&amp; jQuery('#va_phase_wrapper_concept_list').find('.va_phase_' + va_phase).hasClass("active")) {
               app.manager.getDataTable("datatable_concepts").row(app.manager.current_concept_index).scrollTo();
               app.ui.selectTableEntry(app.manager.current_concept_index);
             }
@@ -915,7 +943,7 @@ class DataManager {
 
           app.manager.concepts_modal_initialized = true;
 
-          if (app.manager.locations_modal_modals_initialized && app.manager.concepts_modal_initialized) {
+          if (app.manager.locations_modal_modals_initialized &amp;&amp; app.manager.concepts_modal_initialized) {
             app.manager.modals_initialized = true;
 
             if (language_is_set) jQuery('#welcomeback_modal').modal('hide');
@@ -986,12 +1014,12 @@ class DataManager {
 
         var buttonparent;
 
-        if (!app.manager.modals_initialized && origin == "location") {
+        if (!app.manager.modals_initialized &amp;&amp; origin == "location") {
 
-          buttonparent = jQuery('<div class="list_modal_button_parent"></div>');
+          buttonparent = jQuery('&lt;div class="list_modal_button_parent">&lt;/div>');
           jQuery('#location_modal_table_filter').after(buttonparent);
 
-          var search_location_button = jQuery('<div class="list_modal_button_in_search"><i class="fa fa-map-marker" aria-hidden="true"></i> ' + app.manager.getTranslation("search_map_location") + '</div>');
+          var search_location_button = jQuery('&lt;div class="list_modal_button_in_search">&lt;i class="fa fa-map-marker" aria-hidden="true">&lt;/i> ' + app.manager.getTranslation("search_map_location") + '&lt;/div>');
           buttonparent.append(search_location_button);
 
           search_location_button.on('click', function() {
@@ -1021,13 +1049,13 @@ class DataManager {
 
                 var row = table.row(index).node();
                 jQuery(row).addClass('green_row');
-                var icon = jQuery('<i class="fa fa-check" aria-hidden="true"></i>');
+                var icon = jQuery('&lt;i class="fa fa-check" aria-hidden="true">&lt;/i>');
                 jQuery(row).find('.dataspan').prepend(icon);
 
               }
 
               //for unsetting green on pervious selection
-              if (app.manager.saved_location_index != -1 && app.manager.saved_location_index != index) {
+              if (app.manager.saved_location_index != -1 &amp;&amp; app.manager.saved_location_index != index) {
 
                 var row = table.row(app.manager.saved_location_index).node();
                 jQuery(row).removeClass('green_row');
@@ -1053,7 +1081,7 @@ class DataManager {
             }
 
             setTimeout(function() { modal.modal('hide'); }, 220); //delay to show select effect
-          } else if (origin == "location" /*&& !choosing_location_mode*/ ) { /*when the location dataTable is empty - let user choose a Gemeinde*/
+          } else if (origin == "location" /*&amp;&amp; !choosing_location_mode*/ ) { /*when the location dataTable is empty - let user choose a Gemeinde*/
             app.ui.init_location_search_mode(modal);
 
           }
@@ -1066,7 +1094,7 @@ class DataManager {
 
           app.manager.locations_modal_modals_initialized = true;
 
-          if (app.manager.locations_modal_modals_initialized && app.manager.concepts_modal_initialized) {
+          if (app.manager.locations_modal_modals_initialized &amp;&amp; app.manager.concepts_modal_initialized) {
             app.manager.modals_initialized = true;
 
             if (app.manager.user_data.language_is_set) jQuery('#welcomeback_modal').modal('hide');
@@ -1177,7 +1205,7 @@ class DataManager {
   createConceptIndexList(concepts_cur_lang, concept_va_phase) {
     var result = {};
 
-    for (var y = 0; y < concepts_cur_lang.length; y++) {
+    for (var y = 0; y &lt; concepts_cur_lang.length; y++) {
       result[parseInt(concepts_cur_lang[y].id)] = { index: y, name: concepts_cur_lang[y].name, va_phase: concepts_cur_lang[y].va_phase };
     }
 
@@ -1206,7 +1234,7 @@ class DataManager {
    * @return {void} [description]
    */
   checkEnteredConcepts() {
-    for (var i = 0; i < submitedAnswers.length; i++) {
+    for (var i = 0; i &lt; submitedAnswers.length; i++) {
       app.manager.checkTableEntry(submitedAnswers[i].concept_id);
     }
   }
@@ -1243,9 +1271,9 @@ class DataManager {
     var concepts_cur_lang = app.manager.getData("concepts_cur_lang").data_value
     for (var key in concepts_cur_lang) {
       var concept = concepts_cur_lang[key];
-      if (concept.va_phase == 1 && answers_by_concept_index[concept['id']] == null) c_phase1_idx.push(app.manager.getData("concepts_index_by_id").data_value[concept['id']]);
-      else if (concept.va_phase == 2 && answers_by_concept_index[concept['id']] == null) c_phase2_idx.push(app.manager.getData("concepts_index_by_id").data_value[concept['id']]);
-      else if (concept.va_phase == 3 && answers_by_concept_index[concept['id']] == null) c_phase3_idx.push(app.manager.getData("concepts_index_by_id").data_value[concept['id']]);
+      if (concept.va_phase == 1 &amp;&amp; answers_by_concept_index[concept['id']] == null) c_phase1_idx.push(app.manager.getData("concepts_index_by_id").data_value[concept['id']]);
+      else if (concept.va_phase == 2 &amp;&amp; answers_by_concept_index[concept['id']] == null) c_phase2_idx.push(app.manager.getData("concepts_index_by_id").data_value[concept['id']]);
+      else if (concept.va_phase == 3 &amp;&amp; answers_by_concept_index[concept['id']] == null) c_phase3_idx.push(app.manager.getData("concepts_index_by_id").data_value[concept['id']]);
     }
 
     return [c_phase1_idx, c_phase2_idx, c_phase3_idx];
@@ -1263,7 +1291,7 @@ class DataManager {
       app.manager.active_va_phases = app.ui.check_active_concepts(jQuery('#va_phase_wrapper_concept_list').find('.active'));
     }
 
-    for (var i = 0; i < app.manager.active_va_phases.length; i++) {
+    for (var i = 0; i &lt; app.manager.active_va_phases.length; i++) {
       var active_phase = app.manager.active_va_phases[i];
       active_concepts = active_concepts.concat(this.unanswered_concepts[active_phase - 1]);
     }
@@ -1291,7 +1319,7 @@ class DataManager {
    * @return {void}        [description]
    */
   checkDataBeforeListModal(marker) {
-    if (app.manager.getData("aeusserungen_by_locationindex").data_value[marker.location_id] != null && !app.manager.check_user_aesserungen_in_location(marker.location_name)) {
+    if (app.manager.getData("aeusserungen_by_locationindex").data_value[marker.location_id] != null &amp;&amp; !app.manager.check_user_aesserungen_in_location(marker.location_name)) {
       app.manager.openLocationListModal(marker);
     } else {
       jQuery('#custom_backdrop').show().css('background', 'rgba(0, 0, 0, 0.8)');
@@ -1346,9 +1374,9 @@ class DataManager {
         var usergen = current_location_list_object[Object.keys(current_location_list_object)[0]].usergen;
         var tokenisiert = current_location_list_object[Object.keys(current_location_list_object)[0]].tokenisiert;
 
-        var head = jQuery('<div class="location_header_parent"><div class="location_header_num">' + num + '</div><span class ="location_header">' + name + '</span></div>');
+        var head = jQuery('&lt;div class="location_header_parent">&lt;div class="location_header_num">' + num + '&lt;/div>&lt;span class ="location_header">' + name + '&lt;/span>&lt;/div>');
 
-        var few_elements = jQuery('<div>').text(app.manager.getTranslation("too_few_elements")).addClass('few_elements');
+        var few_elements = jQuery('&lt;div>').text(app.manager.getTranslation("too_few_elements")).addClass('few_elements');
 
         if (usergen) {
           head.find('.location_header_num').addClass('user_generated_m');
@@ -1404,7 +1432,7 @@ class DataManager {
               table.rows().eq(0).each(function(index) {
                 var row = table.row(index);
                 var jrow = jQuery(row.node());
-                if (clicked_index != index && (jrow.find(element_to_animate).css('right') == "0px")) {
+                if (clicked_index != index &amp;&amp; (jrow.find(element_to_animate).css('right') == "0px")) {
 
                   jrow.find(element_to_animate).animate({
                     right: ["-170", "swing"]
@@ -1424,12 +1452,12 @@ class DataManager {
 
         /*add Buttons Alm/Nature Submited Answers*/
         var buttonparent = jQuery('.location_header_parent');
-        var alm = jQuery('<div class="list_modal_button_va_phase va_phase_1 active noselect"  data-va_phase = "1"><i class="far fa-check-square"></i>' + app.manager.getTranslation("alpine_agriculture") + '</div>'); //width:50%; 'Almwirtschaft'
-        var natur = jQuery('<div class="list_modal_button_va_phase va_phase_2 active noselect"   data-va_phase = "2"><i class="far fa-check-square"></i>' + app.manager.getTranslation("alpine_nature") + '</div>'); //width:50%; 'Natur'
-        var modern = jQuery('<div class="list_modal_button_va_phase va_phase_3 active noselect"   data-va_phase = "3"><i class="far fa-check-square"></i>' + app.manager.getTranslation("alpine_modern") + '</div>'); //width:50%; 'Modern'
+        var alm = jQuery('&lt;div class="list_modal_button_va_phase va_phase_1 active noselect"  data-va_phase = "1">&lt;i class="far fa-check-square">&lt;/i>' + app.manager.getTranslation("alpine_agriculture") + '&lt;/div>'); //width:50%; 'Almwirtschaft'
+        var natur = jQuery('&lt;div class="list_modal_button_va_phase va_phase_2 active noselect"   data-va_phase = "2">&lt;i class="far fa-check-square">&lt;/i>' + app.manager.getTranslation("alpine_nature") + '&lt;/div>'); //width:50%; 'Natur'
+        var modern = jQuery('&lt;div class="list_modal_button_va_phase va_phase_3 active noselect"   data-va_phase = "3">&lt;i class="far fa-check-square">&lt;/i>' + app.manager.getTranslation("alpine_modern") + '&lt;/div>'); //width:50%; 'Modern'
 
         jQuery("#va_phase_wrapper_location_list").remove();
-        var va_phase_wrapper = jQuery('<div id="va_phase_wrapper_location_list" class="va_phase_wrapper"></div>');
+        var va_phase_wrapper = jQuery('&lt;div id="va_phase_wrapper_location_list" class="va_phase_wrapper">&lt;/div>');
 
         va_phase_wrapper.append(alm);
         va_phase_wrapper.append(natur);
@@ -1485,7 +1513,7 @@ class DataManager {
           var list_elements = [];
 
           if (active_location_data.length > 0) {
-            for (var i = 0; i < active_location_data.length; i++) {
+            for (var i = 0; i &lt; active_location_data.length; i++) {
               table.rows.add(app.manager.getData("filtered_location_submited_data_phases").data_value[active_location_data[i] - 1]);
               app.manager.getData("filtered_location_submited_data_phases").data_value[active_location_data[i] - 1].map(function(el) {
                 list_elements.push(el);
@@ -1511,11 +1539,11 @@ class DataManager {
           jQuery(row).addClass('other_user_row');
         } else {
           jQuery(row).addClass('this_user_row');
-          jQuery(row).append(jQuery('<div class="location_list_controls"><div class="change_button_in_list rowbutton"><i class="fa fa-pencil" aria-hidden="true"></i> ' +
-            app.manager.getTranslation("change_input") + '</div><div class="delete_button_in_list rowbutton"><i class="fa fa-trash-o" aria-hidden="true"></i> ' +
-            app.manager.getTranslation("delete_input") + '</div></div>'));
+          jQuery(row).append(jQuery('&lt;div class="location_list_controls">&lt;div class="change_button_in_list rowbutton">&lt;i class="fa fa-pencil" aria-hidden="true">&lt;/i> ' +
+            app.manager.getTranslation("change_input") + '&lt;/div>&lt;div class="delete_button_in_list rowbutton">&lt;i class="fa fa-trash-o" aria-hidden="true">&lt;/i> ' +
+            app.manager.getTranslation("delete_input") + '&lt;/div>&lt;/div>'));
           /*tokeniriest*/
-          jQuery(row).append(jQuery('<div class="tokenisiert"><i class="fa fa-check-square-o" aria-hidden="true"></i>  ' + app.manager.getTranslation("permanently_saved") + '</div>'));
+          jQuery(row).append(jQuery('&lt;div class="tokenisiert">&lt;i class="fa fa-check-square-o" aria-hidden="true">&lt;/i>  ' + app.manager.getTranslation("permanently_saved") + '&lt;/div>'));
 
           jQuery(row).find('.change_button_in_list').on('click', function() {
             var aeusserung_id = jQuery(row).find('.dataparent').attr('ae_id');
@@ -1537,7 +1565,7 @@ class DataManager {
             var remaining_num = Object.keys(app.manager.getData("aeusserungen_by_locationindex").data_value[cur_obj.id_geo]).length
             jQuery('#location_list_modal').find('.location_header_num').text(remaining_num);
 
-            if (app.manager.check_for_current_user_entries(cur_obj.id_geo) <= 0) {
+            if (app.manager.check_for_current_user_entries(cur_obj.id_geo) &lt;= 0) {
               jQuery('#location_list_modal').find('.location_header_num').removeClass('user_generated_m');
             }
 
@@ -1585,19 +1613,19 @@ class DataManager {
 
       data[i] = [];
 
-      if (concept_idx < app.manager.getData("important_concepts_count").data_value) {
-        data[i].push('<div ae_id="' + aeusserung_id + '" con_id="' + cur_data.id_concept + '" user_data="' + user_data +
+      if (concept_idx &lt; app.manager.getData("important_concepts_count").data_value) {
+        data[i].push('&lt;div ae_id="' + aeusserung_id + '" con_id="' + cur_data.id_concept + '" user_data="' + user_data +
           '" class="dataparent" title="' + concept_name +
-          '" token="' + token + '"><span class="dataspan"><i title="' + app.manager.getTranslation("important_concepts_texts") +
-          '" class="fa fa-exclamation-triangle" aria-hidden="true"></i>' + concept_name + '</span></div>');
+          '" token="' + token + '">&lt;span class="dataspan">&lt;i title="' + app.manager.getTranslation("important_concepts_texts") +
+          '" class="fa fa-exclamation-triangle" aria-hidden="true">&lt;/i>' + concept_name + '&lt;/span>&lt;/div>');
       } else {
-        data[i].push('<div ae_id="' + aeusserung_id + '" con_id="' + cur_data.id_concept + '" user_data="' + user_data +
+        data[i].push('&lt;div ae_id="' + aeusserung_id + '" con_id="' + cur_data.id_concept + '" user_data="' + user_data +
           '" class="dataparent" title="' + concept_name + '" token="' + token +
-          '"><span class="dataspan">' + concept_name + '</span></div>');
+          '">&lt;span class="dataspan">' + concept_name + '&lt;/span>&lt;/div>');
       }
 
-      data[i].push('<span class="c_answer_span dataspan"  title="' + word + '">\"' + word + '\"</span>');
-      data[i].push('<span class="authorspan dataspan"  title="' + author + '">(' + author + ')</span>');
+      data[i].push('&lt;span class="c_answer_span dataspan"  title="' + word + '">\"' + word + '\"&lt;/span>');
+      data[i].push('&lt;span class="authorspan dataspan"  title="' + author + '">(' + author + ')&lt;/span>');
 
       i++;
     }
@@ -1612,7 +1640,7 @@ class DataManager {
    */
   openLocationListModal(marker) {
 
-    if (jQuery('#custom_modal_backdrop').length < 1) {
+    if (jQuery('#custom_modal_backdrop').length &lt; 1) {
       app.ui.showCustomModalBackdrop();
     }
 
@@ -1745,10 +1773,10 @@ class DataManager {
     this.translations["data_remark"] = translations['CS_COPYWRITE']
 
     this.translations["remark_link"] = [
-      "https://www.verba-alpina.gwi.uni-muenchen.de/?page_id=226&noredirect=de_DE",
-      "https://www.verba-alpina.gwi.uni-muenchen.de/fr/?page_id=22&noredirect=fr_FR",
-      "https://www.verba-alpina.gwi.uni-muenchen.de/it/?page_id=33&noredirect=it_IT",
-      "https://www.verba-alpina.gwi.uni-muenchen.de/si/?page_id=4&noredirect=sl_SI"
+      "https://www.verba-alpina.gwi.uni-muenchen.de/?page_id=226&amp;noredirect=de_DE",
+      "https://www.verba-alpina.gwi.uni-muenchen.de/fr/?page_id=22&amp;noredirect=fr_FR",
+      "https://www.verba-alpina.gwi.uni-muenchen.de/it/?page_id=33&amp;noredirect=it_IT",
+      "https://www.verba-alpina.gwi.uni-muenchen.de/si/?page_id=4&amp;noredirect=sl_SI"
     ]
 
     this.translations["input_select_texts"] = translations['CS_TUTORIAL_3'];
@@ -1863,7 +1891,7 @@ class DataManager {
    *
    */
   check_user_aeusserungen() {
-    if (app.manager.isEmpty(app.manager.submitedAnswers_indexed) && !app.manager.user_data.userLoggedIn) {
+    if (app.manager.isEmpty(app.manager.submitedAnswers_indexed) &amp;&amp; !app.manager.user_data.userLoggedIn) {
       app.loader.eraseCookie("crowder_id");
       app.manager.user_data.current_user = null;
     }
@@ -2033,7 +2061,7 @@ class DataManager {
         var lct = this.submitedAnswers_indexed[key].location;
         var lct_id = this.submitedAnswers_indexed[key].location_id;
 
-        if (input.localeCompare(answer.user_input) == 0 && lct.localeCompare(answer.location) == 0 && cnt.localeCompare(answer.concept) == 0) {
+        if (input.localeCompare(answer.user_input) == 0 &amp;&amp; lct.localeCompare(answer.location) == 0 &amp;&amp; cnt.localeCompare(answer.concept) == 0) {
           exists = true;
           break;
         }
@@ -2055,17 +2083,17 @@ class DataManager {
     var findNaN = needle !== needle;
     var indexOf;
 
-    if (!findNaN && typeof Array.prototype.indexOf === 'function') {
+    if (!findNaN &amp;&amp; typeof Array.prototype.indexOf === 'function') {
       indexOf = Array.prototype.indexOf;
     } else {
       indexOf = function(needle) {
         var i = -1,
           index = -1;
 
-        for (i = 0; i < this.length; i++) {
+        for (i = 0; i &lt; this.length; i++) {
           var item = this[i];
 
-          if ((findNaN && item !== item) || item === needle) {
+          if ((findNaN &amp;&amp; item !== item) || item === needle) {
             index = i;
             break;
           }
@@ -2090,7 +2118,7 @@ class DataManager {
     var row = app.manager.getDataTable("datatable_concepts").row(table_index_t).node();
     jQuery(row).addClass('green_row');
 
-    var icon = jQuery('<i class="fa fa-check" aria-hidden="true"></i>');
+    var icon = jQuery('&lt;i class="fa fa-check" aria-hidden="true">&lt;/i>');
 
     if (jQuery(row).find('.fa-check').length == 0) {
       jQuery(row).find('.dataspan').prepend(icon);
@@ -2099,7 +2127,7 @@ class DataManager {
     jQuery(row).find('.fa-exclamation-triangle').remove();
 
     if (jQuery(row).find('.num_of_answers').length == 0) {
-      jQuery(row).find('.dataparent').append(jQuery('<div class="num_of_answers">1</div>'));
+      jQuery(row).find('.dataparent').append(jQuery('&lt;div class="num_of_answers">1&lt;/div>'));
       if (jQuery(row).find(".wiki_info").length == 1) jQuery(row).find('.num_of_answers').addClass("answers_with_wiki");
     } else {
       jQuery(row).find('.num_of_answers').text(app.manager.getData("num_of_answers_by_id").data_value[parseInt(_concept_id)]);
@@ -2149,12 +2177,12 @@ class DataManager {
     jQuery(row).find('.num_of_answers').remove();
     jQuery(row).find('.dataspan').find('.fa-check').remove();
 
-    if (table_index_t < app.manager.getData("important_concepts_count").data_value) {
+    if (table_index_t &lt; app.manager.getData("important_concepts_count").data_value) {
 
-      var icon = jQuery('<i class="fa fa-exclamation-triangle" aria-hidden="true"></i>');
+      var icon = jQuery('&lt;i class="fa fa-exclamation-triangle" aria-hidden="true">&lt;/i>');
       jQuery(row).find('.dataspan').prepend(icon);
     }
-    this.unanswered_concepts[table_index_t] = app.manager.getData("concepts_cur_lang").data_value[table_index_t]; //add concept back to unanswered list;
+    this.unanswered_concepts[table_index_t] = concepts_cur_lang[table_index_t]; //add concept back to unanswered list;
 
   }
 
@@ -2202,4 +2230,26 @@ class ModalContainer {
   constructor() {
 
   }
-}
+}</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-Ajax_Calls.html">Ajax_Calls</a></li><li><a href="module-Content_Interactions.html">Content_Interactions</a></li><li><a href="module-Geo_Parser.html">Geo_Parser</a></li><li><a href="module-Image%252520Uploader.html">Image Uploader</a></li><li><a href="module-Map-Objects_Generator.html">Map-Objects_Generator</a></li></ul><h3>Classes</h3><ul><li><a href="AjaxCaller.html">AjaxCaller</a></li><li><a href="AppManager.html">AppManager</a></li><li><a href="DataLoader.html">DataLoader</a></li><li><a href="DataManager.html">DataManager</a></li><li><a href="MapController.html">MapController</a></li><li><a href="module-Image%2520Uploader-EventManager.html">EventManager</a></li><li><a href="module-Image%2520Uploader-Modal.html">Modal</a></li><li><a href="module-Image%2520Uploader-UIElement.html">UIElement</a></li><li><a href="UIController.html">UIController</a></li></ul><h3>Global</h3><ul><li><a href="global.html#getsimagelinks">gets image links</a></li><li><a href="global.html#getTableData">getTableData</a></li><li><a href="global.html#getUserID">getUserID</a></li><li><a href="global.html#load_location_polygon">load_location_polygon</a></li><li><a href="global.html#save_word_async">save_word_async</a></li><li><a href="global.html#saveWord">saveWord</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.4</a> on Tue Nov 03 2020 12:33:56 GMT+0200 (Eastern European Standard Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

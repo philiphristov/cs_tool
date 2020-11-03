@@ -1,4 +1,32 @@
-/**
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: ui_controller.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: ui_controller.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
  * UIController
  */
 
@@ -151,7 +179,7 @@ class UIController {
 
 		this.addModalListeners();
 
-		if (app.manager.user_data.language_is_set && app.manager.user_data.crowder_dialect) {
+		if (app.manager.user_data.language_is_set &amp;&amp; app.manager.user_data.crowder_dialect) {
 			console.log("Lang and Dialect Selected");
 
 			this.setRandomTitelImage(function() {
@@ -174,7 +202,7 @@ class UIController {
 			jQuery('#welcomeback_modal').hide()
 
 
-		} else if (app.manager.user_data.language_is_set && !app.manager.user_data.crowder_dialect) {
+		} else if (app.manager.user_data.language_is_set &amp;&amp; !app.manager.user_data.crowder_dialect) {
 			console.log("Lang selected, Dialect Not");
 
 			current_language = parseInt(crowder_lang);
@@ -279,7 +307,7 @@ class UIController {
 
 
 			selectbox.on('open', function() {
-				if (jQuery('#welcome_modal').find('.modal-content').height() < 340)
+				if (jQuery('#welcome_modal').find('.modal-content').height() &lt; 340)
 					jQuery('.findicators').hide();
 			});
 
@@ -376,7 +404,7 @@ class UIController {
 
 		jQuery('#welcome_modal').hammer().bind("swipeleft", function(e) {
 
-			if (jQuery(".active", e.target).index() == 1 && app.manager.selected_dialect) {
+			if (jQuery(".active", e.target).index() == 1 &amp;&amp; app.manager.selected_dialect) {
 				jQuery('#welcome_modal').modal('hide');
 
 			} else {
@@ -475,7 +503,7 @@ class UIController {
 
 		var offsetHeight = jQuery('#left_menu').outerHeight(); //update height for leftmenu
 
-		if (doc_width <= 330) {
+		if (doc_width &lt;= 330) {
 			jQuery('#left_menu').css('padding-left', "9px").css('padding-right', "0px");
 			jQuery('.row_2').css('text-align', 'center');
 		} else {
@@ -484,7 +512,7 @@ class UIController {
 		}
 
 
-		if (doc_width < 576) {
+		if (doc_width &lt; 576) {
 			jQuery('.row_1').css('font-size', "17px");
 			jQuery('.row_2').css('font-size', "17px").css('margin-left', "0px");
 		}
@@ -492,7 +520,7 @@ class UIController {
 		if (doc_width > 1400) {
 			jQuery('.row_1').css('font-size', "48px");
 			jQuery('.row_2').css('font-size', "48px");
-		} else if (doc_width < 1200 && doc_width > 576) {
+		} else if (doc_width &lt; 1200 &amp;&amp; doc_width > 576) {
 			jQuery('.row_1').css('font-size', "3vw");
 			jQuery('.row_2').css('font-size', "3vw");
 		}
@@ -503,7 +531,7 @@ class UIController {
 			jQuery('#image_modal').find('.i_fake_body').height('65vh');
 
 			var modal_margin = 30;
-			if (doc_width < 576) modal_margin = 10;
+			if (doc_width &lt; 576) modal_margin = 10;
 
 			var modal_height = jQuery('#image_modal').find('.i_fake_body').height() + 23 + modal_margin; //23 = footer, 30 = margin top
 			var offsetHeight_l = document.getElementById('left_menu').offsetHeight + 20; //20 = before;
@@ -524,7 +552,7 @@ class UIController {
 		if (source != 'image') {
 
 			var tooltips = app.manager.getTranslation("tooltips", false, true)
-			for (var i = 0; i < tooltips.length; i++) {
+			for (var i = 0; i &lt; tooltips.length; i++) {
 				jQuery(tooltips[i].name).popover('dispose');
 			}
 
@@ -545,23 +573,23 @@ class UIController {
 			}
 
 
-			if (doc_width < 485) {
+			if (doc_width &lt; 485) {
 
 				var offsetstring = "0 0";
 
 				if (app.manager.current_language == 0) {
-					if (doc_width < 338 && doc_width > 329) { offsetstring = "0 -10"; }
-					if (doc_width < 323) offsetstring = "0 20";
-					if (doc_width < 307) { offsetstring = "0 -25"; }
+					if (doc_width &lt; 338 &amp;&amp; doc_width > 329) { offsetstring = "0 -10"; }
+					if (doc_width &lt; 323) offsetstring = "0 20";
+					if (doc_width &lt; 307) { offsetstring = "0 -25"; }
 				}
 
 				if (app.manager.current_language == 1) {
-					if (doc_width < 451) offsetstring = "0 -20";
+					if (doc_width &lt; 451) offsetstring = "0 -20";
 				}
 
 				if (app.manager.current_language == 2) {
-					if (doc_width < 315) offsetstring = "0 10";
-					if (doc_width < 302) offsetstring = "0 -20";
+					if (doc_width &lt; 315) offsetstring = "0 10";
+					if (doc_width &lt; 302) offsetstring = "0 -20";
 				}
 
 
@@ -572,7 +600,7 @@ class UIController {
 					placement: "top",
 					container: "body",
 					html: true,
-					content: '<div class="pop_location_span custom_popover_content">' + app.manager.getTranslation("location_select_texts_with_br") + '</div>',
+					content: '&lt;div class="pop_location_span custom_popover_content">' + app.manager.getTranslation("location_select_texts_with_br") + '&lt;/div>',
 					offset: offsetstring,
 					animation: true
 
@@ -616,14 +644,14 @@ class UIController {
 
 		}
 
-		if (app.ui.old_doc_width > 575 && doc_width < 575) {
+		if (app.ui.old_doc_width > 575 &amp;&amp; doc_width &lt; 575) {
 
 			app.manager.reMeasureDatatables();
-		} else if (app.ui.old_doc_width < 575 && doc_width > 575) {
+		} else if (app.ui.old_doc_width &lt; 575 &amp;&amp; doc_width > 575) {
 			app.manager.reMeasureDatatables();
 		}
 
-		if (doc_width < 452) {
+		if (doc_width &lt; 452) {
 			jQuery('#register_modal .custom-modal-footer button').css('font-size', "10px");
 			jQuery('#register_modal .modal-body').css('padding-right', "2px");
 		} else {
@@ -646,7 +674,7 @@ class UIController {
 	 * @param {Object} elements [description]
 	 */
 	addToolTips(elements) {
-		for (var i = 0; i < elements.length; i++) {
+		for (var i = 0; i &lt; elements.length; i++) {
 			app.ui.addToolTip(elements[i].name, elements[i].array);
 		}
 	}
@@ -669,7 +697,7 @@ class UIController {
 			trigger: "manual",
 			placement: "top",
 			container: "body",
-			content: '<div class="' + class_string + ' custom_popover_content">' + title_array + '</div>',
+			content: '&lt;div class="' + class_string + ' custom_popover_content">' + title_array + '&lt;/div>',
 			html: true,
 			animation: true,
 			offset: offsetstring
@@ -696,7 +724,7 @@ class UIController {
 	 */
 	showPopUp() {
 
-		if (app.ui.tutorial_running && app.ui.location_selected && !app.ui.concept_selected) {
+		if (app.ui.tutorial_running &amp;&amp; app.ui.location_selected &amp;&amp; !app.ui.concept_selected) {
 			jQuery('#location_span').popover('hide');
 			jQuery('#word_span').popover('show');
 			app.ui.stage = 2;
@@ -705,7 +733,7 @@ class UIController {
 				app.ui.handleWordSpanClick();
 			}).addClass('c_hover');
 
-		} else if (app.ui.tutorial_running && !app.ui.location_selected && !app.ui.concept_selected) {
+		} else if (app.ui.tutorial_running &amp;&amp; !app.ui.location_selected &amp;&amp; !app.ui.concept_selected) {
 			app.ui.stage = 1;
 			jQuery('#location_span').popover('show');
 
@@ -713,7 +741,7 @@ class UIController {
 				app.ui.handleLocationSpanClick();
 			}).addClass('c_hover');
 
-		} else if (app.ui.tutorial_running && !app.ui.location_selected && app.ui.concept_selected) {
+		} else if (app.ui.tutorial_running &amp;&amp; !app.ui.location_selected &amp;&amp; app.ui.concept_selected) {
 			jQuery('#word_span').popover('hide');
 			jQuery('#location_span').popover('show');
 			app.ui.stage = 1;
@@ -723,7 +751,7 @@ class UIController {
 			}).addClass('c_hover');
 		}
 
-		// else if (app.ui.tutorial_running && app.ui.location_selected && app.ui.concept_selected) {
+		// else if (app.ui.tutorial_running &amp;&amp; app.ui.location_selected &amp;&amp; app.ui.concept_selected) {
 
 		//       jQuery('#location_span').popover('hide');
 		//       options = {
@@ -731,7 +759,7 @@ class UIController {
 		//         placement: "top",
 		//         container: "body",
 		//         html: true,
-		//         content: '<div class="pop_word_span custom_popover_content">' + app.manager.getTranslation("upload_image_text") + '</div>'
+		//         content: '&lt;div class="pop_word_span custom_popover_content">' + app.manager.getTranslation("upload_image_text") + '&lt;/div>'
 		//       }
 
 		//       jQuery('#word_span').popover('dispose');
@@ -744,7 +772,7 @@ class UIController {
 		//       console.log("UPLOAD MODAL OPEN")
 
 		// } 
-		else if (app.ui.tutorial_running && app.ui.location_selected & app.ui.concept_selected && !app.ui.word_entered) {
+		else if (app.ui.tutorial_running &amp;&amp; app.ui.location_selected &amp; app.ui.concept_selected &amp;&amp; !app.ui.word_entered) {
 			jQuery('#word_span').popover('hide');
 			jQuery('#location_span').popover('hide');
 			jQuery('#user_input').popover('show');
@@ -762,7 +790,7 @@ class UIController {
 
 		}
 
-		if (app.ui.word_entered && app.ui.stage < 4 && app.ui.location_selected && app.ui.concept_selected) {
+		if (app.ui.word_entered &amp;&amp; app.ui.stage &lt; 4 &amp;&amp; app.ui.location_selected &amp;&amp; app.ui.concept_selected) {
 
 			if (app.ui.stage != 4) {
 				jQuery('#user_input').popover('hide');
@@ -805,7 +833,7 @@ class UIController {
 
 		//allow modals without backdrop to be closed when clicked in area beside modal
 		jQuery('body').on('click', function(e) {
-			if (jQuery(e.target).attr('id') == 'upload_image_modal' && app.ui.uploading == false) jQuery('#upload_image_modal').modal('hide');
+			if (jQuery(e.target).attr('id') == 'upload_image_modal' &amp;&amp; app.ui.uploading == false) jQuery('#upload_image_modal').modal('hide');
 			if (jQuery(e.target).attr('id') == 'image_modal') jQuery('#image_modal').modal('hide');
 		})
 
@@ -924,7 +952,7 @@ class UIController {
 
 			if (app.manager.dialect_modal_initialized) {
 
-				if (app.manager.getData("datatable_dialects").data_value && (app.manager.current_dialect_index != -1)) {
+				if (app.manager.getData("datatable_dialects").data_value &amp;&amp; (app.manager.current_dialect_index != -1)) {
 					app.manager.getData("datatable_dialects").data_value.row(app.manager.current_dialect_index).scrollTo();
 				}
 
@@ -973,7 +1001,7 @@ class UIController {
 				app.ui.do_image_modal = false;
 
 
-				if (app.manager.current_concept_index != -1 && jQuery('#va_phase_wrapper_concept_list').find('.va_phase_' + app.manager.va_phase).hasClass("active")) {
+				if (app.manager.current_concept_index != -1 &amp;&amp; jQuery('#va_phase_wrapper_concept_list').find('.va_phase_' + app.manager.va_phase).hasClass("active")) {
 					app.manager.getDataTable("datatable_concepts").row(app.manager.current_concept_index).scrollTo();
 					app.ui.selectTableEntry(app.manager.current_concept_index);
 				}
@@ -1206,7 +1234,7 @@ class UIController {
 		})
 
 		jQuery('#dialect_modal').on('hidden.bs.modal', function(e) {
-			if (!app.ui.prevent_backdrop && !jQuery("#welcome_modal").hasClass('in')) {
+			if (!app.ui.prevent_backdrop &amp;&amp; !jQuery("#welcome_modal").hasClass('in')) {
 				app.ui.displayTooltips(true);
 				jQuery('#custom_modal_backdrop').fadeOut(function() { jQuery(this).remove() })
 			}
@@ -1233,7 +1261,7 @@ class UIController {
 		var jpg = "titel_" + number.toString() + ".jpg";
 		var img_url = url.plugins_Url + '/assets/images/' + jpg;
 
-		jQuery('<img/>').attr('src', img_url).load(function() {
+		jQuery('&lt;img/>').attr('src', img_url).load(function() {
 			jQuery(this).remove();
 
 			jQuery(modal_id).find('.modal-body').css('background', 'url(' + img_url + ')');
@@ -1328,7 +1356,7 @@ class UIController {
 		jQuery('#lwa_user_remember').on('focus', function() { if (jQuery(this).val() == app.manager.getTranslation("enter_username_or_email")) { jQuery(this).val(''); } })
 		jQuery('#lwa_user_remember').on('blur', function() { if (jQuery(this).val() == '') { jQuery(this).val(app.manager.getTranslation("enter_username_or_email")); } })
 
-		var additional_info = jQuery('.slides_reg_register').after('<div id="additional_info">');
+		var additional_info = jQuery('.slides_reg_register').after('&lt;div id="additional_info">');
 		jQuery('#additional_info').text(app.manager.getTranslation("details_why_register_send_anonymous_data"));
 	}
 
@@ -1380,7 +1408,7 @@ class UIController {
 				keyboard: false
 			});
 
-			if (jQuery('#custom_modal_backdrop').length < 1) app.ui.showCustomModalBackdrop();
+			if (jQuery('#custom_modal_backdrop').length &lt; 1) app.ui.showCustomModalBackdrop();
 
 		}
 
@@ -1431,7 +1459,7 @@ class UIController {
 				keyboard: false
 			});
 
-			if (jQuery('#custom_modal_backdrop').length < 1) app.ui.showCustomModalBackdrop();
+			if (jQuery('#custom_modal_backdrop').length &lt; 1) app.ui.showCustomModalBackdrop();
 		}
 
 	}
@@ -1516,7 +1544,7 @@ class UIController {
 			trigger: "manual",
 			placement: "left",
 			container: "body",
-			content: '<div class="login_popover custom_popover_content">' + app.manager.getTranslation("register_texts") + '</div>',
+			content: '&lt;div class="login_popover custom_popover_content">' + app.manager.getTranslation("register_texts") + '&lt;/div>',
 			html: true,
 			animation: true,
 			offset: "0 0"
@@ -1571,7 +1599,7 @@ class UIController {
 		jQuery(row).find('.dataparent').addClass('list_selected_concept');
 
 		if (table_index >= app.manager.getData("important_concepts_count").data_value) {
-			var icon = jQuery('<i class="fa fa-arrow-right list-select-arrow" aria-hidden="true"></i>');
+			var icon = jQuery('&lt;i class="fa fa-arrow-right list-select-arrow" aria-hidden="true">&lt;/i>');
 			if (jQuery(row).find('.fa-arrow-right').length == 0) {
 				jQuery(row).find('.dataspan').prepend(icon);
 			}
@@ -1635,7 +1663,7 @@ class UIController {
 	 */
 	startLoginTimer() {
 
-		if (!jQuery('.login_popover').parent().parent().hasClass('in') && !jQuery('#register_modal').hasClass('in')) {
+		if (!jQuery('.login_popover').parent().parent().hasClass('in') &amp;&amp; !jQuery('#register_modal').hasClass('in')) {
 
 			setTimeout(function() {
 				if (!jQuery('.modal').hasClass('in')) { app.ui.showLoginPopUp(); } else {
@@ -1678,8 +1706,8 @@ class UIController {
 					app.ui.prevent_backdrop = true;
 				}).text(app.manager.getTranslation("active_concept_texts"))
 
-				var icon = jQuery('<i class="fa fa-pagelines leaf_icon_l" aria-hidden="true"></i>');
-				var icon_r = jQuery('<i class="fa fa-pagelines leaf_icon_r" aria-hidden="true"></i>');
+				var icon = jQuery('&lt;i class="fa fa-pagelines leaf_icon_l" aria-hidden="true">&lt;/i>');
+				var icon_r = jQuery('&lt;i class="fa fa-pagelines leaf_icon_r" aria-hidden="true">&lt;/i>');
 				jQuery('.select_score_list').prepend(icon);
 				jQuery('.select_score_list').append(icon_r);
 
@@ -1706,11 +1734,11 @@ class UIController {
 			var arr = array[key];
 
 			if (arr[3]) {
-				table_data.push(['<div class="highscorenumber">' + i + '.</div>', '<div class="concept_data" id="' + arr[3] + '">' + arr[0] + '</div>', arr[1]])
+				table_data.push(['&lt;div class="highscorenumber">' + i + '.&lt;/div>', '&lt;div class="concept_data" id="' + arr[3] + '">' + arr[0] + '&lt;/div>', arr[1]])
 			} else if (arr[2]) {
-				table_data.push(['<div class="highscorenumber">' + i + '.</div>', '<div class="obj_data" id="' + arr[2] + '">' + arr[0] + '</div>', arr[1]])
+				table_data.push(['&lt;div class="highscorenumber">' + i + '.&lt;/div>', '&lt;div class="obj_data" id="' + arr[2] + '">' + arr[0] + '&lt;/div>', arr[1]])
 			} else {
-				table_data.push(['<div class="highscorenumber">' + i + '.</div>', arr[0], arr[1]])
+				table_data.push(['&lt;div class="highscorenumber">' + i + '.&lt;/div>', arr[0], arr[1]])
 			}
 
 		}
@@ -1817,7 +1845,7 @@ class UIController {
 			if (jQuery("#suggest_image_upload").length) {
 
 			} else {
-				var upload_button = jQuery("<div id='suggest_image_upload'></div>").text(app.manager.getTranslation("upload_own_image_button_text"));
+				var upload_button = jQuery("&lt;div id='suggest_image_upload'>&lt;/div>").text(app.manager.getTranslation("upload_own_image_button_text"));
 
 				jQuery('#image_modal').find('.customfooter').append(upload_button);
 				jQuery('#image_modal').find('.customfooter').css("height", "30px");
@@ -1856,7 +1884,7 @@ class UIController {
 			keyboard: true
 		});
 
-		//if(jQuery('#custom_modal_backdrop').length<1)showCustomModalBackdrop();
+		//if(jQuery('#custom_modal_backdrop').length&lt;1)showCustomModalBackdrop();
 		//jQuery('#custom_modal_backdrop').fadeOut();
 	}
 
@@ -1866,7 +1894,7 @@ class UIController {
 	 */
 	showCustomBackdrop() {
 
-		var custom_backdrop = jQuery('<div id="custom_backdrop"><i class="fa fa-circle-o-notch fa-spin fa-3x fa-fw""></i></div>');
+		var custom_backdrop = jQuery('&lt;div id="custom_backdrop">&lt;i class="fa fa-circle-o-notch fa-spin fa-3x fa-fw"">&lt;/i>&lt;/div>');
 		jQuery('body').append(custom_backdrop);
 		jQuery('#custom_backdrop').fadeIn();
 
@@ -1879,7 +1907,7 @@ class UIController {
 	showCustomModalBackdrop() {
 
 		jQuery('#custom_modal_backdrop').remove();
-		var custom_backdrop = jQuery('<div id="custom_modal_backdrop"></div>');
+		var custom_backdrop = jQuery('&lt;div id="custom_modal_backdrop">&lt;/div>');
 		jQuery('body').append(custom_backdrop);
 		jQuery('#custom_modal_backdrop').fadeIn('fast');
 
@@ -1893,7 +1921,7 @@ class UIController {
 	 */
 	check_free_space_few_elements(num_elements, few_elements) {
 
-		if (num_elements < 8) {
+		if (num_elements &lt; 8) {
 			jQuery('#location_list_modal').find('.few_elements').show();
 			if (num_elements == 0) num_elements = 1;
 
@@ -1918,7 +1946,7 @@ class UIController {
 
 
 
-			if (app.map.map.getZoom() < 9) {
+			if (app.map.map.getZoom() &lt; 9) {
 				var zoom_to_location = true;
 			} else {
 				var zoom_to_location = false;
@@ -1960,15 +1988,15 @@ class UIController {
 
 		jQuery('#image_modal').find('#image_slider').remove();
 
-		var result = jQuery('<div id="image_slider" class="carousel slide" data-ride="carousel">');
+		var result = jQuery('&lt;div id="image_slider" class="carousel slide" data-ride="carousel">');
 
 		if (_images.length > 1) {
 
-			var ol = jQuery('<ol class="carousel-indicators findicators"></ol>');
+			var ol = jQuery('&lt;ol class="carousel-indicators findicators">&lt;/ol>');
 
-			for (var i = 0; i < _images.length; i++) {
+			for (var i = 0; i &lt; _images.length; i++) {
 
-				var li = jQuery('<li data-target="#image_slider" data-slide-to="' + i + '"></li>')
+				var li = jQuery('&lt;li data-target="#image_slider" data-slide-to="' + i + '">&lt;/li>')
 				if (i == 0) li.addClass('active');
 				ol.append(li);
 			}
@@ -1977,18 +2005,18 @@ class UIController {
 
 		}
 
-		var inner = jQuery('<div class="carousel-inner" role="listbox">');
+		var inner = jQuery('&lt;div class="carousel-inner" role="listbox">');
 
-		for (var i = 0; i < _images.length; i++) {
+		for (var i = 0; i &lt; _images.length; i++) {
 
-			var item = jQuery('<div class="carousel-item">');
+			var item = jQuery('&lt;div class="carousel-item">');
 			if (i == 0) item.addClass('active');
-			var body = jQuery('<div class ="i_fake_body"></div>');
-			var image_overlay = jQuery('<div class ="i_overlay"></div>');
-			var caption = jQuery('<div class="carousel-caption first-info">' + _caption + '</div>');
+			var body = jQuery('&lt;div class ="i_fake_body">&lt;/div>');
+			var image_overlay = jQuery('&lt;div class ="i_overlay">&lt;/div>');
+			var caption = jQuery('&lt;div class="carousel-caption first-info">' + _caption + '&lt;/div>');
 
 			if (_images[i].image_scource.indexOf("wikipedia/commons") >= 0) {
-				var source = jQuery('<div>' + "Wikipedia Commons" + '</div>'); //
+				var source = jQuery('&lt;div>' + "Wikipedia Commons" + '&lt;/div>'); //
 				source.css({
 					'background-color': 'rgba(255, 255, 255, 0.5)',
 					'font-size': 10,
@@ -2014,7 +2042,7 @@ class UIController {
 		}
 
 		result.append(inner);
-		if (_images.length > 1) result.append(jQuery('<a class="left carousel-control" href="#image_slider" role="button" data-slide="prev"><span class="icon-prev" aria-hidden="true"></span><span class="sr-only">Previous</span></a><a class="right carousel-control" href="#image_slider" role="button" data-slide="next"><span class="icon-next" aria-hidden="true"></span><span class="sr-only">Next</span></a>'));
+		if (_images.length > 1) result.append(jQuery('&lt;a class="left carousel-control" href="#image_slider" role="button" data-slide="prev">&lt;span class="icon-prev" aria-hidden="true">&lt;/span>&lt;span class="sr-only">Previous&lt;/span>&lt;/a>&lt;a class="right carousel-control" href="#image_slider" role="button" data-slide="next">&lt;span class="icon-next" aria-hidden="true">&lt;/span>&lt;span class="sr-only">Next&lt;/span>&lt;/a>'));
 
 		return result;
 	}
@@ -2090,15 +2118,15 @@ class UIController {
 	 */
 	returnChangeInput() {
 		var output = [
-			"<div id='inputWrapper'>",
+			"&lt;div id='inputWrapper'>",
 			/*"Sie haben gesagt:  In " + ort + " sagt man zu " + concept + " " +  auesserung ,*/
 			/* "" + translateInfoWindowText(ort, concept,auesserung, current_user) + "", */
-			"" + "<div style='display:inline-block;margin-right:10px;margin-bottom:5px;'>" + app.manager.getTranslation("change_question") + "</div>",
-			"<div style='display:inline-block;width:100%'><input style='width:100%; margin-right:10px;display:inline-block;' id='userAuesserungInput' type='text'/></div>",
-			"<div style='display:block;margin-top:10px;'><button style='display:inline-block;margin-right:10px;padding:5px;' class='btn btn-primary' id='updateAuesserung' type='button'>" + app.manager.getTranslation("change_input") + "</button>",
-			"</div>", /*"<button style='display:inline-block;padding:5px;' class='btn btn-primary ' data-concept_id=\"" + id_concept + "\" data-todelete=\"" + id_auesserung + "\"  data-ort= \"" + ort + "\" type='button' id='deleteAuesserung' type='button' onclick='deleteInput()'>" + delete_input[current_language] + "</button>*/
+			"" + "&lt;div style='display:inline-block;margin-right:10px;margin-bottom:5px;'>" + app.manager.getTranslation("change_question") + "&lt;/div>",
+			"&lt;div style='display:inline-block;width:100%'>&lt;input style='width:100%; margin-right:10px;display:inline-block;' id='userAuesserungInput' type='text'/>&lt;/div>",
+			"&lt;div style='display:block;margin-top:10px;'>&lt;button style='display:inline-block;margin-right:10px;padding:5px;' class='btn btn-primary' id='updateAuesserung' type='button'>" + app.manager.getTranslation("change_input") + "&lt;/button>",
+			"&lt;/div>", /*"&lt;button style='display:inline-block;padding:5px;' class='btn btn-primary ' data-concept_id=\"" + id_concept + "\" data-todelete=\"" + id_auesserung + "\"  data-ort= \"" + ort + "\" type='button' id='deleteAuesserung' type='button' onclick='deleteInput()'>" + delete_input[current_language] + "&lt;/button>*/
 
-			"</div>"
+			"&lt;/div>"
 		].join("");
 
 
@@ -2131,7 +2159,7 @@ class UIController {
 		}
 
 
-		if (new_auesserung.localeCompare("") != 0 && !stop) {
+		if (new_auesserung.localeCompare("") != 0 &amp;&amp; !stop) {
 
 			if (row_to_update) {
 				row_to_update.find('td:nth-child(2)').first().text("\"" + new_auesserung + "\"");
@@ -2196,14 +2224,14 @@ class UIController {
 			success: function(response) {
 				/*If informant was deleted from db and has no other submited answers, delete cookie and current_user*/
 				var user_deleted = JSON.parse(response);
-				if (user_deleted && app.manager.isEmpty(app.manager.submitedAnswers_indexed) && !userLoggedIn) {
+				if (user_deleted &amp;&amp; app.manager.isEmpty(app.manager.submitedAnswers_indexed) &amp;&amp; !userLoggedIn) {
 					app.loader.eraseCookie("crowder_id");
 					app.manager.user_data.current_user = null;
 				}
 			}
 		});
 
-		if (app.map.old_feature != null && ort.localeCompare(app.map.old_feature['location']) == 0) {
+		if (app.map.old_feature != null &amp;&amp; ort.localeCompare(app.map.old_feature['location']) == 0) {
 			app.map.change_feature_style(app.map.old_feature, app.manager.check_user_aesserungen_in_location(ort));
 		}
 	}
@@ -2224,7 +2252,7 @@ class UIController {
 		/*   jQuery('#editInput_modal').modal({
 		                 keyboard: true
 		    });
-		  jQuery('.editInput_modal_content').html("<div>" + field_not_full[current_language] + "</div>");*/
+		  jQuery('.editInput_modal_content').html("&lt;div>" + field_not_full[current_language] + "&lt;/div>");*/
 
 	}
 
@@ -2273,7 +2301,7 @@ class UIController {
 			placement: "top",
 			container: "#register_slide",
 			html: true,
-			content: '<div class="custom_popover_content">' + app.manager.getTranslation("send_anonymous_data_modal_text") + '</div>',
+			content: '&lt;div class="custom_popover_content">' + app.manager.getTranslation("send_anonymous_data_modal_text") + '&lt;/div>',
 			animation: true
 		});
 
@@ -2289,7 +2317,7 @@ class UIController {
 		// jQuery('body').on('click', function (e) {
 		//     //did not click a popover toggle or popover
 		//     if (jQuery(e.target).data('toggle') !== 'popover'
-		//         && jQuery(e.target).parents('.popover.in').length === 0) {
+		//         &amp;&amp; jQuery(e.target).parents('.popover.in').length === 0) {
 		//         jQuery('[data-toggle="popover"]').popover('hide');
 		//         jQuery('body').unbind();
 		//     }
@@ -2400,7 +2428,7 @@ class ImageUpload {
 			/**
 			 * check if user accepts terms and has selected images for upload
 			 */
-			if (jQuery("#accept_req_image_upload").is(":checked") && app.ui.image_uploader.fd.getAll('image_data[]').length > 0) {
+			if (jQuery("#accept_req_image_upload").is(":checked") &amp;&amp; app.ui.image_uploader.fd.getAll('image_data[]').length > 0) {
 				app.ui.image_uploader.upload_images(selected_concept_id);
 				jQuery('#drop-area-overlay').css('display', 'flex');
 
@@ -2431,15 +2459,15 @@ class ImageUpload {
 		jQuery("#upload_image_modal").on('show.bs.modal', function() {
 			// update title for image upload modal
 			var selected_concept_id = jQuery("#word_span").attr("data-id_concept")
-			var concept_name = "<b>" + app.manager.getData("concepts_index_by_id").data_value[selected_concept_id].name + "</b>"
+			var concept_name = "&lt;b>" + app.manager.getData("concepts_index_by_id").data_value[selected_concept_id].name + "&lt;/b>"
 			var task_text = app.manager.getTranslation("upload_task_text").split("{Konzept}")
 			task_text = task_text[0] + " " + concept_name + " " + task_text[1]
-			jQuery(this).find(".modal-title").html(task_text) // "Zum " + "<b>" + concepts_index_by_id[selected_concept_id].name + "</b>" + " fehlen uns noch Bilder. Hier können Sie Ihre eigene Bilde hochladen und zum Projekt beitragen." 
+			jQuery(this).find(".modal-title").html(task_text) // "Zum " + "&lt;b>" + concepts_index_by_id[selected_concept_id].name + "&lt;/b>" + " fehlen uns noch Bilder. Hier können Sie Ihre eigene Bilde hochladen und zum Projekt beitragen." 
 		})
 
 
 		jQuery(".button_select_files").text(app.manager.getTranslation("upload_text"))
-		var accept_terms = app.manager.getTranslation("upload_terms_text").replace('CC BY SA 4.0', '<a target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/">CC BY SA 4.0</a>');
+		var accept_terms = app.manager.getTranslation("upload_terms_text").replace('CC BY SA 4.0', '&lt;a target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/">CC BY SA 4.0&lt;/a>');
 		jQuery("#accept_terms_label").html(accept_terms);
 
 		jQuery("#upload_images").text(app.manager.getTranslation("upload_image_text"))
@@ -2486,7 +2514,7 @@ class ImageUpload {
 		files.forEach(this.previewFile)
 
 		if (jQuery("#erase_upload_images").length == 0) {
-			var del_button = jQuery("<button id='erase_upload_images'  class='btn-sm btn-outline-danger'></button").text(app.manager.getTranslation("clear_images"));
+			var del_button = jQuery("&lt;button id='erase_upload_images'  class='btn-sm btn-outline-danger'>&lt;/button").text(app.manager.getTranslation("clear_images"));
 
 			del_button.on("click", function() {
 				app.ui.image_uploader.reset_input(jQuery("#fileElem"))
@@ -2542,7 +2570,7 @@ class ImageUpload {
 				app.ui.image_uploader.reset_input(jQuery("#fileElem"))
 
 				jQuery("#gallery").empty()
-				var thanks_div = jQuery('<div class="successful_upload"></div>').text(app.manager.getTranslation("upload_complete"))
+				var thanks_div = jQuery('&lt;div class="successful_upload">&lt;/div>').text(app.manager.getTranslation("upload_complete"))
 				jQuery("#gallery").append(thanks_div);
 				jQuery('#drop-area-overlay').fadeOut('slow');
 				app.ui.uploading = false;
@@ -2560,7 +2588,7 @@ class ImageUpload {
 				app.ui.image_uploader.reset_input(jQuery("#fileElem"))
 
 				jQuery("#gallery").empty()
-				var thanks_div = jQuery('<div class="fail_upload"></div>').text(app.manager.getTranslation("upload_failed"))
+				var thanks_div = jQuery('&lt;div class="fail_upload">&lt;/div>').text(app.manager.getTranslation("upload_failed"))
 				jQuery("#gallery").append(thanks_div)
 			}
 		});
@@ -2574,7 +2602,7 @@ class ImageUpload {
 	reset_input(element) {
 		app.ui.image_uploader.fd.delete("image_data[]");
 
-		element.wrap('<form>').closest('form').get(0).reset();
+		element.wrap('&lt;form>').closest('form').get(0).reset();
 		element.unwrap();
 
 		element.replaceWith(element.val('').clone(true));
@@ -2669,7 +2697,7 @@ function userRegisterDone(user_name, user_age, anonymous_data) {
 	if (anonymous_data) { anonymous_data = "1" } else { anonymous_data = "0" };
 
 	user_age = (new Date()).getFullYear() - user_age;
-	if (isNaN(user_age) || user_age < 0) {
+	if (isNaN(user_age) || user_age &lt; 0) {
 		user_age = '';
 	}
 	jQuery.ajax({
@@ -2709,7 +2737,7 @@ function send_anonymous_data() {
 	var anonymous_age = jQuery('#user_age').val();
 	// anonymous_age = (new Date()).getFullYear() - anonymous_age;
 	console.log(anonymous_age);
-	if (app.manager.user_data.current_user != "" && app.manager.user_data.current_user != null) {
+	if (app.manager.user_data.current_user != "" &amp;&amp; app.manager.user_data.current_user != null) {
 		if (!isNaN(anonymous_age)) {
 			userRegisterDone(app.manager.user_data.current_user, anonymous_age, true);
 			current_user_age = anonymous_age;
@@ -2728,4 +2756,26 @@ function send_anonymous_data() {
 
 jQuery(".btn").mouseup(function() {
 	jQuery(this).blur();
-})
+})</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-Ajax_Calls.html">Ajax_Calls</a></li><li><a href="module-Content_Interactions.html">Content_Interactions</a></li><li><a href="module-Geo_Parser.html">Geo_Parser</a></li><li><a href="module-Image%252520Uploader.html">Image Uploader</a></li><li><a href="module-Map-Objects_Generator.html">Map-Objects_Generator</a></li></ul><h3>Classes</h3><ul><li><a href="AjaxCaller.html">AjaxCaller</a></li><li><a href="AppManager.html">AppManager</a></li><li><a href="DataLoader.html">DataLoader</a></li><li><a href="DataManager.html">DataManager</a></li><li><a href="MapController.html">MapController</a></li><li><a href="module-Image%2520Uploader-EventManager.html">EventManager</a></li><li><a href="module-Image%2520Uploader-Modal.html">Modal</a></li><li><a href="module-Image%2520Uploader-UIElement.html">UIElement</a></li><li><a href="UIController.html">UIController</a></li></ul><h3>Global</h3><ul><li><a href="global.html#getsimagelinks">gets image links</a></li><li><a href="global.html#getTableData">getTableData</a></li><li><a href="global.html#getUserID">getUserID</a></li><li><a href="global.html#load_location_polygon">load_location_polygon</a></li><li><a href="global.html#save_word_async">save_word_async</a></li><li><a href="global.html#saveWord">saveWord</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.4</a> on Tue Nov 03 2020 12:33:56 GMT+0200 (Eastern European Standard Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

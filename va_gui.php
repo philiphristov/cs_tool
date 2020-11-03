@@ -413,7 +413,7 @@ function initMenu(){
 
              <div class ="c_fake_body"></div>
                <div class="carousel-caption welcomeback_container">
-              <h1 class="h1_smaller" id="modal_welcome" lang_id="0">Willkommen <br> zurück.</h1>
+              <h1 class="h1_smaller" id="modal_welcomeback" lang_id="0">Willkommen <br> zurück.</h1>
               <i class="fa fa-circle-o-notch fa-spin fa-3x fa-fw"></i>
             </div>
    
@@ -546,9 +546,9 @@ function initMenu(){
       <div class="modal-body" id="upload_image_body">
 
         <div id="drop-area">
-          <div id="drop-area-overlay"><i class="fa fa-circle-o-notch fa-spin fa-3x fa-fw""></i></div>
+          <div id="drop-area-overlay"><i class="fa fa-circle-o-notch fa-spin fa-3x fa-fw"></i></div>
         <form id="image_upload_form"> 
-          <input type="file" name="images_input[]" id="fileElem" multiple="multiple" accept="image/*" onchange="handleFiles(this.files)">
+          <input type="file" name="images_input[]" id="fileElem" multiple="multiple" accept="image/*" onchange="app.ui.image_uploader.handleFiles(this.files)">
           <label class="button_select_files" for="fileElem">Click Here to Select Images, or drag and drop them in the box.</label>
           <?php
             wp_nonce_field( "upload_image", "upload_image_wpnonce" );
